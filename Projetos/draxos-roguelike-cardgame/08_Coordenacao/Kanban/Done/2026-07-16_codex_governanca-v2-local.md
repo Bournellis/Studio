@@ -9,7 +9,7 @@
 - prioridade_portfolio: `PAUSADO_TEMPORARIO`
 - coordination_scope: `project_local`
 - closure_protocol: `agent_local_merge_v3`
-- technical_status: `ready_for_merge`
+- technical_status: `complete`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none`
@@ -20,12 +20,12 @@
 - delegated_scope: `coordenacao, documentacao e QA locais do Draxos Roguelike Cardgame`
 - branch: `codex/draxos-roguelike/governanca-v2`
 - worktree: `D:\Estudio-worktrees\draxos-roguelike--codex--governanca-v2`
-- base_ref: `main@cc7d7393`
-- merge_status: `pending`
-- worktree_status: `open`
-- branch_cleanup: `pending`
+- base_ref: `main@20542ce3`
+- merge_status: `integrated_ff_only`
+- worktree_status: `cleanup_after_closure_commit`
+- branch_cleanup: `cleanup_after_closure_commit`
 - validation_tier: `Runtime`
-- validation_result: `pass - QA schema e links; Fast 226/226 e 1.975 asserts; Runtime 2x 226/226, 1.975, rota 29/29 e zero side effects; cinco labs verdes`
+- validation_result: `pass - QA e links; Fast 226/226; Runtime 2x pré-merge e 1x pós-merge 226/226, 1.975, rota 29/29, zero side effects; cinco labs verdes`
 - global_sync_needed: `yes`
 
 ## Objetivo

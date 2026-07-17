@@ -8,7 +8,7 @@
 - projeto: `draxos-roguelike-cardgame`
 - coordination_scope: `project_local`
 - closure_protocol: `agent_local_merge_v3`
-- technical_status: `pass`
+- technical_status: `complete`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none para a migracao; gates de produto preservados em Review`
@@ -19,12 +19,12 @@
 - delegated_scope: `coordenacao, documentacao e QA locais`
 - branch: `codex/draxos-roguelike/governanca-v2`
 - worktree: `D:\Estudio-worktrees\draxos-roguelike--codex--governanca-v2`
-- base_ref: `main@cc7d7393`
-- merge_status: `pending`
-- worktree_status: `open`
-- branch_cleanup: `pending`
+- base_ref: `main@20542ce3`
+- merge_status: `integrated_ff_only`
+- worktree_status: `cleanup_after_closure_commit`
+- branch_cleanup: `cleanup_after_closure_commit`
 - validation_tier: `Runtime`
-- validation_result: `pass - Fast e Runtime integrais; labs separados; zero side effects rastreados`
+- validation_result: `pass - Fast e Runtime integrais, incluindo pós-merge; labs separados; zero side effects rastreados`
 - global_sync_needed: `yes`
 - commits: `f345c807 coordenacao; 8edf3da0 documentacao; b0647696 QA/divida; 41535e2d Fast honesto`
 
