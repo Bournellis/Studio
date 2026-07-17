@@ -1,0 +1,77 @@
+{
+  "schema_version": 2,
+  "receipt_id": "receipt_support_202606",
+  "batch_id": "support_202606",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "generated_at": "2026-07-17T15:22:34.974861Z",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "manifest_sha256": "7e5e31ec3ad50d16ab0b3bd9b6aa3e1a2de78bab943d6fdaae09dac451385972",
+  "entries": [
+    {
+      "path": "07_Aprendizados/2026-06-09_agent-doc-drift.md",
+      "sha256": "2a3ba7a6fe02da73f5521e51efabd3de4e3a63265ef1042ad4ce7df5bb51e51f",
+      "git_blob": "712398f94f234b395fb187654158af7957e6840f",
+      "record_id": "rec_2026_06_09_agent_doc_drift_ee1f70ab7c",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "07_Aprendizados/2026-06-09_multiagent-worktree-hygiene.md",
+      "sha256": "fa697a95960ff33824507c3f6e8471358ec7a5143d7770a73ef51d0a6daa0ee8",
+      "git_blob": "f4c22666a8a5fb9b7ac7f1ffe1592a815c226393",
+      "record_id": "rec_2026_06_09_multiagent_worktree_hygiene_9ff5aac639",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "07_Aprendizados/2026-06-09_snapshot-compaction.md",
+      "sha256": "dd883d90c9e3742315f516e406a0e1b7a363a6f574348c15c9fa7aca6a1509bf",
+      "git_blob": "95cb8c4113faa6b8e5bcb758620094671b6182ff",
+      "record_id": "rec_2026_06_09_snapshot_compaction_4f23d1c560",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "07_Aprendizados/2026-06-11_git-escritor-unico.md",
+      "sha256": "a6ad86f385b2d2561d04d4810263fbcf9d969597ba39725d44a4c5e5983a726d",
+      "git_blob": "9952602f74715ddfe02f34f431382d97052f8da2",
+      "record_id": "rec_2026_06_11_git_escritor_unico_512a99219a",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "07_Aprendizados/README.md",
+      "sha256": "62a5c22dce476cbf8487d880e058f11f236ee5a94e39bdcced1d55525b966e9b",
+      "git_blob": "9fcb6a050761484f2b180336de0b5d9f130a3ebd",
+      "record_id": "rec_readme_ca19f97b9d",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    }
+  ]
+}
