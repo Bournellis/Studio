@@ -24,9 +24,9 @@ types are `godot_script`, `gut_scripts`, `powershell`, `python`, `deno` and
 
 Godot-capable runs acquire the `Local\Estudio.GodotQA.v1` mutex; Android lanes
 also acquire `Local\Estudio.AndroidQA.v1`. Python orchestration and PowerShell
-helpers use the same names. Every runner receives temporary `APPDATA`,
-`LOCALAPPDATA` and `GODOT_USER_HOME` roots unless its typed manifest explicitly
-uses `shared_locked`.
+helpers use the same names. Godot-capable runners receive temporary `APPDATA`,
+`LOCALAPPDATA` and `GODOT_USER_HOME` roots unless their typed manifest explicitly
+uses `shared_locked`; backend-only runners retain their normal tool caches.
 
 Custom validators may declare a required structured result:
 

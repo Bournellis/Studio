@@ -102,6 +102,14 @@ if ($runCore) {
     }
     Invoke-Required 'Git' { $path = Assert-Command 'git'; (& $path --version) }
     Invoke-Required 'Git LFS' { $null = Assert-Command 'git'; $output = & git lfs version; if ($LASTEXITCODE -ne 0) { throw 'Git LFS is unavailable.' }; $output }
+    Invoke-Required 'Execution lock contract' {
+        $module = Join-Path $PSScriptRoot 'estudio_execution_lock.psm1'
+        if (-not (Test-Path -LiteralPath $module -PathType Leaf)) { throw 'Execution lock module is missing.' }
+        Import-Module $module -Force
+        $lock = Enter-EstudioExecutionLock -Resource GodotQA -TimeoutSeconds 0
+        try { 'Local\Estudio.GodotQA.v1 acquired and released' }
+        finally { Exit-EstudioExecutionLock -Lock $lock -Resource GodotQA }
+    }
     Invoke-Required 'Governance schema' { Invoke-PythonCheck 'check_governance_contract.py' @() }
     Invoke-Required 'Text integrity' { Invoke-PythonCheck 'check_text_integrity.py' @() }
     Invoke-Required 'Worktree overlap' { Invoke-PythonCheck 'check_worktree_overlap.py' @('--base-ref', 'main') }
