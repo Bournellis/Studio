@@ -13,7 +13,7 @@
       "profiles": ["FastSuite"],
       "timeout_seconds": 30,
       "environments": ["headless"],
-      "output_policy": "tracked_tree_clean",
+      "output_policy": "read_only",
       "local_only": true
     },
     {
@@ -27,7 +27,7 @@
       "profiles": ["FastSuite"],
       "timeout_seconds": 30,
       "environments": ["headless"],
-      "output_policy": "tracked_tree_clean",
+      "output_policy": "read_only",
       "local_only": true
     },
     {
@@ -41,7 +41,7 @@
       "profiles": ["Runtime", "FullLocal"],
       "timeout_seconds": 180,
       "environments": ["headless"],
-      "output_policy": "tracked_tree_clean",
+      "output_policy": "read_only",
       "local_only": true
     },
     {
@@ -50,12 +50,12 @@
       "tier": "Build",
       "lane": "web",
       "runner": "powershell",
-      "entrypoint": "tools/publish_web.ps1",
-      "args": ["-Mode", "Package"],
+      "entrypoint": "tools/package_web_local.ps1",
+      "args": [],
       "profiles": ["Build", "FullLocal"],
       "timeout_seconds": 300,
       "environments": ["local_web"],
-      "output_policy": "ignored_build_only",
+      "output_policy": "ignored_cache_only",
       "local_only": true
     }
   ],
