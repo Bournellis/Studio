@@ -13,4 +13,5 @@ Use `Handoff_TEMPLATE.md` metadata v3 plus:
 - Separate technical completion, Arena/product proof and publication state.
 - Reference release history instead of duplicating package/root/hash details.
 - Record exact local validation profile and clean-tree result.
+- Record `commit`, `merged_to`, `merge_strategy`, `post_merge_validation` and cleanup from the lifecycle receipt.
 - End with `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin` when locally merged.

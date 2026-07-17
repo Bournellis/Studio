@@ -9,6 +9,8 @@
 - prioridade_portfolio: `<value from Prioridades_Estudio.md>`
 - coordination_scope: `project_local | cross_project | global_governance | documentation_alignment | portfolio_sync`
 - closure_protocol: `agent_local_merge_v3`
+- closure_contract: `estudio_lifecycle_v1`
+- closure_mode: `in_progress`
 - technical_status: `in_progress`
 - human_gate_required: `yes | no`
 - human_gate_status: `pending | not_required`
@@ -21,11 +23,16 @@
 - branch: `<lead branch>`
 - worktree: `<lead absolute path>`
 - base_ref: `main@<sha>`
+- commit: `n/a`
+- merged_to: `n/a`
+- merge_strategy: `n/a`
 - merge_status: `pending`
 - worktree_status: `open`
 - branch_cleanup: `pending`
 - validation_tier: `Docs | QA | Runtime | Build | FullLocal`
 - validation_result: `pending`
+- post_merge_validation: `pending`
+- closure_summary: `pending`
 - global_sync_needed: `yes | no`
 
 ## Objective

@@ -2,10 +2,17 @@
 
 ## Metadata
 
+- status: `active | superseded`
+- authority: `product_contract | technical_contract | operational_contract`
+- last_verified: `<YYYY-MM-DD>`
+- review_when: `<concrete trigger>`
+- supersedes: `<decision id | none>`
+- superseded_by: `<decision id | none>`
 - data: `<YYYY-MM-DD>`
 - decisor: `Fabio | Hermes | Codex | Shared`
 - projeto: `estudio | JogoDaCopa | FpsPlayground | draxos-roguelike-cardgame | draxos-mobile | rpg-isometrico | rpg-turnos`
-- prioridade_portfolio: `P0_IMPLEMENTACAO | P1_CONCEITO | PAUSADO_INDEFINIDO | AGUARDANDO_DECISAO | ARQUIVO_HISTORICO`
+- coordination_scope: `project_local | cross_project | portfolio_sync | global_governance | documentation_alignment`
+- prioridade_portfolio: `<value from Prioridades_Estudio.md | unchanged>`
 
 ## Contexto
 
@@ -30,6 +37,6 @@ Explique efeitos esperados em produto, codigo, prazo ou operacao.
 
 Descreva quando esta decisao deve ser revisada.
 
-## Nota de compatibilidade historica
+## Historical Compatibility
 
-Claude pode aparecer em handoffs, reviews e decisoes antigas como contexto historico. Novas tarefas devem usar Fabio, Hermes e/ou Codex como atores operacionais atuais, salvo reativacao explicita registrada em decisao viva.
+Claude/OpenClaw are `historico/deprecated` actors and may appear only in historical records or explicit compatibility wording.

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import html.parser
+import json
 import re
 import sys
 from pathlib import Path
@@ -55,18 +56,35 @@ class LinkHTMLParser(html.parser.HTMLParser):
                 self.hrefs.append(value)
 
 
-def workspace_patterns(workspace: str) -> list[str]:
+def estudio_live_patterns(root: Path) -> list[str]:
+    config_path = root / "tools/estudio_governance.json"
+    patterns = list(ESTUDIO_PATTERNS)
+    if config_path.is_file():
+        try:
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            patterns.extend(
+                entry["path"] for entry in config.get("documentation", {}).get("live_documents", [])
+                if isinstance(entry, dict) and isinstance(entry.get("path"), str)
+            )
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+            # The governance checker owns the configuration error. Keep the
+            # stable fallback list so this checker remains independently useful.
+            pass
+    return sorted(set(patterns))
+
+
+def workspace_patterns(root: Path, workspace: str) -> list[str]:
     if workspace == "minigame":
         return MINIGAME_PATTERNS
     if workspace == "estudio":
-        return ESTUDIO_PATTERNS
-    return MINIGAME_PATTERNS + ESTUDIO_PATTERNS
+        return estudio_live_patterns(root)
+    return MINIGAME_PATTERNS + estudio_live_patterns(root)
 
 
 def iter_files(root: Path, workspace: str) -> list[Path]:
     seen: set[Path] = set()
     files: list[Path] = []
-    for pattern in workspace_patterns(workspace):
+    for pattern in workspace_patterns(root, workspace):
         for path in root.glob(pattern):
             if path.is_file() and path not in seen:
                 seen.add(path)

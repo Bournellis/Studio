@@ -56,6 +56,56 @@ def scan_minigame_review_triage(root: Path, warnings: list[str]) -> None:
                 warn(warnings, f"Review card not listed in local TRIAGE.md: {(review_dir / card).relative_to(root).as_posix()}")
 
 
+def _title_tokens(text: str) -> set[str]:
+    title = next((line.lstrip("# ").strip() for line in text.splitlines() if line.startswith("# ")), "")
+    words = re.findall(r"[a-zA-ZÀ-ÿ]+", title.casefold())
+    ignored = {"gate", "humano", "humana", "the", "and", "para", "completa"}
+    return {word for word in words if len(word) >= 5 and word not in ignored}
+
+
+def scan_estudio_review_triage(root: Path, warnings: list[str]) -> None:
+    for coord in sorted(root.glob("Projetos/*/08_Coordenacao")):
+        review_dir = coord / "Kanban/Review"
+        if not review_dir.is_dir():
+            continue
+        cards = sorted(path for path in review_dir.glob("*.md") if path.name.casefold() != "readme.md")
+        triage = coord / "TRIAGE.md"
+        if cards and not triage.is_file():
+            warn(warnings, f"Review has {len(cards)} card(s) but missing TRIAGE.md: {coord.relative_to(root).as_posix()}")
+            continue
+        triage_text = read(triage).casefold()
+        triage_words = set(re.findall(r"[a-zA-ZÀ-ÿ]+", triage_text))
+        for card in cards:
+            tokens = _title_tokens(read(card))
+            if card.name.casefold() not in triage_text and tokens and not tokens.issubset(triage_words):
+                warn(warnings, f"Review card is not represented in local TRIAGE.md: {card.relative_to(root).as_posix()}")
+
+
+def scan_estudio_current_guides(root: Path, warnings: list[str]) -> None:
+    guide_root = root / "materiais/guides"
+    current = [
+        guide_root / "README.md",
+        guide_root / "estudio-agent-workflow-current.md",
+        guide_root / "thread-cheat-sheet-current.md",
+        guide_root / "direct-thread-templates-current.md",
+    ]
+    for path in current:
+        text = read(path)
+        rel = path.relative_to(root).as_posix()
+        if not text:
+            warn(warnings, f"missing current guide: {rel}")
+            continue
+        if "## Metadata" not in text or "- authority:" not in text or "- last_verified:" not in text:
+            warn(warnings, f"current guide lacks governance metadata: {rel}")
+        if re.search(r"(?im)^##\s+Current Portfolio\b|^\s*-\s*P[012]\s+implementation:|PAUSADO_(?:TEMPORARIO|INDEFINIDO)", text):
+            warn(warnings, f"current guide duplicates static portfolio state: {rel}")
+
+    rgignore = read(root / ".rgignore")
+    for pattern in ("**/Handoffs/**", "**/Kanban/Done/**", "**/archive/**", "**/Historico/**"):
+        if pattern not in rgignore:
+            warn(warnings, f".rgignore is missing Documentation Lite pattern: {pattern}")
+
+
 def scan_dashboard_contract(root: Path, warnings: list[str]) -> None:
     md = root / "08_Coordenacao_Agentes/FABIO_DASHBOARD.md"
     html = root / "08_Coordenacao_Agentes/FABIO_DASHBOARD.html"
@@ -103,6 +153,9 @@ def main() -> int:
     scan_live_agent_refs(root, workspace, warnings)
     if workspace == "minigame":
         scan_minigame_review_triage(root, warnings)
+    else:
+        scan_estudio_review_triage(root, warnings)
+        scan_estudio_current_guides(root, warnings)
 
     if warnings:
         print(f"DOCS_HEALTH_WARN warnings={len(warnings)}")

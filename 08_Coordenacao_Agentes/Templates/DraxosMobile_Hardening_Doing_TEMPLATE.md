@@ -20,4 +20,4 @@ Use `Tarefa_TEMPLATE.md` metadata v3 plus:
 - `NoProjectWrites`: `yes | no - reason`
 - Remote/device/database mutation: `no`
 
-Copy the full lifecycle fields from `Tarefa_TEMPLATE.md`; do not carry package lineage in this live card.
+Copy every `estudio_lifecycle_v1` field from `Tarefa_TEMPLATE.md`; do not carry package lineage in this live card. At closure, paste the helper receipt instead of inferring merge or cleanup state.
