@@ -22,4 +22,8 @@ Esta pasta é a autoridade local de produto do RPG Isométrico. Nenhum conteúdo
 7. `roadmap/release-horizons.md`
 8. `platform/steam-platform.md`
 
+## Proveniência
+
+`historical-provenance.md` mapeia decisões e supersessões de G1–G4 e das Tracks 01–02 para as autoridades acima. É referência histórica, não uma camada adicional de canon ou estado.
+
 Lore compartilhado permanece em `../../../../canon/shared-lore/`. Estado técnico e execução permanecem em `../../implementation/current-status.md` e na coordenação local.
