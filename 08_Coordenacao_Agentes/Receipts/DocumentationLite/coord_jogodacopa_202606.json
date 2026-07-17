@@ -1,0 +1,1564 @@
+{
+  "schema_version": 2,
+  "receipt_id": "receipt_coord_jogodacopa_202606",
+  "batch_id": "coord_jogodacopa_202606",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "generated_at": "2026-07-17T15:20:58.013411Z",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "manifest_sha256": "001306788ee17a105df134ea993ca578ff4f63e9d8d325f06511975dabf94f2e",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-10_codex_jogodacopa_track03-arcade-series-v1_blocked-dirty-main.md",
+      "sha256": "1fc4c56990177aac9527bd037e0e49338bea38d30b6feda3ac9611fd73e48413",
+      "git_blob": "b109d40eb8ace042fb2fdc9fcace516b9324a11f",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track03_arcade_se_6e93d015f6",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-10_codex_jogodacopa_track03g-playtest-findings-v1_blocked-dirty-main.md",
+      "sha256": "9841589df249b9e142dbcb6c974c483fd4a951671b6f7f647fc2193c43cb9118",
+      "git_blob": "64657564d14ba34377cae4a74868554f3cd53a72",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track03g_playtest_5c7ba34be9",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md",
+      "sha256": "46132b181bae2e64551ae0b1acf481bf16a7e043fd53b1a25bf0158b61777fd7",
+      "git_blob": "afdd49a47fc4c632bef16b25c4f9d57b2c35fd96",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04b1_charact_928aa9a1d0",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md",
+      "sha256": "fa193dedb76e67c6da34376acd3379ff80cd4fa4c43f1c0297021af0e60c9609",
+      "git_blob": "a671bf49fe4974cae88fe9a189225550aa412de8",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04b2_feel_ui_572fde9799",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md",
+      "sha256": "abe08c5eb055ec63e5504fe4fa59ab775bbd452d55b131a692b5bca00904c10a",
+      "git_blob": "5e1428fdb7067b87681fc64b795a8b213e9f11fa",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04b3_kick_ar_732436dcc2",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md",
+      "sha256": "907da4be07f2f541884f2db62cbc1b6d29fa7690c4e53d34929310d0f4460321",
+      "git_blob": "62ea2773df0b4c5b8d94c3f0361908b89b85e285",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04c_stadium_fa2f312167",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md",
+      "sha256": "f015859b7ab5bff983649a7b89633821f790b24f78eadb89624921dc07de551d",
+      "git_blob": "a6ec21b4d627df358ccc04345dd113773e6a4ac4",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04d_match_co_ee4560867f",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md",
+      "sha256": "e6554374d873fac3ba24ca33f847ac239c6db3230ed567f32acf29218148d380",
+      "git_blob": "7ace8eca7820b65305831e15d9dedd77012485f3",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04e_web_spik_de04350a61",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md",
+      "sha256": "3f7dea098a017efa2663b7425272ccdcd3f3001d6d2c9fc3102c0b0d889968d5",
+      "git_blob": "7fcb7fcb3536936941c5c42ebb1d7e376d566989",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04f_web_perf_4802601b60",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track04f2-webgl-first-render-stall-v1.md",
+      "sha256": "7b288102aba9bd0a2da9ea8530a3ce5bd2f80cc0e3dbe635cd4e6f77788a4961",
+      "git_blob": "d57eb523b19db6ffd6f5da1ed4ef5a645e6b216e",
+      "record_id": "rec_2026_06_12_codex_jogodacopa_track04f2_webgl_f_2544ee6d8e",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md",
+      "sha256": "b594e1382124d74744a8593b9ecb2d90ee382cc1d1ab5e1d88384d6060436d45",
+      "git_blob": "035e683c27edcbd176f9572bc924a20466d2a3b8",
+      "record_id": "rec_2026_06_12_codex_jogodacopa_track05_web_publi_62b9131c9a",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md",
+      "sha256": "59964a48144e797627cb159a67fafec8f72441c49a0a1172a985c293a91dff0b",
+      "git_blob": "d972b87b58337e9099522c428489da923712b0f8",
+      "record_id": "rec_2026_06_12_codex_jogodacopa_track05a_web_stab_c0fc7684e3",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md",
+      "sha256": "c0f3aea57cb82c5d11920807a1e6b32b562888b8b791435343654bc0795b9786",
+      "git_blob": "a0c48720c30507b412b2f65a6b6ae858d3298e6b",
+      "record_id": "rec_2026_06_12_codex_jogodacopa_track05b_first_mi_1a0902a63f",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-12_codex_jogodacopa_track05b1-sensory-feedback-v1.md",
+      "sha256": "d4d6cce7f1867ff865d5e9b365f3c19aacfaca89cb75c6b1c8072da7b2d21217",
+      "git_blob": "08501565c036f7055ec53bc191b3b73f09a87050",
+      "record_id": "rec_2026_06_12_codex_jogodacopa_track05b1_sensory_90be585ffa",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06a-match-start-fixes-v1.md",
+      "sha256": "9acee523c19aeb09c0e42d71e60830cef32acef0b7436a2acc4c52dc9329244b",
+      "git_blob": "b749599580ce8a64bf0ebd6c058e6d9688e7aa28",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06a_match_st_ee16e9d634",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06b-esc-menu-v1.md",
+      "sha256": "b2a16abbe9ee8519ba82fa5e73ccca638fd06ac1f5a5f3957373c55ee78c95c4",
+      "git_blob": "752252334cf9300d2ec38b978c862938ed3e08f0",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06b_esc_menu_87806b3130",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md",
+      "sha256": "f234ce562ef9eca426493a6338fd2ecec525af5b3aa77941a59528eda2dc1d5f",
+      "git_blob": "1b7e4a1cd9de45868436d43def16258549c2ea9e",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06c_menu_bro_ae4c2ea7a8",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06d-hud-broadcast-v1.md",
+      "sha256": "6d99dc3dd092fe5191b5b9f51af0346a6fd8772f7dca31c8df2a0bfba90868e1",
+      "git_blob": "a4e2d388270928de3c9e88628b58c8225d5d6d8a",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06d_hud_broa_557f20e536",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0-rollback.md",
+      "sha256": "c6304f7c38c7d77865f8a743af66619e43f3b70a589e1faccf0abcb1242d2930",
+      "git_blob": "9fd68d621b176aea3f74ea5675c0adf73ab2d90a",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06e_release_06a640bb6a",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0.md",
+      "sha256": "73ece2e8736da8695c2fe062f0e4b98405999e08941bc9771111229654f133e4",
+      "git_blob": "42578d6019421db2c2c613dfb33672f6f6bf12b9",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06e_release_4fff68579c",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06f-web-audio-stability-v1.md",
+      "sha256": "e0f94d47255f41ba6c84f7efa0850fccfcb0949451d8877c9886276a2a9d283a",
+      "git_blob": "7fb900a5bbf57f8c7e6ac7b243d3cbd3c17a1e8e",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06f_web_audi_bc2ac98dbe",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_track06g-countdown-restart-flow-v1.md",
+      "sha256": "efa468df891a38e302655c771cf4513d8057afc3355b76ef700f7ca942451283",
+      "git_blob": "0f31c24cd6044060f8d0aa1b0b0fdc99d7fc7f5a",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06g_countdow_1922a64aac",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-13_codex_jogodacopa_v1-1-0-publicado-retest.md",
+      "sha256": "25e18572a6070dc598eb580b02dd93e87adb12d875122935bebfd99f004a4838",
+      "git_blob": "79920b405b0a150ca20ca285a9924fad8b70066b",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_v1_1_0_publicado_d377cc73cf",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07-visual-polish-web-safe-rollback.md",
+      "sha256": "d4194d29347b2141c378c4d916a3fae02caf36650d1ac296c63413cd2c2cbcb9",
+      "git_blob": "c3fcb0a361f901570e01bdfc30f91c72d7ecb2f9",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track07_visual_po_856a94ced2",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07b-web-heap-margin-hotfix-rollback.md",
+      "sha256": "b803483a40d74585f8d4396f69df29400912c1da52fe397be16c4b12cf9cb6ad",
+      "git_blob": "c4fb687e08deb7477b544d28a5b6ed36e52fa5f1",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track07b_web_heap_ca0faa6f0c",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track07c-web-audio-safe-publicado-retest.md",
+      "sha256": "ff8d6c09837a621309e245c35f8ce9467203e4e17469f14fe6cb7eb884fa51ce",
+      "git_blob": "93e03eeeed8ddd027853dd8d879045d5c9a2a5a9",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track07c_web_audi_4bf8158bc4",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track08-super-campeao-ui-rollback.md",
+      "sha256": "93538e75b8b53376ad7c41ab00ed8bbb0db399940fbff679488e5479424b60aa",
+      "git_blob": "6b5734856b05d672217e160c2d35d3aace973cd1",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track08_super_cam_ac7769d7d3",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-14_codex_jogodacopa_track08a-super-campeao-publicado-retest.md",
+      "sha256": "00201f92593cf426bf0b4d830d33e3fe9d2a4947ca29e282953c5d9de641dffe",
+      "git_blob": "49c0da5112783bb956462ac562f1a054d32fd6bb",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track08a_super_ca_c6b51466e8",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_documentacao-limpeza-v1.md",
+      "sha256": "f4f03ab5cd01781c763765d83ff6ccbb1b91d91d69132f2c2419eccd4bff51f9",
+      "git_blob": "449c1fdad42dcc24727992423502ee287ea88011",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_documentacao_limp_c788deaccb",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_footballroot-extraction-v1.md",
+      "sha256": "b8d1a7ea894123f018521f7c491e1ffc6ce2b4399269b0f5c07746780cb300b7",
+      "git_blob": "2187dc7c498652ef933703bdc673de742a39db45",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_footballroot_extr_f31a128395",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09a-publicado-retest.md",
+      "sha256": "a7a7401e1635db73cf15e92ac7c731c2f51b6427651e6bf14d951fd06c05aea2",
+      "git_blob": "f8e606785942ea571ec01351234d0bb441b4000c",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09a_publicad_190002d9f9",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09b-web-loading-controller-v1.md",
+      "sha256": "2fd171f1a93946dc64f32812a4d8eb559a05a5310202c624cb6216f3ed1ae044",
+      "git_blob": "b1e3b9eff60427a9c3733648ca1bc1a39330ffab",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09b_web_load_5931b1c13f",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09c-runtime-spawner-v1.md",
+      "sha256": "8417cddce5e81fcb251a2cc8200a4b775d1b3b06114ee431d7adef1a639e5142",
+      "git_blob": "eaa40ac0ae1b272da31ceb398b76f83ad2439154",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09c_runtime_40949bc8ad",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09d-match-flow-controller-v1.md",
+      "sha256": "498c8cb456a597ebbf896dde724dfdc702bdc98615a408afda33c3bbea50f19f",
+      "git_blob": "94debe38d363b26a6881dd044cbe76c4a0ff1a19",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09d_match_fl_4b2066b8dd",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09e-match-presentation-controller-v1.md",
+      "sha256": "175b6accfd1f6a9ec99ec5da66c8f29571e0604c48134e69a7add04340fdb6ee",
+      "git_blob": "7d8684c9fe32f25e97fa49bc33e46f5379b71434",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09e_match_pr_c3cf02a425",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09f-approved-track09g-plan.md",
+      "sha256": "2cf27b83df1e652ed1aeccd9c5aea2244bde2fd18df325dd13eaa779c5f58aa9",
+      "git_blob": "68c716f283609a3b4bd58e838916c980192fc4ab",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09f_approved_8eff36fc4e",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09f-arcade-field-controller-v1.md",
+      "sha256": "d02c7725c7d1d5c430742bfdf7c8d1cba75dcbb5b8d6f030107de45b7c1ed187",
+      "git_blob": "21351b097422c09f82afb70745f18c89b1c40fcd",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09f_arcade_f_0f9e373975",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09f-publication-v1.md",
+      "sha256": "908e77e3216e4f46850bf46df2e6546bfea483284182747aa7cf4f0c2a1edeea",
+      "git_blob": "5b1b2a9955689ed07098d94e5a727dc6b86e8d28",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09f_publicat_e5c66bb0d8",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09g-match-resolution-controller-v1.md",
+      "sha256": "7485133d449431507a11110835cf687e0b74ca900c8467ae0e5ed74e433ff220",
+      "git_blob": "b9876e0f435e11473738510ff7d06f46c3366751",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09g_match_re_35670e05cf",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09g-publication-v1.md",
+      "sha256": "c0156f31ea8559f8ed5b9a7d268c506c35caffcd03a7edf5048b068e87ddb589",
+      "git_blob": "3bcae6a579f3c19605b2d574011e158128c54691",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09g_publicat_06b9eabf6d",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09h-publication-v1.md",
+      "sha256": "180b46c148f0242c9bd3c9dd7c812183ab947e014929c0b191f2eff2973061d5",
+      "git_blob": "da4122cd95dc6718f1926147aed467332016399b",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09h_publicat_c02fecc980",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-15_codex_jogodacopa_track09h-web-heap-hotfix-v1.md",
+      "sha256": "7718ab9c6f2c0a1b4b3460a59debafd101e0550534cf052f074ee96e7011ce99",
+      "git_blob": "21cd465fc731c0736245772da1c6839ec39ceabf",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09h_web_heap_4985a15853",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_arcade-arena-boost-v1.md",
+      "sha256": "7458ebbb0239f97d668805834ea58fcfb011a31770f70962684fbe68c4024948",
+      "git_blob": "4b7d9826066656be8ddb18397b868338ff3e1560",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_arcade_arena_boos_8c15d1cd2e",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_ball-goal-kick-tuning-v1.md",
+      "sha256": "4590cacbd8a80971274252a395a3ddf67a8a9caf660beb504aa978f60b79d4a8",
+      "git_blob": "a082ed72902c69d4b6e9bb289c207ff8b4f856d6",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_ball_goal_kick_tu_15f2df53d7",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track01c-arena-stadium-visual-rework-v1.md",
+      "sha256": "5bf3dff6a5998d80450ef37f11fda45a268e836ae1682268d5f5b1520e6adfd2",
+      "git_blob": "31586dc1559ad1dfb02ed78f3b1fa6981895b3ff",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track01c_arena_st_e5eda92c67",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md",
+      "sha256": "4103a79a4dbc733304e204f686b43e246889c9ba6fcc891483f11342dd8c9576",
+      "git_blob": "a4800ffd80eb575a52c6ff4fe20d84b91823c7b5",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track02_quality_u_41c000f603",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track02cbis-02dbis-real-assets-v1.md",
+      "sha256": "305448693b5ec87fdf4e165e973db179028f3bc81b26f66d4e8bfeefe528735e",
+      "git_blob": "b1ac94ee7afb4fbead5d4687e779d1f577a1fabc",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track02cbis_02dbi_2ce59dea4a",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track02h-quality-hotfix-v1.md",
+      "sha256": "f80e0b5f3ee94d50b43af54c652879efe51492dde2c6dfe11093b06c9cd4ec23",
+      "git_blob": "8dae5f14454ad0c572e5f2bba7c901bafd5278ca",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track02h_quality_783dcd43b3",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track03-arcade-series-v1.md",
+      "sha256": "ca493718893311ed8a7955574d87752c4c25aea1467a81b193af2c0d31280e4a",
+      "git_blob": "82b4d018fc7f6eebab5681f515fcb40c291832c8",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track03_arcade_se_b5d828aa47",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track03f-quality-hotfix-v1.md",
+      "sha256": "7bdb62beabc131f1a510c1d531314440e8ec1bd6c6b64e8fe0f60f4968deab2c",
+      "git_blob": "f4e40a3caa76ee3e0f76191772bdc9ee662f9f7f",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track03f_quality_adca0cff80",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track03g-playtest-findings-v1.md",
+      "sha256": "6c28103d2a3430658199474e95f5d525da8171bf2cca2162059534080e633432",
+      "git_blob": "dfddb3026388924d8c586e9d31e9e3d00e8beaf5",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track03g_playtest_76f26f169b",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_jogodacopa_track03h-avatar-parity-drift-v1.md",
+      "sha256": "f89a3c2afd2c69e618fcded6bb3d98c6df621b15c187f3a3bce5e39aa0dadb6b",
+      "git_blob": "97df019f473331cfd2105ef955bbc96ebb6524aa",
+      "record_id": "rec_2026_06_10_codex_jogodacopa_track03h_avatar_p_e6a7acddcc",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_godot-debugger-bugs-v1.md",
+      "sha256": "37cfb0048259fd7255d6ebe3e61d75f3b9b8c4c5d309cd409b1a61a7bd2f831e",
+      "git_blob": "bf511b3015562c3f87351f5cfc033f0ea6e336ee",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_godot_debugger_bu_7440b0bb6d",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_hotfix04e1-night-capture.md",
+      "sha256": "aa9d0ca383feddfc7c1d1970a93ca1fc537f110c76966cf4f4ffa254ad18370f",
+      "git_blob": "efa0666284cb8223c295b3b4cce8127ce4af822a",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_hotfix04e1_night_e20de4424e",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track03i-menu-interaction-fix-v1.md",
+      "sha256": "d462bbed78b49444229a98ef122f121c11ee70a2713009a9c0f6c41f5ff0743c",
+      "git_blob": "7a19668652c217cf4b0eaa0e0b4f4229f6d6fe49",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track03i_menu_int_bd7233c333",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track03j-process-git-policy-v1.md",
+      "sha256": "486f80853721dff083bbf96e25be6236c612b095a29738e2fdfb831481aa2a72",
+      "git_blob": "73376248945706086db90f7cf8d23bae22b3016b",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track03j_process_f962d0e1a3",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track03k-animation-pose-restore-v2.md",
+      "sha256": "f54405dc79639a92673df9021fe1f96a8ed7d1dec0d99eb958648f3b04322ab4",
+      "git_blob": "60485b8f403fce7fd232c4dc1f60fdfa697c0b42",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track03k_animatio_0fa3566f0a",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track03l-arena-seal-facing-v2.md",
+      "sha256": "972f44115fd28f8b1ce779e9f039a5afc49911f2c3d68f9a7c6a3be61ba61afc",
+      "git_blob": "8d88d5c14e337d4bf52c980cecf8fcd5ec7f0efd",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track03l_arena_se_ef7200bb1e",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track03l1-facing-evidence-v1.md",
+      "sha256": "5112b89d886abc7fffd71157c8b84b44398f72dcb7ad5683b15565d1e2cec3ff",
+      "git_blob": "84ede1d46916fba735e4ba755a70fb953a7bd49c",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track03l1_facing_1cc1bf65bb",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b1-character-presentation-v1.md",
+      "sha256": "fc890684f27ecc5725e0e4c68af0bfb7604b30a78f5ff0786e50e1a7d1f9aeaa",
+      "git_blob": "e4c354f964262e4c154966c77b6b4e4036612a7a",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04b1_charact_59d20045c7",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b2-feel-ui-fixes-v1.md",
+      "sha256": "51a4e4c5285538e9a81a4f5b2dfacaccbcc9801793cb37c8728d8311d021d734",
+      "git_blob": "c58827a4cfadbdd4518ea1fdbed1ec9ddf724f04",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04b2_feel_ui_0cab9ec3c5",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04b3-kick-arms-polish-v1.md",
+      "sha256": "a83893a9aac4959208238df6297e2abeaa63ffcfa6e9d6933b63275daee9594e",
+      "git_blob": "5eb38b72309bb49228272310d7c0ee51eaa5a1ea",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04b3_kick_ar_4a81c88c3b",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04c-stadium-visual-v1.md",
+      "sha256": "dc1cb609df77200d52280f98e8d47fc99e8ab1ec613eb7339c80d9201299ba0b",
+      "git_blob": "eb968426c53e7b7077efbe48395d06f2ff28af45",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04c_stadium_3a9a44dba6",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04d-match-completeness-v1.md",
+      "sha256": "eb5b75152c4dfbcfa8071c6c1648534a1b1204e27b9150edb632c37ee86ff14c",
+      "git_blob": "3a4040921b6cbe28ee2c45333e29474422948a68",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04d_match_co_5202deac31",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04e-web-spike-v1.md",
+      "sha256": "93cea288272a390cf90d9f72e7faa5942f54e6d289e59e3044385b8ca4908dc2",
+      "git_blob": "43d29fe0bd8c11f58eea17b6dbb5728c626ab385",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04e_web_spik_6be9cba1a4",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04f-web-performance-v1.md",
+      "sha256": "32e6d28e20ab9744566139615dda9a32dac448284fd55af04dd4a3bda371f04b",
+      "git_blob": "cab7ec43ec4f6b9d6e3b76fd90dd508af6877f82",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04f_web_perf_e27396205d",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_codex_jogodacopa_track04f2-webgl-first-render-stall-v1.md",
+      "sha256": "8df0cee3fbf59f6990d23bee978a702526216645288a918ef6c217a51456f0cf",
+      "git_blob": "89ec8fa2345a521ad864fd0caf52fead44ded47b",
+      "record_id": "rec_2026_06_11_codex_jogodacopa_track04f2_webgl_f_c7e3a9da69",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05-web-publication-v1.md",
+      "sha256": "6e30f0cfd49834c8bc638f61dbe1a8bdf200a6c8cfeeda6a63915c6a8c29293c",
+      "git_blob": "121ccf47d6c0be07cc52aecb460685d8c479d2b1",
+      "record_id": "rec_2026_06_12_codex_jogodacopa_track05_web_publi_350ab6e759",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05a-web-stability-hotfix-v1.md",
+      "sha256": "ef44704f7e9651eb8a3c2b572513e4155ed28694c899a2ee4f4d50d747c5c6f8",
+      "git_blob": "e476932c67d5f920c0e3e453b425e374541baa33",
+      "record_id": "rec_2026_06_12_codex_jogodacopa_track05a_web_stab_b44c8c5442",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05b-first-minute-smoothness-v1.md",
+      "sha256": "38da972100534462d6160416481d146d582c3ce80a5f5e91ebac04fdec63c335",
+      "git_blob": "cb08ee4cac447eea46dc57d07fd435cfb263ffb8",
+      "record_id": "rec_2026_06_12_codex_jogodacopa_track05b_first_mi_95075986cf",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-12_codex_jogodacopa_track05b1-sensory-feedback-v1.md",
+      "sha256": "5ae99df1ab6505002466ed7f4277aaa00c7d9fd5208f3ff9771ee16a3942f3af",
+      "git_blob": "9946a70e704624540a6c70cccd93f3a098e63100",
+      "record_id": "rec_2026_06_12_codex_jogodacopa_track05b1_sensory_3327ec545f",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06a-match-start-fixes-v1.md",
+      "sha256": "0f88d004fcf515af81bb09f2fed01f0163117ffc96f98f2bb755f2c311241c89",
+      "git_blob": "108ee7a4c8d9eacec4490dd7977bf81159699520",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06a_match_st_f946d750fe",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06b-esc-menu-v1.md",
+      "sha256": "8e593518f0e965a7e0d8d64dadbcebc8b46afe6c7549fddb385674845b2f38a0",
+      "git_blob": "0f44bd3593fad91c22f5612f77a305eeaeaf553e",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06b_esc_menu_02101cfbca",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06c-menu-broadcast-v1.md",
+      "sha256": "e0c56ee442295659800f915a069014260dc39069483dd48eee5a2fe5b15558dd",
+      "git_blob": "0f75e8e0bfb7c828c52f31dda842cb8d736b49a2",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06c_menu_bro_e1e3101c83",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06d-hud-broadcast-v1.md",
+      "sha256": "e215d8d5a4f5a639d95072801ad642ebafa426b7cb1a4deb273ffaee13a443bd",
+      "git_blob": "1fdd53a27763fc10f9f568d09bef79256ae0a9a6",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06d_hud_broa_081f4b5c31",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06e-release-v1-1-0.md",
+      "sha256": "64b305db5fb014f1915fa38e537e6974cf996eab8e1c68fec06cbcfc54e29ad4",
+      "git_blob": "c2b41b7565b1929bf4c2bf72656ec9b4397fca99",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06e_release_0bcc4cad24",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06f-web-audio-stability-v1.md",
+      "sha256": "b8187524f36e613761dc56876bea33f01f6e95cb0cbd53e2d619d07658bb4ba3",
+      "git_blob": "a7a44820122df1a2686811f948e193ffd70c9784",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06f_web_audi_fcb40ddd3c",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-13_codex_jogodacopa_track06g-countdown-restart-flow-v1.md",
+      "sha256": "c2276d152696cafa237cd0f12aff023ceba613e1c7fef070144201b73fc31aa1",
+      "git_blob": "2a1435064cecdfea5b1c821bfc72f939cc7ec667",
+      "record_id": "rec_2026_06_13_codex_jogodacopa_track06g_countdow_5946124d03",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track07-visual-polish-web-safe.md",
+      "sha256": "0d46f9e5509de7a3022459f913d7f5565427cdbda318b99abaff9d87c53a833a",
+      "git_blob": "943259bfc4ce40a8f9cb6e67bb6e132e9966bb52",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track07_visual_po_0e3f95fef8",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track07b-web-heap-margin-hotfix.md",
+      "sha256": "f44951b6a774d2d4ba70641e39012fd3de477b39a8609fd704bd2cfe6a9f45a5",
+      "git_blob": "a053a7c8fc57dd6d7a58f243de91ee5fcc0253ae",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track07b_web_heap_f0e3d292b2",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track07c-web-audio-safe-hotfix.md",
+      "sha256": "06ad26ff2e5cad937e5a5ab3d0f85ad236244c6f02068fc83f400640d19558ce",
+      "git_blob": "aa00fb808ef0a33dae6625274f3179481c005161",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track07c_web_audi_24de162abb",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track08-super-campeao-ui.md",
+      "sha256": "4dd520e22c6cfdfeb5f3ff6c4dbe2bb0978a85d4d4983921821455032e7fc32f",
+      "git_blob": "d8a5892755b39669992c06cbdf4191bb21b202ed",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track08_super_cam_376ea08539",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_jogodacopa_track08a-ball-glass-hitch-hotfix.md",
+      "sha256": "c7a56fb0879315f37a18c04e7810a373f08875ef9daddace80d7349281f8c7f8",
+      "git_blob": "d099d0f261bec24dab6fb707f19abd5ad2105432",
+      "record_id": "rec_2026_06_14_codex_jogodacopa_track08a_ball_gla_388a498da2",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_documentacao-limpeza-v1.md",
+      "sha256": "7a1d844447b46bb8b7516f1e50c8d5b3eb3fd6132356f530913d70557f5b1be7",
+      "git_blob": "b16fe8f0e6ac5f228aca98b1b6a5442305882ef0",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_documentacao_limp_d413ab8612",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_footballroot-extraction-v1.md",
+      "sha256": "bfac8ad6cab3e57d339ebe4f07f8ad1a2f97b11206a80478a83f4a1fbfade7f8",
+      "git_blob": "cb86a5d7139ade73629640469d5899d638692ea1",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_footballroot_extr_45ec3f3ee2",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09b-web-loading-controller-v1.md",
+      "sha256": "bc8f504fe81ce5d04526451e0810508c91866eab922d4d92a018845737230daf",
+      "git_blob": "86093c889c55bc0d0b4ba50467d8c0f9fc9ea84a",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09b_web_load_d81cc1157c",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09c-runtime-spawner-v1.md",
+      "sha256": "16c65035505d6e8550c4df356e513a4d0cf141564dae3d89f73233b229239bc6",
+      "git_blob": "83e23ea09c4f4f8227400483c3412dd5706a0b0b",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09c_runtime_c5e3665a45",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09d-match-flow-controller-v1.md",
+      "sha256": "5290188bd2a88f9dbe8ea7435e7794a31851907dc4c52c2bfff1e3ec4bf2c644",
+      "git_blob": "b7f4e6fe96c5037b2e4eff8b3cf25443202d5aaf",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09d_match_fl_b15f0c99ff",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09e-match-presentation-controller-v1.md",
+      "sha256": "dc2ac538ab52d91088ec4b956e6a2e7b8acae2f90e495b8c5c241a3d657e0b82",
+      "git_blob": "838b6ec8c786e9b1b357a5228920b31f7b22aba4",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09e_match_pr_41072e410e",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-approved-track09g-plan.md",
+      "sha256": "142173c69d11348a264b9ea83082db05777d5cda1c770906c8a857588a678ae6",
+      "git_blob": "2427d20e45cb1da9835081202fcc933e729dcabd",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09f_approved_c92dc3ad5f",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-arcade-field-controller-v1.md",
+      "sha256": "155d56e35dd37891ac511383f8c32a9295440f8bffb1cbadf3bddf30f45f2f19",
+      "git_blob": "d5b7347f3e86e7086b600e85e941d822578907a0",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09f_arcade_f_84591b8105",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09f-publication-v1.md",
+      "sha256": "925efea6507f30dec90ce3c6361cbf478b19c7bd680f352a06eb88e2251cf3b4",
+      "git_blob": "9212299305a81854faa7efdb509d69f11f7d27c3",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09f_publicat_a453b913d2",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-match-resolution-controller-v1.md",
+      "sha256": "c21abe86f7a031ceb13b419db77a2817403ffdd0a07f1ce215568aaf5928bfa3",
+      "git_blob": "f4c85ac8ac3c352fc3db8442191974113197ce9d",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09g_match_re_9ea384a02e",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09g-publication-v1.md",
+      "sha256": "7d84f5c81d13dc674aae6e195366a96df4fd576a852f90f5f41ac38f88fcde7b",
+      "git_blob": "f4429edc779dd75086f6f06eee2910fe226c68b8",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09g_publicat_3b6b05fcaf",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09h-publication-v1.md",
+      "sha256": "0ede191e173250d88ca6e953605cd712563e0ed5997c1f56ebed314fd2543dca",
+      "git_blob": "45d7467ae150bf75bf2b6086cee95cbdeef7f925",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09h_publicat_bb82d1b731",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-15_codex_jogodacopa_track09h-web-heap-hotfix-v1.md",
+      "sha256": "493b2f81953aba24b3949ba8457adda240f34bf8ec553c4d3a81a73ae2b4f9b4",
+      "git_blob": "5106dbe3e4cd900e77fb89da980afc33b76ce41a",
+      "record_id": "rec_2026_06_15_codex_jogodacopa_track09h_web_heap_92a6bf19da",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-16_codex_jogodacopa_publish-track09i.md",
+      "sha256": "47a96827b7ee3136a4d407ff1955b5884743329cd80f19e89999004dda66179f",
+      "git_blob": "66df4f558c8a02e44456adf7561022f889429f50",
+      "record_id": "rec_2026_06_16_codex_jogodacopa_publish_track09i_1c07d8af1a",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-16_codex_jogodacopa_track09i-kick-super-controller-v1.md",
+      "sha256": "ce54f670cd4b49aa7ae988532d30a2e8cd8a6dae6777dcec20f954e2773ef7b9",
+      "git_blob": "12a8930e8ff5d4b66c62bd144439dafd1074a797",
+      "record_id": "rec_2026_06_16_codex_jogodacopa_track09i_kick_sup_5e4c7d0800",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_post09o-doc-cleanup-v1.md",
+      "sha256": "3c32d8d5913321c9f80df34a738f64f8ac97845ec0e7c4f8e15a40981412ef0c",
+      "git_blob": "7bf259858906195936bbf1be5dcfdfc7cf216a5a",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_post09o_doc_clean_fd2982c4a9",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_publish-track09j.md",
+      "sha256": "4de2d762bd041f76812a3cc2239845904b3b30a634952b64c289743585dc1139",
+      "git_blob": "ebcd450aaf8e538b7eb80e25c9f38daa332b09d6",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_publish_track09j_74ce22dadf",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_publish-track09p.md",
+      "sha256": "7820d4115f8d52fd366202aa7cd3da50e83dc1a6fd552b68436cc3384ef9ddd1",
+      "git_blob": "0f5976a2f171c9f0f8e64cb7b69ab150b3352038",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_publish_track09p_788ee469b1",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_publish-track09q.md",
+      "sha256": "1ca3c94e812f3fe53a5e7a0ec2bcedc956bb1e50dfae0d50c85f7023cc6ccfc2",
+      "git_blob": "2ef7096ba6dfe17ba9f4048484e1954e0cc76cf6",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_publish_track09q_821eb45184",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09j-ball-contact-controller-v1.md",
+      "sha256": "50a8e02d5dc4dce7bf8628dfdcf51ccf30f59d653067abda3027a587cb6012d4",
+      "git_blob": "d7a7139af653ffe9aabd079391ff1b0f130dc041",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09j_ball_con_66a60a16de",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09k-web-heap-hotfix-v1.md",
+      "sha256": "ab1cad64cc2b16b062b746e31dfe1c679cd8433514780c2e78bf4eec7968ba08",
+      "git_blob": "94a436944557e27a5f6d013dd0f2f4d26da0941e",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09k_web_heap_3a739358a0",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09l-web-heap-instrumentation-v1.md",
+      "sha256": "e4bd84f53d8f5164c41195eab1b72f6f4c613fe07cea62b0859c98a7c6793670",
+      "git_blob": "f78eaa5dffeae04f5727469c4fa36b947ebde63f",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09l_web_heap_b3032796bb",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09m-web-heap-gate-semantics-v1.md",
+      "sha256": "a688fe5fb17e38d5ad8ceb0181e52329cba787061c6adde48e9627f67c78756b",
+      "git_blob": "182811cc2c091bae835884cfe499425ec609ce98",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09m_web_heap_63089bb4cf",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-human-retest-approved-v1.md",
+      "sha256": "797bcb098528b5044b21fb72cd59206bd6c470b3534d39506c3afe22df8454da",
+      "git_blob": "5a8a1ffe8f926f31b02f09dd100340c0b571a8fb",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09n_human_re_93a26c4f52",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-prepublish-ab-v1.md",
+      "sha256": "54320e0a509da94c31ca88862ba59f8b43f579dfb297e16b5fe76aedb31fbfcd",
+      "git_blob": "9f9a7c2111ebe2c8a2a9116988b265edec687fdd",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09n_prepubli_15c80cded9",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-publication-v1.md",
+      "sha256": "f8ae86563763d284be2bfc0a8b02072a7275fabf987f1d2429532410a54f7727",
+      "git_blob": "d2c3621d560b8b7f94f6effb9508e7080334ed1f",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09n_publicat_9ec192c799",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09n-render-settings-controller-v1.md",
+      "sha256": "2db0caadf9da7a46b814f4e84f35344e1d8bce84b6ef82883d7b796247b8a03d",
+      "git_blob": "ad723f4a618ec65153fa3aefbc930ad853cd5801",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09n_render_s_12813c5b8c",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09o-documentation-rebaseline-v1.md",
+      "sha256": "8df6519ece7693f0ae183a3709382a53f237fd2630c1e6c8088a17eb08892c1c",
+      "git_blob": "793721ccffac6f2d81c5b33124000e54964b86ff",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09o_document_346feb07ea",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09p-human-retest-approved-v1.md",
+      "sha256": "4d4bd7bf9895afdd28286c7bdcf6738b47130f786d8b481867ca97d702b4084c",
+      "git_blob": "94184860c674db3808c244c06be10ef158a78261",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09p_human_re_1e37af4709",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09p-session-ui-controller-v1.md",
+      "sha256": "d8551262494b3861669d97f155c58b633bdfb484adc51cf5849fabba2b359f63",
+      "git_blob": "221f8bc4a814f285477c79b05b1b9f742084bde7",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09p_session_f6bdf7428e",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09q-football-presentation-fx-controller-v1.md",
+      "sha256": "bab9bfc43e3e2e9b16c05b7e1042f91439fe358e859ad3ff53219e90742928f2",
+      "git_blob": "cdecc31a7ff5109dc1f0cc803852045b54d52619",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09q_football_f27964273a",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/docs/release-history.md",
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-19_codex_jogodacopa_track09r-foot-camera-hotfix-v1.md",
+      "sha256": "b436498c3de5725afc1bd6761647a71c3044d77cbc30eaabb6fe5d019a3eb3ff",
+      "git_blob": "ed457c1ad30f95f7847c6f36a56be9fdea4d6195",
+      "record_id": "rec_2026_06_19_codex_jogodacopa_track09r_foot_cam_61e2c7bc07",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_publish-track09r.md",
+      "sha256": "946f015c9d838ac0a4d7485d597d63c981c4bfd2bc40db4ebec87a52fe338ebb",
+      "git_blob": "297ff52a74409f0e9a68406856a70133978c5d7f",
+      "record_id": "rec_2026_06_20_codex_jogodacopa_publish_track09r_307af48949",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_publish-track10b.md",
+      "sha256": "00e7c028b172e111cfaba7dad1291ef3ac06bb848cea59ca1bea991c972c050e",
+      "git_blob": "894db792f430e28d0ce00294fe829b067b97e410",
+      "record_id": "rec_2026_06_20_codex_jogodacopa_publish_track10b_bed2b3c9ab",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track09s-camera-strafe-smoothing-hotfix-v1.md",
+      "sha256": "5d3ca6516a3151b56429cdb78337a24207389b90db6d4034ab1ca7cf51260869",
+      "git_blob": "3eafe567f69bed763010f4dca7ed59dfe7b33049",
+      "record_id": "rec_2026_06_20_codex_jogodacopa_track09s_camera_s_34c8cdf2ca",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track09s-human-retest-approved-v1.md",
+      "sha256": "987c8a11292779265ef1286ddc9b2ca0a561ef3aaa53917101381916bd0f605f",
+      "git_blob": "0509d6011934518cf5716eb9755a4a5e72cd3952",
+      "record_id": "rec_2026_06_20_codex_jogodacopa_track09s_human_re_0443995980",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track10a-hud-pause-menu-decomposition-v1.md",
+      "sha256": "4a01704103a025fdbbb3f2cbc02f0e5c70a26dbea7ea295eceb5cea67e233e74",
+      "git_blob": "f37cd99406f184f7565340ae8df3b514ef8f00c5",
+      "record_id": "rec_2026_06_20_codex_jogodacopa_track10a_hud_paus_61ff8d89cc",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track10a-human-approved-v1.md",
+      "sha256": "c92baddeeff8678235117dbcc5d26f898e43b2ae04fe1faf3b565cbfa30ddbe8",
+      "git_blob": "0504363f82bf65241db32b936a5dd2ff7f530d62",
+      "record_id": "rec_2026_06_20_codex_jogodacopa_track10a_human_ap_f239acb450",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track10b-web-goal-feel-reintroduction-v1.md",
+      "sha256": "69eb2524fc3e85e6c0f32944773034b260052a37d77d52261df10e77f535b323",
+      "git_blob": "88fe594025a692818965bea85ee7a5f8327ec2e3",
+      "record_id": "rec_2026_06_20_codex_jogodacopa_track10b_web_goal_b2f32a7fd5",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track10c-web-goal-feedback-heap-safe-v1.md",
+      "sha256": "232377f89402e464ea08c3772fefc84e47b7717052a55291d78a1aee5d2becbf",
+      "git_blob": "fffa97ffffd121db93697b911e6e8fabfee6cf91",
+      "record_id": "rec_2026_06_20_codex_jogodacopa_track10c_web_goal_5490cca88e",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-20_codex_jogodacopa_track10d-web-goal-golden-pop-hotfix-v1.md",
+      "sha256": "b2f744bd35aadd1a35b05cef06fda92c6322a2e0c41a2a3065e38026f94eb1aa",
+      "git_blob": "154aa18fbe5881e1a919ee82aec237aa388605ec",
+      "record_id": "rec_2026_06_20_codex_jogodacopa_track10d_web_goal_62a5400ebc",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_jogodacopa_track10d-human-retest-approved-v1.md",
+      "sha256": "62b55f88e653055b30528520408f4fac700757c55df8605e0cabc89ed45b5215",
+      "git_blob": "848c8a79847232d0cf8ed17a6ca4c19eb5800a6b",
+      "record_id": "rec_2026_06_25_codex_jogodacopa_track10d_human_re_f6659e912d",
+      "ledger_path": "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+      "retained_authorities": [
+        "Projetos/JogoDaCopa/implementation/history-ledger/2026-06.md",
+        "Projetos/JogoDaCopa/implementation/history.md",
+        "Projetos/JogoDaCopa/qa/QA_INDEX.md"
+      ]
+    }
+  ]
+}
