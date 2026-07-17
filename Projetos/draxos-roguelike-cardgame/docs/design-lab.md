@@ -1,7 +1,15 @@
 # Design Lab
 
-- Last Updated: `2026-06-25`
-- Status: `DESIGN_LAB_CONTENT_WAVE01`
+## Metadata
+
+- status: living
+- authority: technical_contract
+- last_verified: 2026-07-16
+- review_when: proposta, scoring, contextos, relatorios ou promocao mudar
+- supersedes: none
+- superseded_by: none
+
+- Baseline: `DESIGN_LAB_CONTENT_WAVE01`
 - Scope: proposal packs, content-wave authoring, context templates, lab-only prototype cards, deterministic numeric variants, official-neighbor comparison, battle/enemy contexts, interpretable scoring, reports and promotion manifest.
 
 ## Purpose

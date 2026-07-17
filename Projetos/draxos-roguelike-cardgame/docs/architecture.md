@@ -1,7 +1,15 @@
 # Architecture
 
-- Last Updated: `2026-06-05`
-- Status: `Track 02 foundation closeout baseline with AutoRun Gate Pack V1`
+## Metadata
+
+- status: living
+- authority: technical_contract
+- last_verified: 2026-07-16
+- review_when: ownership, data flow, generation or runtime boundaries mudar
+- supersedes: none
+- superseded_by: none
+
+Baseline tecnica preservada: Track 02 foundation closeout com AutoRun Gate Pack V1.
 
 ## Goal
 
@@ -15,7 +23,7 @@ For closeout ownership and remaining debt, use `docs/foundation-closeout.md` tog
 
 | Layer | Live owner | Rule |
 |---|---|---|
-| Product status | `implementation/current-status.md` | Live operational authority. `docs/production-status.md` is a production summary/history and must not override the status root. |
+| Product status | `implementation/current-status.md` | Unica autoridade tecnica local; historia detalhada permanece nas tracks. |
 | Human playtest | `docs/playtest-track-02.md` | Human feedback decides balance and clarity after automated gates pass. |
 | Run state | `core/run_session.gd` | Public run API and snapshot v5 stay here; services delegate internal work. |
 | Rewards | `core/run_reward_service.gd` behind `RunSession` | Reward payloads, pending queues and category state remain compatible. |

@@ -1,7 +1,15 @@
 # Product Brief
 
-- Last Updated: `2026-06-09`
-- Status: `Track 02 complete-run build preserved; Design Lab-guided content expansion before full-run feel playtests`
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: identidade, promessa, escopo ou fronteiras de produto mudar
+- supersedes: none
+- superseded_by: none
+
+Baseline de produto preservada: Track 02 complete-run e Design Lab como laboratorio anterior a qualquer promocao manual.
 
 ## Identity
 

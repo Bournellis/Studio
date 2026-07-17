@@ -1,7 +1,15 @@
 # AutoRun Lab
 
-- Last Updated: `2026-06-06`
-- Status: `DESIGN_LAB_V1_FOUNDATION_COMPLETE`
+## Metadata
+
+- status: living
+- authority: technical_contract
+- last_verified: 2026-07-16
+- review_when: runners, packs, relatorios ou criterios de gate mudar
+- supersedes: none
+- superseded_by: none
+
+- Baseline: `DESIGN_LAB_V1_FOUNDATION_COMPLETE`
 - Scope: macro-route gameplay testing foundation, explicit scenario fixtures, isolated BattleEngine gameplay lab, before/after lab diff reporting, card impact orchestration, player-card effect signatures, isolated target-card capture, full active player-card coverage, utility effect signatures, card-flow observability, explicit card-flow expectations, enemy-card causal signatures, V4/V4.1/V4.2/V5 card redesign validation and Design Lab V1 proposal-to-playable-number exploration
 
 ## Purpose

@@ -1,7 +1,15 @@
 # Reuse Map
 
-- Last Updated: `2026-05-07`
-- Status: `active bootstrap record`
+## Metadata
+
+- status: historical
+- authority: historical_record
+- last_verified: 2026-07-16
+- review_when: never; preserve bootstrap provenance
+- supersedes: none
+- superseded_by: none
+
+Registro de bootstrap de 2026-05-07; nao autoriza novas importacoes de mecanica.
 
 ## Copied From `rpg-turnos`
 

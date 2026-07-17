@@ -1,8 +1,15 @@
 # Early Game Update - Historical Track 01 Notes
 
-- Last Updated: `2026-05-27`
-- Status: `HISTORICAL - superseded by Track 02`
-- Current Reference: `game-design-document.md`
+## Metadata
+
+- status: historical
+- authority: historical_record
+- last_verified: 2026-07-16
+- review_when: never; preserve Track 01 design provenance
+- supersedes: none
+- superseded_by: game-design-document.md
+
+- Historical date: `2026-05-27`
 
 ## Purpose
 

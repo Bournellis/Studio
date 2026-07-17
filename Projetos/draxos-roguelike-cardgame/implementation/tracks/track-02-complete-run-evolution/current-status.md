@@ -1,5 +1,14 @@
 # Track 02 Current Status
 
+## Metadata
+
+- status: historical
+- authority: historical_record
+- last_verified: 2026-07-16
+- review_when: never; preserve Track 02 checkpoint
+- supersedes: none
+- superseded_by: ../../current-status.md
+
 > Historical Track 02 snapshot. This file preserves track detail and does not
 > replace `../../current-status.md`, which is the live operational authority.
 

@@ -1,13 +1,16 @@
 # Tracks
 
-Track status:
+## Metadata
 
-- `track-00-project-bootstrap/`: complete first playable checkpoint.
-- `track-01-playable-run-loop/`: historical complete playable 13-map slice baseline.
-- `track-02-complete-run-evolution/`: active production planning track for the first complete 29-map run.
+- status: living
+- authority: router
+- last_verified: 2026-07-16
+- review_when: uma track for criada, retomada ou arquivada
+- supersedes: tracks/README.md before Governance v2
+- superseded_by: none
 
-Track 00 owns the project bootstrap and first transition from copied RPG Turnos scaffolding into local roguelike cardgame foundations.
+- `track-00-project-bootstrap/`: bootstrap concluido e historico.
+- `track-01-playable-run-loop/`: slice de 13 mapas concluido e historico.
+- `track-02-complete-run-evolution/`: baseline completa de 29 mapas preservada em `T02-P09_COMPLETE`.
 
-Track 01 owns the historical transition from placeholder screens into a coherent playable 13-map run loop.
-
-Track 02 owns the transition from the 13-map playable slice into the first complete 29-map version of the game.
+Tracks registram contratos e historia. O estado presente vive somente em `../current-status.md`.

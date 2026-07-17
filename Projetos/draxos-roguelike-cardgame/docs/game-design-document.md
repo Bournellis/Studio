@@ -1,7 +1,15 @@
 # Game Design Document
 
-- Last Updated: `2026-06-03`
-- Status: `Track 02 complete-run baseline`
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: loop, regras, progressao, conteudo oficial ou balanceamento mudar
+- supersedes: none
+- superseded_by: none
+
+Baseline de design preservada: Track 02 complete-run.
 
 ## Direction
 

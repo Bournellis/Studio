@@ -1,5 +1,14 @@
 # Track 02 Linear Execution Plan
 
+## Metadata
+
+- status: historical
+- authority: historical_record
+- last_verified: 2026-07-16
+- review_when: never; Track 02 execution is complete
+- supersedes: none
+- superseded_by: ../../current-status.md
+
 - Last Updated: `2026-06-03`
 - Status: `TRACK_02_COMPLETE_READY_FOR_USER_PLAYTEST`
 - Execution Owner: `Codex`

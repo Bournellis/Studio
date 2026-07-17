@@ -1,7 +1,15 @@
 # Playtest Track 02
 
-- Last Updated: `2026-05-27`
-- Status: `READY_FOR_HUMAN_PLAYTEST`
+## Metadata
+
+- status: living
+- authority: runbook
+- last_verified: 2026-07-16
+- review_when: roteiro, evidencia ou gates humanos mudar
+- supersedes: none
+- superseded_by: none
+
+Roteiro preservado para uma retomada explicitamente autorizada; a migracao nao executa nem aprova playtest humano.
 
 ## Preflight
 

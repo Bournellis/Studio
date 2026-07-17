@@ -1,7 +1,14 @@
 # Hardening Validation Matrix
 
-- Last Updated: `2026-06-09`
-- Status: `VIVO`
+## Metadata
+
+- status: living
+- authority: technical_contract
+- last_verified: 2026-07-16
+- review_when: tipo de mudanca, matriz de gates ou tooling mudar
+- supersedes: none
+- superseded_by: none
+
 - Scope: long-term hardening/refactor gates for Draxos Roguelike Cardgame.
 
 ## Purpose

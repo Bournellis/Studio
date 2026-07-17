@@ -15,7 +15,8 @@ Esta pasta governa cards e handoffs novos de escopo exclusivo do Draxos Roguelik
 
 `Backlog -> Doing -> Done` e o fluxo tecnico normal. `Review` e reservado a uma decisao humana realmente pendente. Um gate humano pendente nao impede integracao tecnica verde, mas o card permanece em `Review` ate a decisao.
 
-Todo card usa metadados v3, registra validacao e encerra com `global_sync_needed`. Trabalho local nao edita `Prioridades_Estudio.md`, `Estado_Atual.md` ou dashboards; solicita a projecao em `../../../08_Coordenacao_Agentes/PortfolioSync_QUEUE.md`.
+Todo card usa metadados v3, registra validacao e encerra com `global_sync_needed`.
+Trabalho local nao edita `Prioridades_Estudio.md`, `Estado_Atual.md` ou dashboards; solicita a projecao em `../../../08_Coordenacao_Agentes/PortfolioSync_QUEUE.md`.
 
 ## Autoridades
 

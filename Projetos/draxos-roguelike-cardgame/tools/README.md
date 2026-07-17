@@ -1,5 +1,14 @@
 # Tools
 
+## Metadata
+
+- status: living
+- authority: runbook
+- last_verified: 2026-07-16
+- review_when: runners, argumentos ou saidas mudarem
+- supersedes: none
+- superseded_by: none
+
 Local Godot tools for generation, validation, screenshots, and route telemetry live here.
 
 ## Main Tools

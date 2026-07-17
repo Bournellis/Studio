@@ -3,7 +3,7 @@
 - Last Updated: `2026-06-06`
 - Status: `READY_FOR_THREAD_HANDOFFS`
 
-Historical note: this file is chronological. Older validation counts, 13-map references, and pre-closeout recommendations are preserved as handoff history from the date they were written; the live baseline is defined by `implementation/current-status.md`, `docs/production-status.md`, and `docs/foundation-closeout.md`.
+Historical note: this file is chronological. Older validation counts, 13-map references, and pre-closeout recommendations are preserved as handoff history from the date they were written; the live technical baseline is defined only by `implementation/current-status.md`.
 
 ## Protocol
 

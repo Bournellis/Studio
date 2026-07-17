@@ -1,7 +1,15 @@
 # Foundation Closeout
 
-- Last Updated: `2026-06-04`
-- Status: `FOUNDATION_REVIEW_CLOSED_FOR_PLAYTEST`
+## Metadata
+
+- status: historical
+- authority: historical_record
+- last_verified: 2026-07-16
+- review_when: never; preserve foundation closeout evidence
+- supersedes: none
+- superseded_by: ../implementation/current-status.md
+
+- Historical marker: `FOUNDATION_REVIEW_CLOSED_FOR_PLAYTEST`
 - Baseline: `Track 02 complete-run build`
 
 ## Purpose
@@ -27,7 +35,7 @@ The foundation is considered ready for human Track 02 playtest. Automated valida
 | Area | Owner | Supporting Files | Contract |
 |---|---|---|---|
 | Portfolio/status | Studio coordination docs | `../../../08_Coordenacao_Agentes/Estado_Atual.md`, `../../README.md`, local `implementation/current-status.md` | Keep snapshots compact and decision-oriented. |
-| Product direction | Local docs | `docs/product-brief.md`, `docs/game-design-document.md`, `docs/production-status.md` | Track 02 is the live product baseline; Track 01 material is historical. |
+| Product direction | Local docs | `docs/product-brief.md`, `docs/game-design-document.md`, local `implementation/current-status.md` | Track 02 is the preserved product baseline; Track 01 material is historical. |
 | Run state | `core/run_session.gd` | `core/run_reward_service.gd`, `core/run_shop_service.gd` | `RunSession` owns state and public wrappers; services mutate through compatible delegation. |
 | Save/load | `core/save_manager.gd` | `RunSession` snapshot payloads | Save/snapshot v5 is the live format; older saves are stale but deletable/overwritable. |
 | Catalog | `data/definitions/slice_catalog.json` | `tools/catalog_source_loader.gd`, `tools/content_generator.gd`, `data/generated/slice_catalog.tres` | JSON remains source of truth; generated `.tres` writes only when semantic hash changes. |
