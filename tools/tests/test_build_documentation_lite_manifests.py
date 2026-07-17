@@ -102,6 +102,7 @@ class ManifestBuilderTests(ManifestBuilderFixture):
         write_artifacts(self.root, artifacts)
 
         index = json.loads((self.root / INDEX).read_text(encoding="utf-8"))
+        self.assertEqual(index["enforcement_mode"], "strict")
         self.assertEqual(summary["index_sha256"], hashlib.sha256((self.root / INDEX).read_bytes()).hexdigest())
         for descriptor in index["batches"]:
             manifest = self.root / descriptor["manifest"]

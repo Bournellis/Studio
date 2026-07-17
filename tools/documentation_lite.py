@@ -429,8 +429,8 @@ def check_documentation_lite(
                     report.fail("DOCLITE_SOURCE_MISSING", "prepared source is absent before receipt", str(entry.get("path")))
             if mode == "Verify":
                 report.fail("DOCLITE_RECEIPT_MISSING", "Verify requires a removal receipt", receipt_rel)
-            if index.get("enforcement_mode") == "strict":
-                report.fail("DOCLITE_STRICT_PENDING", "strict mode requires every selected batch cut over", manifest_rel)
+            if index.get("enforcement_mode") == "strict" and mode != "Verify":
+                report.warn("DOCLITE_STRICT_PENDING", "strict cutover is prepared but this batch has no receipt yet", manifest_rel)
         if not ci:
             resolved = _tag_commit(root, str(batch.get("recovery_tag", "")))
             if resolved is None:

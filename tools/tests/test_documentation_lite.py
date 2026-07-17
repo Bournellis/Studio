@@ -54,7 +54,10 @@ class DocumentationLiteFixture(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp.cleanup()
 
-    def prepare(self, *, approved: bool = False, path: str = "source.md", corrupt_hash: bool = False) -> str:
+    def prepare(
+        self, *, approved: bool = False, path: str = "source.md",
+        corrupt_hash: bool = False, enforcement_mode: str = "audit",
+    ) -> str:
         data = subprocess.run(
             ["git", "show", f"{self.baseline}:source.md"], cwd=self.root,
             capture_output=True, check=True,
@@ -88,7 +91,7 @@ class DocumentationLiteFixture(unittest.TestCase):
         batch_path.write_text(json.dumps(batch, indent=2) + "\n", encoding="utf-8")
         manifest_sha = hashlib.sha256(batch_path.read_bytes()).hexdigest()
         index = {
-            "schema_version": 2, "enforcement_mode": "audit",
+            "schema_version": 2, "enforcement_mode": enforcement_mode,
             "authorization_path": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
             "batches": [{
                 "batch_id": "test_batch", "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/test_batch.json",
@@ -111,6 +114,17 @@ class DocumentationLiteFixture(unittest.TestCase):
 
 
 class DocumentationLiteTests(DocumentationLiteFixture):
+    def test_strict_preparation_warns_without_invalidating_exact_hash(self) -> None:
+        index_sha = self.prepare(approved=True, enforcement_mode="strict")
+        audit = check_documentation_lite(self.root, self.config, mode="Audit")
+        self.assertFalse(audit.failed, audit.issues)
+        self.assertTrue(any(item.code == "DOCLITE_STRICT_PENDING" for item in audit.issues))
+        execute = check_documentation_lite(
+            self.root, self.config, mode="Execute", batch_id="test_batch",
+            confirm_manifest_hash=index_sha,
+        )
+        self.assertFalse(execute.failed, execute.issues)
+
     def test_audit_accepts_prepared_batch_and_reports_pending_authorization(self) -> None:
         self.prepare()
         report = check_documentation_lite(self.root, self.config)

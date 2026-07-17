@@ -495,7 +495,7 @@ def build_artifacts(root: Path, baseline: str, recovery_tag: str) -> tuple[dict[
         batch_sizes[batch_id] = sum(item["entry"]["byte_count"] for item in chunk)
     index = {
         "schema_version": 2,
-        "enforcement_mode": "audit",
+        "enforcement_mode": "strict",
         "authorization_path": AUTHORIZATION,
         "batches": descriptors,
     }
