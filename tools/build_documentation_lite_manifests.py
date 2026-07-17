@@ -315,6 +315,7 @@ def _retained_authorities(owner: str, classification: str, ledger: str) -> list[
         return sorted({
             ledger, "AGENTS.md",
             "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+            "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
         })
     spec = PROJECT_BY_KEY[owner]
     result = {ledger, spec.history, spec.qa}

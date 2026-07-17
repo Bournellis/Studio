@@ -39,6 +39,7 @@ class ManifestBuilderFixture(unittest.TestCase):
             "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
             "# Decision\n",
         )
+        self._write("08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md", "# Runbook\n")
         self._write("Projetos/JogoDaCopa/implementation/history.md", "# Durable project history\n")
         self._write("Projetos/JogoDaCopa/qa/QA_INDEX.md", "# QA\n")
 
