@@ -138,6 +138,7 @@
       { "path": "08_Coordenacao_Agentes/Registers/cleanup-retention-manifest-v1.md", "authority": "historical_record", "max_lines": 140 },
       { "path": "08_Coordenacao_Agentes/Registers/code-convergence-candidates-v1.md", "authority": "historical_record", "max_lines": 100 },
       { "path": "08_Coordenacao_Agentes/Runbooks/VISUAL_PRODUCTION_PIPELINE.md", "authority": "runbook", "max_lines": 100 },
+      { "path": "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md", "authority": "runbook", "max_lines": 100 },
       { "path": "canon/studio-conventions/code-convergence-registry.md", "authority": "operational_contract", "max_lines": 100 },
       { "path": "canon/studio-conventions/final-focus-readiness.md", "authority": "operational_contract", "max_lines": 100 },
       { "path": "canon/studio-conventions/prospective-asset-provenance.md", "authority": "operational_contract", "max_lines": 100 },
