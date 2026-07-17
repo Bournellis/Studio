@@ -1,0 +1,90 @@
+{
+  "schema_version": 2,
+  "receipt_id": "receipt_support_202605",
+  "batch_id": "support_202605",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "generated_at": "2026-07-17T15:22:32.378334Z",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "manifest_sha256": "86a3b80ba13b69723f0983adad01766707c4f8fe4eed5fadc9e3a4fb9b3834f6",
+  "entries": [
+    {
+      "path": "migration/README.md",
+      "sha256": "d507b64049a73a96883b71d6c82b9a75d02591cfb631a3ea8ab361c5ba879245",
+      "git_blob": "11c7b35454e2b744ab0769f3ae37f30fc15cee28",
+      "record_id": "rec_readme_68372a0ca4",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-05.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-05.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "migration/audit/unity-current-surface.md",
+      "sha256": "c55f528590f70019fbbd5911c0911f95aee4cbeaa0f8f0d1b80b0d3d2c18aead",
+      "git_blob": "cd6248e690fc8fc411ed5b21dd7442edf15811ea",
+      "record_id": "rec_unity_current_surface_3c735593d2",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-05.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-05.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "migration/cutover/cutover-checklist.md",
+      "sha256": "3cf89794480252f8bdc4297b02664a2436fd7c63a69e93a6a25fa98382e9f5cc",
+      "git_blob": "a65bac89cdfa3b2912a2cf9308aebfd2b846adf8",
+      "record_id": "rec_cutover_checklist_4b26cbfebb",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-05.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-05.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "migration/mapping/doc-relocation-map.md",
+      "sha256": "94d9008ddca51b41dd473169cbeccbb7f4d8866320980ba97f703058091e76e5",
+      "git_blob": "23ee3d6d5a4d87df672d978728faa2f0a4cd70f8",
+      "record_id": "rec_doc_relocation_map_33123a5f24",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-05.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-05.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "migration/mapping/unity-to-godot-system-map.md",
+      "sha256": "85058a69f6e08dfbc5c83f0e4f9bf4fdcd95dd98a5daa4c3b104a9348cd0a5e4",
+      "git_blob": "82a030f9717720281354f112f03eff0a61621bec",
+      "record_id": "rec_unity_to_godot_system_map_97624abecf",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-05.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-05.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "migration/parity/parity-matrix.md",
+      "sha256": "c38c81252099fb524aa39ef920f250e86812f8665e643a3b4c87fb3f0d1b2394",
+      "git_blob": "ffa6a8126f075c1e79986999386528b33a13d705",
+      "record_id": "rec_parity_matrix_9ac801c513",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-05.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-05.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    }
+  ]
+}
