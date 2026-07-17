@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "status": "pending",
-  "approved_by": "",
-  "approved_at": "",
-  "index_sha256": "",
-  "evidence": "Fabio must approve the exact index SHA-256 before Execute"
+  "status": "approved",
+  "approved_by": "Fabio",
+  "approved_at": "2026-07-17T12:17:54-03:00",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "evidence": "Fabio approved execution in the Codex task immediately after presentation of this exact frozen index SHA-256: Aprovo, pode executar!"
 }
