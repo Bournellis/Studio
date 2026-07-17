@@ -9,7 +9,7 @@
 - prioridade_portfolio: `PAUSADO_TEMPORARIO`
 - coordination_scope: `project_local`
 - closure_protocol: `agent_local_merge_v3`
-- technical_status: `in_progress`
+- technical_status: `ready_for_merge`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none`
@@ -20,12 +20,12 @@
 - delegated_scope: `coordenacao, documentacao e QA locais do Draxos Roguelike Cardgame`
 - branch: `codex/draxos-roguelike/governanca-v2`
 - worktree: `D:\Estudio-worktrees\draxos-roguelike--codex--governanca-v2`
-- base_ref: `main@12dd1400`
+- base_ref: `main@cc7d7393`
 - merge_status: `pending`
 - worktree_status: `open`
 - branch_cleanup: `pending`
 - validation_tier: `Runtime`
-- validation_result: `pending`
+- validation_result: `pass - QA schema e links; Fast 226/226 e 1.975 asserts; Runtime 2x 226/226, 1.975, rota 29/29 e zero side effects; cinco labs verdes`
 - global_sync_needed: `yes`
 
 ## Objetivo
@@ -57,3 +57,13 @@ Instalar coordenacao local-first, reduzir documentos vivos, declarar QA executav
 ## Hard stops e handoff
 
 Parar diante de conflito semantico, diff gerado inesperado, cena/binario ambiguo, segredo, remoto, retomada ou nova decisao humana. Entregar commits rebased e arvore limpa ao coordenador global.
+
+## Resultado tecnico
+
+- documentacao viva curta e alinhada ao `PAUSADO_TEMPORARIO`;
+- snapshot detalhado pre-cutover preservado na historia da Track 02;
+- resumo duplicado removido do HEAD com recuperacao pelo Git;
+- Fast e Runtime preservam `226/226` testes, `1.975` asserts e rota `29/29`;
+- segunda execucao Runtime deixa o mesmo estado Git vazio;
+- gates humanos continuam pendentes em `Kanban/Review/`;
+- nenhum produto, tuning, promocao, remoto ou publicacao executado.
