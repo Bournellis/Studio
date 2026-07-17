@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "project": "JogoDaCopa",
+  "runners": [
+    {
+      "id": "structure_fast",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "godot",
+      "runner": "godot_script",
+      "entrypoint": "res://tools/validate.gd",
+      "args": ["--profile=structure"],
+      "profiles": ["FastSuite"],
+      "timeout_seconds": 30,
+      "environments": ["headless"],
+      "output_policy": "tracked_tree_clean",
+      "local_only": true
+    },
+    {
+      "id": "rules_fast",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "godot",
+      "runner": "gut_scripts",
+      "entrypoint": "res://addons/gut/gut_cmdln.gd",
+      "args": ["-gtest=res://tests/unit/test_rule_helpers.gd", "-gtest=res://tests/unit/test_game_settings.gd"],
+      "profiles": ["FastSuite"],
+      "timeout_seconds": 30,
+      "environments": ["headless"],
+      "output_policy": "tracked_tree_clean",
+      "local_only": true
+    },
+    {
+      "id": "runtime_full",
+      "category": "regression",
+      "tier": "Runtime",
+      "lane": "godot",
+      "runner": "godot_script",
+      "entrypoint": "res://tools/validate.gd",
+      "args": ["--profile=full"],
+      "profiles": ["Runtime", "FullLocal"],
+      "timeout_seconds": 180,
+      "environments": ["headless"],
+      "output_policy": "tracked_tree_clean",
+      "local_only": true
+    },
+    {
+      "id": "web_package_local",
+      "category": "platform",
+      "tier": "Build",
+      "lane": "web",
+      "runner": "powershell",
+      "entrypoint": "tools/publish_web.ps1",
+      "args": ["-Mode", "Package"],
+      "profiles": ["Build", "FullLocal"],
+      "timeout_seconds": 300,
+      "environments": ["local_web"],
+      "output_policy": "ignored_build_only",
+      "local_only": true
+    }
+  ],
+  "critical_journey": [
+    {"id": "boot", "status": "covered", "runner_ids": ["runtime_full"], "evidence": "GUT bootstrap contracts"},
+    {"id": "match", "status": "covered", "runner_ids": ["runtime_full"], "evidence": "football lifecycle regressions"},
+    {"id": "ball", "status": "covered", "runner_ids": ["rules_fast", "runtime_full"], "evidence": "ball and rule helper contracts"},
+    {"id": "super", "status": "covered", "runner_ids": ["runtime_full"], "evidence": "SUPER spend and kick routing regressions"},
+    {"id": "goal", "status": "covered", "runner_ids": ["runtime_full"], "evidence": "goal resolution regressions"},
+    {"id": "pause", "status": "covered", "runner_ids": ["runtime_full"], "evidence": "pause menu regressions"},
+    {"id": "result", "status": "covered", "runner_ids": ["runtime_full"], "evidence": "result and rematch regressions"},
+    {"id": "web_package", "status": "covered", "runner_ids": ["web_package_local"], "evidence": "local package and size gates"},
+    {"id": "feel", "status": "manual", "runner_ids": [], "evidence": "human playtest required"},
+    {"id": "camera", "status": "manual", "runner_ids": [], "evidence": "human playtest required"},
+    {"id": "audio", "status": "manual", "runner_ids": [], "evidence": "human review required"},
+    {"id": "visual", "status": "manual", "runner_ids": [], "evidence": "three-resolution captures and human review"},
+    {"id": "publication", "status": "manual", "runner_ids": [], "evidence": "Fabio authorization and execution required"}
+  ]
+}
