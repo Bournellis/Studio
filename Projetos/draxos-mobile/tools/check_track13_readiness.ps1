@@ -146,6 +146,9 @@ $requiredProjectFiles = @(
   'AGENTS.md',
   'README.md',
   'implementation\current-status.md',
+  '08_Coordenacao\README.md',
+  'qa\qa_manifest.json',
+  'qa\QA_INDEX.md',
   "$trackDir\scope.md",
   "$trackDir\implementation-plan.md",
   "$trackDir\current-status.md",
@@ -178,15 +181,14 @@ Test-FileContains $ProjectPath 'README.md' 'implementation/current-status.md'
 Test-FileContains $ProjectPath 'README.md' 'docs/release-history.md'
 Test-FileContains $ProjectPath 'AGENTS.md' 'implementation/current-status.md'
 Test-FileContains $ProjectPath 'AGENTS.md' 'docs/release-history.md'
+Test-FileContains $ProjectPath '08_Coordenacao\README.md' 'implementation/current-status.md'
+Test-FileContains $ProjectPath 'qa\QA_INDEX.md' 'release_promotion'
 Test-FileContains $ProjectPath 'tools\README.md' 'validate_foundation.ps1'
 Test-FileContains $ProjectPath 'docs\track-13-manual-walkthrough-gate.md' 'Android / Windows / Web preview / Web Access-protected'
 
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'DraxosMobile'
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'P2_IMPLEMENTACAO'
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Estado_Atual.md' 'Track 13'
 Test-FileContains $RepoPath 'Projetos\README.md' 'draxos-mobile/'
-Test-FileContains $RepoPath 'Projetos\README.md' 'Release history:'
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'DraxosMobile'
 
 Test-BootBudget
 

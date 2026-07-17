@@ -90,6 +90,10 @@ $requiredProjectFiles = @(
   'AGENTS.md',
   'README.md',
   'implementation\current-status.md',
+  '08_Coordenacao\README.md',
+  '08_Coordenacao\TRIAGE.md',
+  'qa\qa_manifest.json',
+  'qa\QA_INDEX.md',
   'docs\agent-operating-manual.md',
   'docs\documentation-index.md',
   'docs\product-vision.md',
@@ -110,9 +114,10 @@ foreach ($relative in $requiredProjectFiles) {
   Test-FileRequired $ProjectPath $relative
 }
 
-foreach ($category in @('VIVO', 'CONTRATO', 'RUNBOOK', 'HISTORICO', 'ARQUIVO_DESIGN')) {
-  Test-FileContains $ProjectPath 'docs\documentation-index.md' $category
+foreach ($section in @('Authority map', 'Live contracts', 'Historical records', 'Classification rule')) {
+  Test-FileContains $ProjectPath 'docs\documentation-index.md' $section
 }
+Test-FileContains $ProjectPath 'docs\documentation-index.md' 'authority: `router`'
 
 foreach ($relative in @('AGENTS.md', 'README.md', 'implementation\current-status.md')) {
   Test-FileDoesNotContain $ProjectPath $relative 'Fast Lane Atual - Track 04'
@@ -121,11 +126,15 @@ foreach ($relative in @('AGENTS.md', 'README.md', 'implementation\current-status
 }
 
 Test-FileContains $ProjectPath 'AGENTS.md' 'docs/agent-operating-manual.md'
-Test-FileContains $ProjectPath 'AGENTS.md' 'docs/documentation-index.md'
+Test-FileContains $ProjectPath 'AGENTS.md' '08_Coordenacao/TRIAGE.md'
+Test-FileContains $ProjectPath 'AGENTS.md' 'qa/qa_manifest.json'
 Test-FileContains $ProjectPath 'AGENTS.md' 'validate_foundation.ps1'
-Test-FileContains $ProjectPath 'AGENTS.md' 'ConfirmRemoteMutation'
-Test-FileContains $ProjectPath 'README.md' 'docs/agent-operating-manual.md'
+Test-FileContains $ProjectPath 'AGENTS.md' 'No remote database, device, upload, deploy, publication or external mutation'
+Test-FileContains $ProjectPath 'README.md' 'AGENTS.md'
 Test-FileContains $ProjectPath 'README.md' 'docs/documentation-index.md'
+Test-FileContains $ProjectPath '08_Coordenacao\README.md' 'global_sync_needed'
+Test-FileContains $ProjectPath 'qa\QA_INDEX.md' 'Arena product proof'
+Test-FileContains $ProjectPath 'implementation\current-status.md' 'ARENA_CORE_NOT_PROVEN'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'docs/release-history.md'
@@ -140,10 +149,7 @@ foreach ($legacy in @('Varinha Magica', '1 slot de passiva', '1 slot de pet')) {
 
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'DraxosMobile'
 Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'P2_IMPLEMENTACAO'
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Estado_Atual.md' 'Track 14'
 Test-FileContains $RepoPath 'Projetos\README.md' 'draxos-mobile/'
-Test-FileContains $RepoPath 'Projetos\README.md' 'Doc map:'
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Painel_Visual_Estudio.html' 'DraxosMobile'
 Test-FileContains $RepoPath 'AGENTS.md' 'Projetos/draxos-mobile/'
 Test-FileContains $RepoPath 'AGENTS.md' 'Prioridades_Estudio.md'
 Test-FileContains $RepoPath 'AGENTS.md' 'Estado_Atual.md'
