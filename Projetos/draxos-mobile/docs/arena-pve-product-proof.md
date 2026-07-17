@@ -1,5 +1,14 @@
 # DraxosMobile - Arena PVE Product Proof
 
+## Metadata
+
+- status: `living`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `Fabio records a new Arena proof verdict`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: `VIVO`
 - Last updated: `2026-06-15`
 - Scope: human playtest protocol and product decision gate for Arena PVE.

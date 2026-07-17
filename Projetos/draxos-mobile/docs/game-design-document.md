@@ -1,5 +1,14 @@
 # DraxosMobile - Game Design Document (Referencia De Implementacao)
 
+## Metadata
+
+- status: `living`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `an implementation-facing design contract changes`
+- supersedes: `the promoted concept GDD for active implementation`
+- superseded_by: `none`
+
 - Ultima atualizacao: `2026-06-04`
 - Fonte historica completa: `../../_conceitos/mobile-universe/gdd.md`
 

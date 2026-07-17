@@ -1,5 +1,14 @@
 # DraxosMobile Hardening Program
 
+## Metadata
+
+- status: `living`
+- authority: `technical_contract`
+- last_verified: `2026-07-16`
+- review_when: `hardening boundaries or validation profiles change`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: `VIVO`
 - Last updated: `2026-06-10`
 - Scope: long-term hardening/refactor guardrails for DraxosMobile after the

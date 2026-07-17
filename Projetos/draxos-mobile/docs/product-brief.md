@@ -1,5 +1,14 @@
 # DraxosMobile - Product Brief
 
+## Metadata
+
+- status: `living`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `the approved product framing changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Ultima atualizacao: `2026-06-14`
 - Status: `VIVO`
 

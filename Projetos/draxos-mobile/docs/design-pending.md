@@ -1,5 +1,14 @@
 ﻿# DraxosMobile - Design Pending
 
+## Metadata
+
+- status: `living`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `a question is opened, calibrated, resolved or deferred`
+- supersedes: `distributed unresolved-design lists`
+- superseded_by: `none`
+
 - Ultima atualizacao: `2026-06-15`
 - Status: registro vivo de pendencias de design abertas, calibraveis e adiadas
 - Escopo: DraxosMobile, pendencias de design vivas, Arena PVE inicial,

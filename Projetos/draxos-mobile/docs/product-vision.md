@@ -1,5 +1,14 @@
 # DraxosMobile - Product Vision
 
+## Metadata
+
+- status: `living`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `Fabio approves a product-direction change`
+- supersedes: `promoted mobile-universe product framing`
+- superseded_by: `none`
+
 - Ultima atualizacao: `2026-06-10`
 - Status: `LOCAL_PRODUCT_VISION - fonte viva do produto DraxosMobile`
 - Escopo: direcao de longo prazo, limites de produto, plataforma, economia, social, live ops, backend e monetizacao.

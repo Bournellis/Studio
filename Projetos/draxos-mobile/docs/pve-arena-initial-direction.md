@@ -1,5 +1,14 @@
 # DraxosMobile - PVE Arena Initial Direction
 
+## Metadata
+
+- status: `living`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `Arena proof or early-game direction is decided`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: `VIVO`
 - Data: `2026-05-31`
 - Decisao: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`

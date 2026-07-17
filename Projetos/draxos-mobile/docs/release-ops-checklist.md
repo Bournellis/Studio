@@ -1,5 +1,14 @@
 # DraxosMobile - Release Ops Checklist
 
+## Metadata
+
+- status: `living`
+- authority: `runbook`
+- last_verified: `2026-07-16`
+- review_when: `local build, artifact or release safety changes`
+- supersedes: `internal-alpha-release-plan.md as the active procedure`
+- superseded_by: `none`
+
 - Data: `2026-06-24`
 - Track: `Track 13 - Foundation Validation And Release Safety` + `Track 17 - Foundation Expansion Readiness` + `Foundation Final Polish` + `Foundation Hardening V2 release-ops-keystore`
 - Status: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED` / `FOUNDATION_FINAL_POLISH_DELIVERED`

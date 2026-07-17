@@ -1,5 +1,14 @@
 # DraxosMobile - Release History (Internal Alpha)
 
+## Metadata
+
+- status: `living`
+- authority: `historical_record`
+- last_verified: `2026-07-16`
+- review_when: `a package is promoted or historical evidence is corrected`
+- supersedes: `distributed package lineage in status and publication reports`
+- superseded_by: `none`
+
 This file is the single historical record of published Internal Alpha packages.
 Operational snapshots may point here for package lineage; pointer docs such as
 `AGENTS.md` must not duplicate package names, release roots, URLs or version

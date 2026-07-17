@@ -1,5 +1,14 @@
 # DraxosMobile - Behavior And Potion Crafting
 
+## Metadata
+
+- status: `living`
+- authority: `technical_contract`
+- last_verified: `2026-07-16`
+- review_when: `behavior, potion or crafting contracts change`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: `VIVO`
 - Data: `2026-06-07`
 - Track fonte: `implementation/tracks/track-16-behavior-crafting/`

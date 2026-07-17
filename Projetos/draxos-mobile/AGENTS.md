@@ -1,88 +1,63 @@
-# AGENTS.md - DraxosMobile
+# AGENTS.md — DraxosMobile
 
-This file is the fast entrypoint and guardrail set for agents working in `Projetos/draxos-mobile`.
+## Metadata
 
-**Do not confuse this project with** `Projetos/draxos-roguelike-cardgame/`, the separate Steam roguelike cardgame.
+- status: `living`
+- authority: `operational_contract`
+- last_verified: `2026-07-16`
+- review_when: `authority, validation or release safety changes`
+- supersedes: `global-first DraxosMobile coordination`
+- superseded_by: `none`
 
-## Current Truth (pointers only)
+This is the fast operational entrypoint for `Projetos/draxos-mobile`. Do not confuse this project with the separate Steam roguelike cardgame. This file carries no package names, URLs or version codes.
 
-- Portfolio status and allowed work: `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
-- Operational stage, published package and next step: `implementation/current-status.md`
-- Package history, stable URLs, downloads: `docs/release-history.md`
-- This file carries no package names, URLs or version codes. If you find any here, treat it as drift and fix it.
+## Authority
 
-DraxosMobile is a PVE Arena-first async autobattler with Refugio/Base, later PVP, social systems and server-authoritative progression (Godot never simulates battle results or mutates resources directly). Current names, spells, weapons, economy values, battle flavor, visual style and premium systems are mock/substance for evaluation unless a live doc explicitly promotes them.
+1. Portfolio focus and allowed work: `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`.
+2. Local technical baseline and next technical step: `implementation/current-status.md`.
+3. Product contracts: `docs/product-vision.md`, `docs/pve-arena-initial-direction.md` and `docs/game-design-document.md`.
+4. QA commands: `qa/qa_manifest.json`; journeys and human gates: `qa/QA_INDEX.md`.
+5. Package lineage and endpoints: `docs/release-history.md`.
 
-## Start Here
+No local file may redefine portfolio priority. DraxosMobile owns its mechanics; shared lore or another project's implementation is not an implicit gameplay contract.
 
-Read in this order for almost every task:
+## Local-first cycle
 
-1. `implementation/current-status.md`
-2. `docs/agent-operating-manual.md` (task-type read orders, validation matrix, release safety)
-3. `docs/documentation-index.md`
-4. `docs/multi-agent-workflow.md` when coordinating parallel lanes or mode work
-5. The files you intend to touch
+- New project-only cards and handoffs live in `08_Coordenacao/`.
+- Read `08_Coordenacao/TRIAGE.md`, open a v3 card, and use a dedicated worktree before editing.
+- `Review` is only for an actual pending human decision. Technical work may be integrated while its independent human gate remains pending.
+- Local work records `global_sync_needed`; only a later `portfolio_sync` writer updates global hot files.
+- Keep history in `implementation/tracks/`, local `Kanban/Done/` or `docs/release-history.md`, never in the live status.
 
-Contract guards for specific surfaces:
+## Read by task
 
-- Entry/Refugio/Battle or visual/layout code: `docs/foundation-responsive-layout-contract.md` + `tools/smoke_responsive_layout.gd`
-- First-session guidance and loop copy: `docs/first-session-clarity-v1.md`
-- Ossos/crafting/potions/consumables/behavior: `docs/behavior-potion-crafting-v1.md`
-- Product direction, battles, rewards, tuning, onboarding, PVP: `docs/pve-arena-initial-direction.md`
-- Product/design work: `docs/product-vision.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md`
-- Release/validation/publication: `docs/release-ops-checklist.md`, `docs/track-13-manual-walkthrough-gate.md`, `implementation/tracks/track-13-validation-release-safety/`
+- Runtime/client: `docs/agent-operating-manual.md`, then the affected contract.
+- Account/save/server authority: `docs/contracts/account-save.md`, `docs/contracts/database-schema.md`, `docs/contracts/api-endpoints.md`.
+- Arena: `docs/pve-arena-initial-direction.md`, `docs/pve-arena-v1.md`, `docs/arena-pve-product-proof.md`.
+- Release/build: `docs/release-ops-checklist.md`; stay local unless Fabio explicitly authorizes external mutation.
+- Parallel lanes: `docs/multi-agent-workflow.md`.
 
-## Worktree And Branch Rules
+## Safe local validation
 
-- Do not implement in `D:\Estudio` unless the user explicitly asks for direct work there.
-- Use a dedicated worktree outside the main root: `D:\Estudio-worktrees\draxos-mobile--<agent>--<slug>`; Codex branches use `codex/draxos-mobile/<slug>`.
-- Do not edit another agent's worktree without explicit user direction.
-- Before touching shared files (`AGENTS.md`, `../../canon/`, `../../08_Coordenacao_Agentes/`, `../README.md`), run `git status --short`, `git worktree list` and read the coordination snapshot.
-- Register active work in `../../08_Coordenacao_Agentes/Kanban/Doing/` or a handoff note with branch, worktree, objective, intended files, docs read, validation plan and next handoff point.
-- For hardening lanes and mode work, use `docs/multi-agent-workflow.md` plus the DraxosMobile templates in `../../08_Coordenacao_Agentes/Templates/`.
-
-## Safe Commands
-
-Run commands from `Projetos/draxos-mobile` unless noted.
+Run from this project root:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile DocsOnly
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile ClientQuick
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile ServerQuick
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate_foundation.ps1 -ProjectDir . -Profile FullLocal -RequireClean
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\check_foundation_expansion_readiness.ps1 -ProjectDir .
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/client -gexit
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/smoke_responsive_layout.gd
-npx -y deno task --cwd server/functions check
-npx -y deno task --cwd supabase/functions check
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile DocsOnly
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ServerQuick
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ClientQuick
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ModePlatform
+.\tools\validate_foundation.ps1 -ProjectDir . -Profile ReleaseDryRun
 git diff --check
 git status --short
 ```
 
-Release scripts are safe by default (`Mode Plan`, `Mode Package` with fresh versioned `-ReleaseRoot`). `Mode Upload`, `Mode DeployManifest` and `Mode FullPublish` require explicit user approval, a versioned `-ReleaseRoot` and `-ConfirmRemoteMutation`. `validate_foundation.ps1 -Profile FullPublish` is disabled; validate first, then publish only through `publish_internal_alpha.ps1`.
+The studio orchestrator snapshots Git around every declared runner. A validator-caused tracked change is `VALIDATOR_SIDE_EFFECT` and must be investigated, never restored automatically.
 
-For user-approved product packages that require human testing, publication to Internal Alpha is the default completion step after local validation: fresh versioned release root, export/package/upload/deploy from the same worktree session, and verify the published Web shell against the remote `index.pck`/`index.wasm` sizes before reporting success.
+## Hard stops
 
-## Hard Stops
-
-- Do not put `service_role`, Supabase secrets, database passwords, keystore passwords or private tokens in client code, exports, portal files, manifests or operational docs.
-- Do not run remote publishing modes without explicit user approval and `-ConfirmRemoteMutation`.
-- Do not start a new playable feature, numeric tuning pass, weapon/spell/economy pass, potion/consumable expansion, advanced behavior pass, battle presentation pass, final visual pass, iOS work or mobile browser support outside the approved Arena PVE initial package.
-- Do not create new account/save, social, reward or minigame state that bypasses `account_profiles/game_saves`, ruleset registry, idempotency v1 or the relevant contract docs.
-- Do not edit `.tscn` files as raw text unless the user explicitly asks and the change is safer than an editor/tool path.
-- Do not publish Entry/Refugio/Battle layout changes unless `tools/smoke_responsive_layout.gd` passes.
-- Do not import gameplay rules from other Draxos projects unless this project's live docs explicitly adopt them.
-- Do not treat `Projetos/_conceitos/mobile-universe/` as active implementation material. It is design archive only.
-
-## Live Source Rules
-
-- `docs/product-vision.md` is the local long-term product canon until promoted to shared canon.
-- `docs/pve-arena-initial-direction.md` is the live early-game direction.
-- `docs/game-design-document.md` is the authoritative implementation GDD.
-- `docs/design-pending.md` is the only live register of unresolved design decisions.
-- `docs/documentation-index.md` classifies live docs, contracts, runbooks, history and design archive.
-- `docs/release-history.md` is the only place that lists historical packages.
-- `implementation/current-status.md` must remain short and decision-oriented; detailed history belongs in `implementation/tracks/`.
-- Supabase mirrors under `server/` and `supabase/` must stay aligned.
+- No secret, service role, database/keystore password or private token in code, exports, portal, manifests or docs.
+- No remote database, device, upload, deploy, publication or external mutation without explicit authorization.
+- No new product feature, tuning, economy, PVP, content expansion or final visual pass while Arena proof remains pending.
+- No bypass of `account_profiles/game_saves`, ruleset registry, idempotency or server-authoritative battle/reward boundaries.
+- No raw `.tscn` edit unless explicitly requested and safer than the editor/tool path.
+- No growth of allowlisted debt without extraction or a recorded exception plus regression.

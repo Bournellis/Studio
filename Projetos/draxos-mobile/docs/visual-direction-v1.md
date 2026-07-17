@@ -1,5 +1,14 @@
 # DraxosMobile - Visual Direction v1
 
+## Metadata
+
+- status: `living`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `a visual direction package is approved`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: `VIVO`
 - Last updated: `2026-05-29`
 - Stage: `VISUAL_DIRECTION_V1_IMPLEMENTED`

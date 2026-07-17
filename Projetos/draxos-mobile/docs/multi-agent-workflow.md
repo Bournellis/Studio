@@ -1,5 +1,14 @@
 # DraxosMobile - Multi-Agent Workflow
 
+## Metadata
+
+- status: `living`
+- authority: `runbook`
+- last_verified: `2026-07-16`
+- review_when: `lane ownership or worktree closure changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: `VIVO`
 - Last updated: `2026-06-09`
 - Scope: coordination workflow for hardening lanes, mode work and handoffs.

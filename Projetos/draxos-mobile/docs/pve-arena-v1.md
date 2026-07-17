@@ -1,5 +1,14 @@
 # DraxosMobile - PVE Arena v1
 
+## Metadata
+
+- status: `living`
+- authority: `technical_contract`
+- last_verified: `2026-07-16`
+- review_when: `the implemented Arena contract changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: `VIVO`
 - Data: `2026-05-31`
 - Decisao-base: `PVE_ARENA_INITIAL_DIRECTION_APPROVED`

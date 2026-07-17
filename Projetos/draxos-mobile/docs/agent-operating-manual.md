@@ -1,5 +1,14 @@
 # DraxosMobile - Agent Operating Manual
 
+## Metadata
+
+- status: `living`
+- authority: `runbook`
+- last_verified: `2026-07-16`
+- review_when: `task routing, validation or hard stops change`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: `VIVO`
 - Owner: project agents
 - Last updated: `2026-06-15`
