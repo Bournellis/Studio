@@ -39,6 +39,7 @@
           "execution_resources": {
             "type": "array",
             "items": { "enum": ["GodotQA", "AndroidQA"] },
+            "minItems": 1,
             "uniqueItems": true
           },
           "user_data_mode": { "enum": ["isolated", "shared_locked"] },

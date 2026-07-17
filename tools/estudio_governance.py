@@ -373,11 +373,21 @@ def validate_qa_manifest(data: Any, project: dict[str, Any], config: dict[str, A
         if not isinstance(timeout, int) or timeout < 1 or timeout > 3600:
             report.fail("QA_TIMEOUT", f"invalid timeout for {runner.get('id')}: {timeout}", path)
         resources = runner.get("execution_resources", [])
-        if not isinstance(resources, list) or not all(item in {"GodotQA", "AndroidQA"} for item in resources):
+        if (
+            not isinstance(resources, list)
+            or ("execution_resources" in runner and not resources)
+            or not all(item in {"GodotQA", "AndroidQA"} for item in resources)
+        ):
             report.fail("QA_EXECUTION_RESOURCES", f"invalid resources for {runner.get('id')}: {resources}", path)
         user_data_mode = runner.get("user_data_mode", config["qa"].get("user_data_mode_default", "isolated"))
         if user_data_mode not in {"isolated", "shared_locked"}:
             report.fail("QA_USER_DATA_MODE", f"invalid user data mode for {runner.get('id')}: {user_data_mode}", path)
+        surface_for_lock = " ".join([str(runner.get("entrypoint", "")), *map(str, runner.get("args", []))]).casefold()
+        inferred_lock = runner.get("runner") in {"godot_script", "gut_scripts"} or runner.get("lane") == "android" or any(
+            token in surface_for_lock for token in ("validate_foundation.ps1", "run_gut_short.ps1")
+        )
+        if user_data_mode == "shared_locked" and not resources and not inferred_lock:
+            report.fail("QA_SHARED_DATA_UNLOCKED", f"shared user data needs a typed execution resource for {runner.get('id')}", path)
         result_contract = runner.get("result_contract")
         if result_contract is not None:
             valid_contract = (

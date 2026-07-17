@@ -214,9 +214,7 @@ def _baseline_issue(
 
 def _runner_resources(runner: dict[str, Any]) -> list[str]:
     declared = runner.get("execution_resources")
-    if isinstance(declared, list):
-        return sorted(set(str(item) for item in declared))
-    resources: set[str] = set()
+    resources: set[str] = set(str(item) for item in declared) if isinstance(declared, list) else set()
     runner_type = str(runner.get("runner", ""))
     lane = str(runner.get("lane", "")).casefold()
     surface = " ".join([str(runner.get("entrypoint", "")), *map(str, runner.get("args", []))]).casefold()

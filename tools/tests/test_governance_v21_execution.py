@@ -49,6 +49,15 @@ class ExecutionIsolationTests(unittest.TestCase):
                 }
             ),
         )
+        self.assertEqual(
+            ["AndroidQA", "GodotQA"],
+            _runner_resources(
+                {
+                    "runner": "gut_scripts", "lane": "godot", "entrypoint": "res://gut.gd", "args": [],
+                    "execution_resources": ["AndroidQA"],
+                }
+            ),
+        )
 
     def test_isolated_environment_redirects_godot_user_roots(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
