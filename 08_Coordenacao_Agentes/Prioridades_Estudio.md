@@ -1,6 +1,15 @@
 # Prioridades do Estudio
 
-Este documento e a fonte de verdade de portfolio para agentes e para coordenacao do `D:\Estudio`.
+## Metadata
+
+- status: `active`
+- authority: `portfolio_state`
+- last_verified: `2026-07-16`
+- review_when: `Fabio changes focus, portfolio status or allowed work`
+- supersedes: `none`
+- superseded_by: `none`
+
+Este documento e a unica fonte de verdade para foco, status de portfolio e trabalho permitido no `D:\Estudio`.
 
 ## Foco Atual
 

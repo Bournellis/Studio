@@ -1,44 +1,37 @@
 # Estudio Workspace
 
-This workspace is the documentation and implementation home for the studio's Godot projects, coordination state and shared canon.
+## Metadata
 
-## Operational State - Single Source
+- status: `active`
+- authority: `router`
+- last_verified: `2026-07-16`
+- review_when: `workspace structure or authority model changes`
+- supersedes: `README.md before Governance v2`
+- superseded_by: `none`
 
-Portfolio truth lives in exactly two files:
+Godot-first multi-project workspace for studio projects, shared lore, coordination and tooling. This README carries no operational project state.
 
-1. `08_Coordenacao_Agentes/Prioridades_Estudio.md` - focus, priority and allowed work per project
-2. `08_Coordenacao_Agentes/Estado_Atual.md` - per-project snapshot and next step
+## Start Here
 
-This README intentionally carries no project status, package names, version codes or next steps. If any other document conflicts with the two files above, those two files win. Run `tools/check_doc_drift.ps1` to detect violations.
+1. `AGENTS.md` - operational contract and hard stops.
+2. `08_Coordenacao_Agentes/Prioridades_Estudio.md` - portfolio focus, status and allowed work.
+3. `Projetos/README.md` - stable project registry and routing.
+4. `08_Coordenacao_Agentes/Estado_Atual.md` - short portfolio projection.
+5. Target project `AGENTS.md`, `implementation/current-status.md` and `08_Coordenacao/`.
 
 ## Structure
 
-- `canon/`: shared lore, product identity, architecture and platform direction (stable truth only).
-- `Projetos/`: all Godot projects and concept archives; `Projetos/README.md` is the registry.
-- `08_Coordenacao_Agentes/`: coordination hub - documentation index, Prioridades, Estado_Atual, Fabio dashboard, Kanban, Handoffs, Decisoes and Templates.
-- `07_Aprendizados/`: operational lessons for agents.
-- `materiais/`: supporting guides and non-canonical material. Prefer `materiais/guides/*-current.md`; older guides are historical.
-- `migration/`: historical cutover archive, parity notes and relocation records.
-- `builds/`: generated build outputs and other disposable packages.
-- `tools/`: studio-level scripts (doc drift check).
-- Remote backup: private GitHub repository `Bournellis/Studio` (`origin`); push routine in `AGENTS.md`.
+- `Projetos/`: official projects and read-only concept archives.
+- `canon/shared-lore/`: reusable lore and stable cross-project identity.
+- `canon/studio-conventions/`: explicit cross-project adoption boundaries.
+- `08_Coordenacao_Agentes/`: global governance, portfolio sync and pre-cutover history.
+- `07_Aprendizados/`: durable operational lessons.
+- `materiais/`: supporting guides and non-canonical references.
+- `migration/`: historical cutover and legacy comparison archive.
+- `tools/`: machine-readable governance, validation and worktree lifecycle.
 
-## Standard Read Order
+## Boundaries
 
-1. `AGENTS.md`
-2. `08_Coordenacao_Agentes/documentation-index.md`
-3. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-4. `Projetos/README.md`
-5. `08_Coordenacao_Agentes/Estado_Atual.md`
-6. the target project's `AGENTS.md` and `implementation/current-status.md`
+Projects share lore and studio conventions, not mechanics automatically. Product, gameplay, progression, architecture and platform contracts remain local unless the receiving project explicitly adopts a rule.
 
-## Historical Context
-
-- `Projetos/rpg-isometrico/implementation/phase-g1/` through `phase-g4/` preserve the closed Godot validation cycle.
-- `migration/` preserves the workspace cutover context and legacy comparison notes.
-
-No standard task in this workspace should require opening the external Unity repository.
-
-## Project Boundary
-
-Projects under `Projetos/` may share lore and studio conventions without sharing mechanics automatically. A mechanic only crosses projects when a local document of the receiving project explicitly adopts it.
+Agents perform local Git only. Fabio owns push/fetch/pull, release, publication and remote mutation.

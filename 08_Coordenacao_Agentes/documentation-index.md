@@ -1,69 +1,49 @@
 # Documentation Index - Estudio
 
-- Ultima atualizacao: `2026-06-29`
-- Tipo: roteador global de documentacao.
-- Este arquivo nao e fonte de estado operacional; ele aponta para as fontes vivas.
+## Metadata
 
-## Fontes vivas globais
+- status: `active`
+- authority: `router`
+- last_verified: `2026-07-16`
+- review_when: `authority map or official project registry changes`
+- supersedes: `documentation-index.md before Governance v2`
+- superseded_by: `none`
 
-- `Prioridades_Estudio.md` - foco, prioridade, status aceitos e trabalho permitido por projeto.
-- `Estado_Atual.md` - snapshot vivo curto por projeto e proximo passo atual.
-- `FABIO_DASHBOARD.md` - sintese humana curta para Fabio decidir foco/QA sem navegar como agente; fontes vivas vencem.
-- `FABIO_DASHBOARD.html` - visualizacao local em navegador do painel Fabio.
+Global documentation router. It carries no package, marker, release URL or next step.
 
-## Contrato operacional para agentes
+## Authority
 
-- `../AGENTS.md` - regra global de agentes, worktrees, leitura, canon, Git local e hard stops.
-- `../README.md` - mapa estavel do workspace; nao carrega estado de projeto.
-- `../Projetos/README.md` - registro estavel de projetos, identidades e entrypoints.
-- `Templates/` - templates oficiais de coordenacao.
-- `Decisoes/` - decisoes de produto, arquitetura e processo.
-  - `Decisoes/2026-07-06_codex_hermes_plano_multiagentes.md` - modelo flexivel Codex/Hermes para estrategia, implementacao, docs, validacao e tooling.
-- `Kanban/` - cards de trabalho e historico operacional.
-- `Handoffs/` - transicoes entre agentes/rodadas.
-- `Docs_Status_Slimming_Plan.md` - plano para reduzir snapshots locais longos sem apagar historico.
-- `Lifecycle_Cleanup_Audit_2026-06-29.md` - auditoria read-only de branches/worktrees para limpeza futura.
+- `Prioridades_Estudio.md` - focus, portfolio status and allowed work.
+- Project `implementation/current-status.md` - local baseline, gate, risk and validation.
+- `Estado_Atual.md` - short portfolio projection.
+- `PortfolioSync_QUEUE.md` - pending/reflected synchronization acts, never state authority.
+- `../AGENTS.md` - workspace operational contract.
 
-## Canon e direcao compartilhada
+## Coordination
 
-- `../canon/canon-brief.md` - leitura rapida do canon compartilhado.
-- `../canon/product/product-vision.md` - visao compartilhada de produto.
-- `../canon/design/game-design-document.md` - GDD compartilhado.
-- `../canon/design/progression-design.md` - progressao compartilhada.
-- `../canon/architecture/shared-architecture.md` - arquitetura compartilhada.
-- `../canon/architecture/game-mode-standard.md` - padrao de modos.
-- `../canon/roadmap/evolution-roadmap.md` - roadmap compartilhado.
-- `../canon/platform/steam-platform.md` - direcao de plataforma.
+- `Decisoes/` - active and historical product/process decisions.
+- `Templates/` - gates v3 and lifecycle templates.
+- `Kanban/` and `Handoffs/` - global work plus pre-cutover history.
+- Project `08_Coordenacao/` - new project-local cards, triage and handoffs.
+- `FABIO_DASHBOARD.md` / `.html` - human projection, never technical authority.
 
-## Projetos ativos/consultaveis
+## Canon
 
-Use `../Projetos/README.md` para roteamento inicial. Depois leia o `AGENTS.md` e `implementation/current-status.md` do projeto alvo.
+- `../canon/canon-brief.md` - fast shared-lore and boundary map.
+- `../canon/shared-lore/` - reusable lore.
+- `../canon/studio-conventions/project-boundaries.md` - adoption rules.
+- `../Projetos/rpg-isometrico/docs/canon/` - RPG Isometrico product canon.
+- Other projects - local product/technical contracts under their own docs.
 
-- `../Projetos/JogoDaCopa/AGENTS.md`
-- `../Projetos/JogoDaCopa/implementation/current-status.md`
-- `../Projetos/JogoDaCopa/docs/documentation-index.md`
-- `../Projetos/draxos-mobile/AGENTS.md`
-- `../Projetos/draxos-mobile/implementation/current-status.md`
-- `../Projetos/draxos-mobile/docs/documentation-index.md`
-- `../Projetos/FpsPlayground/AGENTS.md`
-- `../Projetos/FpsPlayground/implementation/current-status.md`
-- `../Projetos/FpsPlayground/docs/documentation-index.md`
-- `../Projetos/draxos-roguelike-cardgame/AGENTS.md`
-- `../Projetos/draxos-roguelike-cardgame/implementation/current-status.md`
+## Projects
 
-## Validadores e higiene documental
+Use `../Projetos/README.md`, then the target `AGENTS.md`, `implementation/current-status.md`, `08_Coordenacao/documentation-index.md` and `qa/QA_INDEX.md`.
 
-- `../tools/check_doc_drift.ps1` - garante que pointer docs nao carreguem estado, que snapshots fiquem compactos, verifica dashboard gerado, roda link checker e imprime health warnings.
-- `../tools/generate_fabio_dashboard.py` - gera e verifica `FABIO_DASHBOARD.html` a partir do Markdown.
-- `../tools/check_local_doc_links.py` - checagem oficial de links locais Markdown/HTML em docs vivos.
-- `../tools/check_docs_health.py` - health check documental warning-only para drift leve.
-- Validacoes locais de projeto vivem nos `AGENTS.md` e docs de cada projeto.
-- Para trabalho documental global, use no minimo:
-  - `git diff --check`
-  - `powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tools/check_doc_drift.ps1`
+## Tooling
 
-## Regras de uso
+- `../tools/studio_doctor.ps1` - environment and integrity checks.
+- `../tools/validate_estudio.ps1` - DocsOnly, FastSuite, Runtime, Build and FullLocal orchestration.
+- `../tools/estudio_governance.json` - machine-readable project/tooling configuration, without portfolio status duplication.
+- `../tools/check_doc_drift.ps1` - compatibility entrypoint for DocsOnly.
 
-- Nao coloque status operacional, URLs de release, version codes, markers ou proximos passos neste indice.
-- Se houver conflito, vencem `Prioridades_Estudio.md`, `Estado_Atual.md` e o `implementation/current-status.md` local do projeto alvo.
-- Este indice e um mapa, nao um diario nem historico.
+Historical slimming plans and lifecycle audits are evidence, not current contracts.

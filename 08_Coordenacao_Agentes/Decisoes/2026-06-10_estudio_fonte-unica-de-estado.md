@@ -1,11 +1,15 @@
 # Decisao: Fonte Unica De Estado Operacional
 
+> Superseded em 2026-07-16 por `2026-07-16_estudio_governanca-v2-local-first-gates-v3.md`. Esta decisao permanece como registro historico do primeiro slimming global.
+
 ## Metadata
 
 - data: `2026-06-10`
 - decisor: `Usuario`
 - projeto: `estudio`
 - prioridade_portfolio: `-`
+- status: `superseded`
+- superseded_by: `2026-07-16_estudio_governanca-v2-local-first-gates-v3.md`
 
 ## Contexto
 

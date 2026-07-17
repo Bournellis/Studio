@@ -1,155 +1,170 @@
 # AGENTS.md
 
-This file governs agent behavior for the `D:\Estudio` workspace.
+## Metadata
 
-## Single Source Of State
+- status: `active`
+- authority: `operational_contract`
+- last_verified: `2026-07-16`
+- review_when: `governance, portfolio, Git or validation contract changes`
+- supersedes: `AGENTS.md before Governance v2`
+- superseded_by: `none`
 
-Operational state lives in exactly two files:
+This file governs agent behavior for `D:\Estudio`.
 
-1. `08_Coordenacao_Agentes/Prioridades_Estudio.md` - portfolio source of truth: focus, priority, status and allowed work per project.
-2. `08_Coordenacao_Agentes/Estado_Atual.md` - live snapshot: marker, short baseline and next step per project.
+## Authority Order
 
-No other workspace-level document may carry project status, active tracks, published package names, release URLs, version codes or next steps. `README.md`, `CLAUDE.md`, `canon/canon-brief.md`, `Projetos/README.md` and this file are pointer documents. Run `tools/check_doc_drift.ps1` to verify; it is part of the docs-only validation habit.
+1. Latest active decision for the affected product or process.
+2. `08_Coordenacao_Agentes/Prioridades_Estudio.md` for focus, portfolio status and allowed work.
+3. `Projetos/<project>/implementation/current-status.md` for local baseline, gate, risk, validation and next technical step.
+4. `08_Coordenacao_Agentes/Estado_Atual.md` as the short portfolio projection.
+5. Product and technical contracts local to the selected project.
+6. Routers such as README, AGENTS, indexes and dashboards.
+7. Historical tracks, Done cards and handoffs.
 
-When a task changes observable status, update `Estado_Atual.md` (and the `Prioridades_Estudio.md` table if focus/priority changed). Do not replicate the change anywhere else; history goes to the project's history files (`implementation/tracks/`, `docs/release-history.md`, Kanban Done, Handoffs).
+Routers never override state or product contracts. Shared lore never imports mechanics into a project.
 
-## Workspace Roles
+## State And Portfolio Sync
 
-- `08_Coordenacao_Agentes/` is the coordination hub: documentation index, Prioridades, Estado_Atual, Fabio dashboard, Kanban, Handoffs, Decisoes and Templates.
-- `canon/` is the shared source of truth for established lore, product identity, gameplay contracts, progression, shared architecture, mode standard and platform strategy. It carries no operational state.
-- `Projetos/` holds all Godot projects; `Projetos/README.md` is the stable registry (identity and entry points only).
-- `07_Aprendizados/` preserves operational lessons for agents.
-- `materiais/` holds supporting guides (`materiais/guides/*-current.md` are the live ones) and non-canonical material.
-- `migration/` is a historical archive for cutover, relocation and legacy comparison context.
-- `tools/` holds studio-level scripts (doc drift check).
+- `Prioridades_Estudio.md` is the only authority for focus, status taxonomy and allowed work.
+- Each `implementation/current-status.md` is the only local technical state authority.
+- `Estado_Atual.md` is updated only by `portfolio_sync`, `cross_project` or `global_governance` work.
+- Local work records `global_sync_needed: yes` in `PortfolioSync_QUEUE.md`; it does not edit global snapshots.
+- `Prioridades_Estudio.md` changes only when Fabio changes priority, status or allowed work.
+- History belongs in tracks, release history, Kanban Done or handoffs.
 
-## Modelo Multiagentes Codex/Hermes
+## Scope Classification
 
-Codex e Hermes podem atuar em estrategia, planejamento, implementacao, revisao, documentacao, validacao, Godot, tooling e gestao operacional quando Fabio pedir e quando houver ferramenta/contexto suficiente. A diferenca entre eles e preferencia operacional e melhor encaixe por tarefa, nao permissao exclusiva.
+Classify before acting:
 
-- Codex e preferido para leitura profunda de projeto, planejamento de implementacao com Fabio e execucao tecnica substancial em worktree/branch isolada.
-- Hermes e preferido para criacao/estrutura de projetos, gestao do estudio, acompanhamento macro, revisao, documentacao/governanca e pequenas implementacoes claras e validaveis.
-- Ambos podem aproveitar runbooks, validadores, tooling, evidencias e aprendizados criados pelo outro agente.
-- Fabio continua decisor final de produto, prioridade, QA humano, aprovacao de tracks quando houver gate humano, releases e mutacoes remotas.
+- `project_local`: one project, local files and coordination only.
+- `operations_local`: local build, QA, evidence or release preparation without remote mutation.
+- `cross_project`: intentional change across two or more projects.
+- `portfolio_sync`: reflect local state into the global projection.
+- `global_governance`: contracts, tooling, templates or process for the workspace.
+- `documentation_alignment`: authority, routing or history cleanup without product change.
+- `review`: assess evidence; do not mutate unless explicitly requested.
+- `implementation`: authorized product/runtime work inside the selected project.
 
-Referencia: `08_Coordenacao_Agentes/Decisoes/2026-07-06_codex_hermes_plano_multiagentes.md`.
+Local-first is mandatory for `project_local` and `operations_local` work.
 
-## Multi-Agent Worktree And Git Rule
+## Local Coordination
 
-`D:\Estudio` is the main coordination/read workspace. By default, agents must not use it as an implementation worktree. Each agent working on implementation, documentation, contracts, backend, client, validation, release or portfolio changes must create or use a dedicated Git worktree outside the main root, unless the user explicitly asks for direct work in `D:\Estudio`.
-
-Default worktree path and branch names:
+Every official project owns:
 
 ```text
-D:\Estudio-worktrees\<projeto>--<agente>--<slug>
-codex/<projeto>/<slug>        (Codex)
-<agente>/<projeto>/<slug>     (other agents)
+08_Coordenacao/
+  README.md
+  documentation-index.md
+  TRIAGE.md
+  Kanban/{Backlog,Doing,Review,Done}/
+  Handoffs/
 ```
 
-Rules:
+- New project-local cards and handoffs live there.
+- Global Kanban and Handoffs preserve pre-cutover history and global/cross-project work.
+- `TRIAGE.md` lists only live human gates in Review.
+- Do not create `08_Coordenacao/Estado.md`; point to `implementation/current-status.md`.
 
-- Never edit another agent's worktree unless the user explicitly asks for intervention there.
-- Before touching shared files (`AGENTS.md`, `canon/`, `08_Coordenacao_Agentes/`, `Projetos/README.md`) run `git status --short`, `git worktree list`, and read the current coordination docs.
-- At the start of work, register branch, worktree, objective, intended files, base docs read, validation plan and next handoff point in `08_Coordenacao_Agentes/Kanban/Doing/` or `08_Coordenacao_Agentes/Handoffs/`.
-- Commit by logical stage: documentation, contract, backend, client, validation, publication and coordination updates should not be mixed into one mega commit.
-- Remote backup: `origin` = `https://github.com/Bournellis/Studio.git` (private GitHub repository). Agents perform LOCAL git only (`commit`, `merge`, `branch`, `worktree`, `status`, `diff`, `log`). `push`, `fetch` and `pull` are exclusive to Fabio via GitHub Desktop. Agents must not run `git push`, `git fetch`, `git pull`, `gh auth login`, browser login flows or PAT/token setup for GitHub remote sync. Track closures must declare `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`. Policy: `08_Coordenacao_Agentes/Decisoes/2026-06-14_estudio_git_remote_exclusivo_fabio.md`.
-- Single writer rule: while an agent task is committing in the main tree, do not commit/stage/discard from GitHub Desktop or an IDE in that tree. See `07_Aprendizados/2026-06-11_git-escritor-unico.md`.
-- Keep the worktree clean at handoff whenever possible. If not clean, list every remaining changed file and why it remains changed.
+## Gates V3
 
-## Portfolio Gate
+New cards use `closure_protocol: agent_local_merge_v3` and record technical, human and publication states separately.
 
-Before opening deep documentation of any project, read:
+- `Review` accepts only `human_gate_status: pending` with an explicit `blocking_decision`.
+- `Done` rejects a pending human gate.
+- Technical work may be committed, merged and cleaned when automation is green even if a human product gate remains pending.
+- Approval, rejection or supersession resolves the human gate and moves the card to Done.
+- General approval never implies release, remote mutation, monetization, device QA, priority change or approval of unrelated gates.
+- Product, visual, feel, device, release, monetization and priority decisions remain Fabio's.
+
+## Multi-Agent And Worktrees
+
+`D:\Estudio` is the main coordination/read tree, not an implementation worktree.
+
+```text
+D:\Estudio-worktrees\<project>--<agent>--<slug>
+codex/<project>/<slug>
+<agent>/<project>/<slug>
+```
+
+- Every writer uses a dedicated external worktree unless Fabio explicitly authorizes direct work.
+- One writer per worktree; no simultaneous edits to the same file.
+- The lead owns integration, validation, coordination and final delivery.
+- Project agents touch only their project; the global coordinator is the sole writer of shared files.
+- Before shared edits, run `git status --short`, `git worktree list` and read the current authority docs.
+- Register objective, branch, worktree, intended files, validation and handoff before editing.
+- Stop on semantic conflict, ambiguous scene/binary, unexpected generated diff, secret, remote mutation or a new human decision.
+
+## Git And Remote Boundary
+
+- Agents may perform local branch, commit, rebase, merge, worktree and cleanup operations.
+- Use logical commits; do not mix docs, runtime, validation and publication in a mega commit.
+- Merge approved technical branches locally with `ff-only` after rebasing onto current `main`.
+- Keep worktrees clean; validate after merge, remove worktree, delete branch and prune.
+- Never run `push`, `fetch`, `pull`, GitHub login, PAT setup or remote publication.
+- Final handoff states `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- While the agent commits/merges in a tree, GitHub Desktop and IDEs must not stage, discard or commit in that tree.
+
+## Portfolio Gate And Routing
+
+Read before deep project work:
 
 1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 2. `Projetos/README.md`
 3. `08_Coordenacao_Agentes/Estado_Atual.md`
+4. target `AGENTS.md` and `implementation/current-status.md`
+5. target local coordination and live card
 
-The status taxonomy (`P0_IMPLEMENTACAO`, `P1_CONCEITO`, `P2_IMPLEMENTACAO`, `PAUSADO_TEMPORARIO`, `PAUSADO_INDEFINIDO`, `AGUARDANDO_DECISAO`, `ARQUIVO_DESIGN`, `ARQUIVO_HISTORICO`) and what each status allows are defined in `Prioridades_Estudio.md`. Follow them; do not infer permissions from history.
+Route domains:
 
-## Project Selection Gate
+- football/Copa/ball/goals -> `Projetos/JogoDaCopa/`
+- FPS/arena/hitscan/jump pads -> `Projetos/FpsPlayground/`
+- roguelike/ship hub/run map/Souls/relics/lanes -> `Projetos/draxos-roguelike-cardgame/`
+- mobile/browser/Supabase/autobattler/Base/Internal Alpha -> `Projetos/draxos-mobile/`
+- isometric action campaign -> `Projetos/rpg-isometrico/`
+- turn-based board/card exploration -> `Projetos/rpg-turnos/`
+- `_conceitos/mobile-universe/` -> read-only reference
 
-Choose the target project using the user's request and the portfolio table. Route by request domain:
+`Draxos` alone does not select a project. Paused projects allow only consultation, governance and explicitly authorized integrity work unless Fabio explicitly resumes product work.
 
-- football/Copa/ball/goals/shirts -> `Projetos/JogoDaCopa/`
-- FPS/arena 1x1/hitscan/jump pads (legacy name `FpsShooter`) -> `Projetos/FpsPlayground/`
-- roguelike/ship hub/run map/Souls/relics/lane battles -> `Projetos/draxos-roguelike-cardgame/`
-- mobile/PC browser client/Supabase/async autobattler/Base/Internal Alpha/release ops -> `Projetos/draxos-mobile/`
-- isometric action campaign -> `Projetos/rpg-isometrico/` (historical consultation by default)
-- turn-based board/cards exploration RPG -> `Projetos/rpg-turnos/` (historical consultation by default)
-- `_conceitos/mobile-universe/` -> read-only design reference for DraxosMobile
+## Canon And Product Boundaries
 
-`Draxos` alone is shared vocabulary and does not select a project. If the request names no project, use the current focus in `Prioridades_Estudio.md`. If the domain is ambiguous, confirm against the portfolio table before reading deep docs.
+- `canon/shared-lore/` contains reusable lore and stable cross-project identity.
+- `canon/studio-conventions/project-boundaries.md` defines adoption boundaries.
+- RPG Isometrico product canon lives in `Projetos/rpg-isometrico/docs/canon/`.
+- Other projects own their product, mechanics, progression, architecture and platform contracts locally.
+- A mechanic crosses projects only through explicit adoption in the receiving project's local contract.
+- JogoDaCopa and FpsPlayground inherit no Draxos gameplay/economy/progression/backend rules.
+- DraxosMobile inherits no gameplay from the Roguelike, RPG Turnos or RPG Isometrico.
 
-After choosing the target project, read only that project's `AGENTS.md`, `implementation/current-status.md` and active stage docs, unless the task is cross-cutting.
+## Godot And Validation
 
-## Read Order - Fast Lane
+- Expected versions live in `.godot-version`; Godot projects use their local AGENTS and validator contracts.
+- Generated resources must be deterministic. Run generator/validator twice when changing generated outputs.
+- Validators must not change tracked state; `VALIDATOR_SIDE_EFFECT` is a failure and is never auto-restored.
+- Use `tools/studio_doctor.ps1` for environment/integrity checks.
+- Use `tools/validate_estudio.ps1` with the smallest proportional profile.
+- Docs-only work does not require Godot runtime unless a local contract explicitly requires it.
+- `FullLocal` never performs remote, physical-device, publication, signing or remote-database operations.
 
-For tasks localized in a single project or area:
+## Documentation Rules
 
-1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-2. `08_Coordenacao_Agentes/Estado_Atual.md` (relevant section)
-3. The active task in `08_Coordenacao_Agentes/Kanban/Doing/`, if any
-4. The target project's `AGENTS.md` and `implementation/current-status.md`
-5. `canon/canon-brief.md` when the task touches shared identity, lore or architecture
+Living authoritative documents carry `status`, `authority`, `last_verified`, `review_when`, `supersedes` and `superseded_by` metadata.
 
-Escalate to the full order immediately if the task affects more than one project or canon direction, involves a product/architecture/platform decision, or the scope grows beyond the initially touched files.
+- README, AGENTS, indexes and dashboards are routers without packages, release URLs, markers or next steps.
+- Active local state targets 50 lines and must stay at or below 60.
+- Paused local state targets 40 lines and must stay at or below 50.
+- Routers must stay at or below 100 lines.
+- Preserve unique history before deleting duplication; Git history remains the final recovery layer.
+- Claude/OpenClaw are `historico/deprecated` and may appear only in historical records or explicit compatibility wording.
 
-## Read Order - Full
+## Hard Stops
 
-Before substantial work affecting multiple projects or the canon:
+Never automate or infer authorization for:
 
-1. `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-2. `canon/product/product-vision.md`
-3. `canon/design/game-design-document.md`
-4. `canon/design/progression-design.md`
-5. `canon/architecture/shared-architecture.md`
-6. `canon/architecture/game-mode-standard.md`
-7. `canon/roadmap/evolution-roadmap.md` and `canon/roadmap/release-horizons.md`
-8. `canon/platform/steam-platform.md`
-9. The target project's `AGENTS.md` and `implementation/current-status.md`
-10. This file
-
-## Canon Rule
-
-If shared canon conflicts with any historical implementation note, the canon prevails.
-
-Do not silently apply one project's mechanics in another. Projects share lore and studio conventions only; a mechanic crosses projects only when a local document of the receiving project explicitly adopts it. This applies in every direction: RPG Isometrico contracts are not RPG Turnos canon; `draxos-roguelike-cardgame` is not a variant of `rpg-turnos`; DraxosMobile inherits no gameplay from any of them; `JogoDaCopa` and `FpsPlayground` are independent tech probes that inherit no Draxos gameplay/economy/progression/backend systems.
-
-DraxosMobile keeps local long-term product canon in `Projetos/draxos-mobile/docs/product-vision.md` until parts are promoted into shared canon.
-
-## Godot Rule
-
-Implementations live under `Projetos/`. Expected Godot version: see `.godot-version` at the workspace root. Which projects are active, paused or archived is defined only in `Prioridades_Estudio.md`.
-
-When entering a Godot project:
-
-1. Confirm allowed work in `Prioridades_Estudio.md`
-2. Read the project's `AGENTS.md` and `implementation/current-status.md`
-3. Read the active track in `implementation/tracks/` when one exists
-4. Use historical validation docs only to answer specific questions
-
-A future project under `Projetos/` only becomes official when it has a local `AGENTS.md`, a local `implementation/current-status.md`, an entry in `Projetos/README.md` and a summary entry in `Estado_Atual.md`.
-
-## Historical Context Rule
-
-If historical context is needed, consult in order: `migration/`, then `Projetos/rpg-isometrico/implementation/phase-g1/` through `phase-g4/`, and only then any external legacy repository if the task is explicitly historical.
-
-## Manutencao Do Estado_Atual.md
-
-- **Quando atualizar**: ao concluir qualquer tarefa que mude status observavel, prioridade, track ativa, baseline ou proximo passo.
-- **O que atualizar**: somente as linhas que mudaram.
-- **O que nao colocar**: historico de gates/pacotes, detalhes tecnicos, listas longas de arquivos - isso vai para Kanban Done, Handoffs, `implementation/tracks/` ou `docs/release-history.md` do projeto.
-- **Regra do tamanho**: maximo ~12 linhas por projeto.
-
-## Coordination Structure
-
-- Indice global de documentacao: `08_Coordenacao_Agentes/documentation-index.md`
-- Prioridades e foco: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
-- Estado atual: `08_Coordenacao_Agentes/Estado_Atual.md`
-- Painel Fabio: `08_Coordenacao_Agentes/FABIO_DASHBOARD.md` e `08_Coordenacao_Agentes/FABIO_DASHBOARD.html`
-- Tarefas: `08_Coordenacao_Agentes/Kanban/` (Backlog, Doing, Review, Done)
-- Handoffs: `08_Coordenacao_Agentes/Handoffs/`
-- Decisoes de produto e arquitetura: `08_Coordenacao_Agentes/Decisoes/` (registre toda decisao de produto/arquitetura/processo em 5-15 linhas usando o template)
-- Templates oficiais: `08_Coordenacao_Agentes/Templates/`
-
-**Nomenclatura de arquivos Kanban**: `YYYY-MM-DD_agente_slug.md` (ex.: `2026-06-10_codex_jogodacopa_track02-quality-upgrade-series-v1.md`)
+- product, feel, visual or human playtest approval;
+- priority or portfolio changes;
+- remote mutation, publication or release;
+- secrets, production signing or credentials;
+- physical-device authority;
+- importing mechanics between projects;
+- expanding a paused project beyond the user's explicit scope.
