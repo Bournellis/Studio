@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "project": "RpgIsometrico",
+  "runners": [
+    {
+      "id": "contracts_fast",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "godot",
+      "runner": "gut_scripts",
+      "entrypoint": "res://addons/gut/gut_cmdln.gd",
+      "args": [],
+      "profiles": ["FastSuite"],
+      "timeout_seconds": 30,
+      "environments": ["headless", "explicit_project_selection"],
+      "output_policy": "read_only",
+      "local_only": true
+    },
+    {
+      "id": "runtime_full",
+      "category": "regression",
+      "tier": "Runtime",
+      "lane": "godot",
+      "runner": "godot_script",
+      "entrypoint": "res://tools/validate.gd",
+      "args": [],
+      "profiles": ["Runtime", "FullLocal"],
+      "timeout_seconds": 180,
+      "environments": ["headless", "explicit_project_selection"],
+      "output_policy": "read_only",
+      "local_only": true
+    }
+  ],
+  "critical_journey": [
+    {"id": "campaign", "status": "covered", "runner_ids": ["contracts_fast", "runtime_full"], "evidence": "campaign route and runtime regressions"},
+    {"id": "profile", "status": "covered", "runner_ids": ["contracts_fast", "runtime_full"], "evidence": "profile and progression regressions"},
+    {"id": "save", "status": "covered", "runner_ids": ["contracts_fast", "runtime_full"], "evidence": "suspended-run persistence regressions"},
+    {"id": "modes", "status": "covered", "runner_ids": ["runtime_full"], "evidence": "Arena Bot, Survival and Boss regressions"},
+    {"id": "human_playability", "status": "not_applicable", "runner_ids": [], "evidence": "no active human gate while PAUSADO_INDEFINIDO"}
+  ]
+}
