@@ -14,12 +14,12 @@
 - delegated_scope: `contratos, schemas, helper e roteamento de QA mobile locais ao DraxosMobile`
 - branch: `codex/draxosmobile/v21-mobile-qa`
 - worktree: `D:\Estudio-worktrees\draxosmobile--codex--v21-mobile-qa`
-- base_ref: `codex/estudio/governanca-v21@4d0a3aad`
-- merge_status: `pending_governance_lead`
-- worktree_status: `open_for_lead_integration`
-- branch_cleanup: `pending_after_merge`
+- base_ref: `codex/estudio/governanca-v21@a1f38d3e`
+- merge_status: `merged_into_governance_v21@edcd0fa8`
+- worktree_status: `removed`
+- branch_cleanup: `deleted`
 - validation_tier: `DocsOnly`
-- validation_result: `local pass; Studio wrapper blocked only by expected concurrent-worktree overlap; tracked snapshots unchanged`
+- validation_result: `post-merge 6/6 tests, QA contract and git diff PASS; tracked snapshot unchanged`
 - global_sync_needed: `no; o coordenador global da Governança v2.1 mantém o closeout do programa`
 
 ## Objetivo concluído
@@ -38,8 +38,8 @@ A matriz Android deriva APIs do APK candidato, os gaps de acessibilidade estão 
 
 ## Commits técnicos
 
-- `bbd2f2ed` — helper, schemas e testes de recibos imutáveis.
-- `0f6da8ba` — contratos mobile, QA manifest/index e roteamento local.
+- `11889d2b` — helper, schemas e testes de recibos imutáveis.
+- `ebe736ba` — contratos mobile, QA manifest/index e roteamento local.
 
 ## Validação
 

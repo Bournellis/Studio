@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `router`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `authority map or official project registry changes`
 - supersedes: `documentation-index.md before Governance v2`
 - superseded_by: `none`
@@ -23,6 +23,8 @@ Global documentation router. It carries no package, marker, release URL or next 
 
 - `Decisoes/` - active and historical product/process decisions.
 - `Templates/` - gates v3 and lifecycle templates.
+- `Registers/` - observation/classification ledgers; they never authorize deletion or shared extraction.
+- `Runbooks/VISUAL_PRODUCTION_PIPELINE.md` - prospective visual production and independent gates.
 - `Kanban/` and `Handoffs/` - global work plus pre-cutover history.
 - Project `08_Coordenacao/` - new project-local cards, triage and handoffs.
 - `FABIO_DASHBOARD.md` / `.html` - human projection, never technical authority.
@@ -32,6 +34,9 @@ Global documentation router. It carries no package, marker, release URL or next 
 - `../canon/canon-brief.md` - fast shared-lore and boundary map.
 - `../canon/shared-lore/` - reusable lore.
 - `../canon/studio-conventions/project-boundaries.md` - adoption rules.
+- `../canon/studio-conventions/prospective-asset-provenance.md` - provenance required for new runtime assets.
+- `../canon/studio-conventions/code-convergence-registry.md` - read-only convergence policy; no shared core.
+- `../canon/studio-conventions/final-focus-readiness.md` - inactive checklist, activated only by Fabio.
 - `../Projetos/rpg-isometrico/docs/canon/` - RPG Isometrico product canon.
 - Other projects - local product/technical contracts under their own docs.
 
@@ -45,5 +50,8 @@ Use `../Projetos/README.md`, then the target `AGENTS.md`, `implementation/curren
 - `../tools/validate_estudio.ps1` - DocsOnly, FastSuite, Runtime, Build and FullLocal orchestration.
 - `../tools/estudio_governance.json` - machine-readable project/tooling configuration, without portfolio status duplication.
 - `../tools/check_doc_drift.ps1` - compatibility entrypoint for DocsOnly.
+- `../tools/git_commit_powershell.ps1` / `close_worktree_powershell.ps1` - local commit and closure helpers.
+- `../tools/create_evidence_manifest.py` / `register_new_lfs_path.ps1` - dry-run-first evidence and literal LFS helpers.
+- `../tools/check_secret_scan.ps1` - read-only tracked-file secret scan.
 
 Historical slimming plans and lifecycle audits are evidence, not current contracts.

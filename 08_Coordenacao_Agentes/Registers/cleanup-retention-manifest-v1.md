@@ -102,4 +102,6 @@ Este registro cobre grupos rastreados com arquivos iguais de pelo menos 1 MiB no
 
 ## Next safe action
 
-Recalcular paths, tamanhos, hashes, referencias e worktrees em tarefa read-only antes de qualquer proposta. Se um grupo deixar de ser identico, este manifesto permanece historia da medicao e deve ser superseded, nunca reescrito como autorizacao retroativa.
+Recalcular paths, tamanhos, hashes, referencias e worktrees em tarefa read-only antes de qualquer proposta.
+
+Se um grupo deixar de ser identico, este manifesto permanece historia da medicao e deve ser superseded, nunca reescrito como autorizacao retroativa.

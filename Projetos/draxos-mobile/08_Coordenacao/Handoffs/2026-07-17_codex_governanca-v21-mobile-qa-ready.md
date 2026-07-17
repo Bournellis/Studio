@@ -19,12 +19,12 @@
 - delegated_scope: `all writes under Projetos/draxos-mobile`
 - branch: `codex/draxosmobile/v21-mobile-qa`
 - worktree: `D:\Estudio-worktrees\draxosmobile--codex--v21-mobile-qa`
-- base_ref: `codex/estudio/governanca-v21@4d0a3aad`
-- merge_status: `pending_governance_lead`
-- worktree_status: `open_for_lead_integration`
-- branch_cleanup: `pending_after_merge`
+- base_ref: `codex/estudio/governanca-v21@a1f38d3e`
+- merge_status: `merged_into_governance_v21@edcd0fa8`
+- worktree_status: `removed`
+- branch_cleanup: `deleted`
 - validation_tier: `DocsOnly`
-- validation_result: `local pass; global wrapper blocked only by concurrent-worktree overlap; tracked snapshots unchanged`
+- validation_result: `post-merge 6/6 tests, QA contract and git diff PASS; tracked snapshot unchanged`
 - global_sync_needed: `no`
 
 ## Resultado
@@ -37,10 +37,10 @@ Promoção significa somente um registro local após decisão humana resolvida. 
 
 ## Commits para integração
 
-1. `a8fbd176` — registro operacional local.
-2. `bbd2f2ed` — helper, schemas e testes.
-3. `0f6da8ba` — contratos, manifesto/índice QA e roteamento.
-4. O commit de fechamento contém este handoff e o card Done.
+1. `29b0133f` — registro operacional local.
+2. `11889d2b` — helper, schemas e testes.
+3. `ebe736ba` — contratos, manifesto/índice QA e roteamento.
+4. `edcd0fa8` — handoff e card Done integrados pelo líder.
 
 ## Evidência
 
@@ -59,6 +59,6 @@ Promoção significa somente um registro local após decisão humana resolvida. 
 - Contraste, reduced motion, locale, safe area do SO, lifecycle Android e haptics permanecem gaps registrados, não features aprovadas.
 - Arena proof, tuning, economia, PVP, direção visual, QA física, promoção real e publicação continuam humanos e fora desta tarefa.
 
-## Próximo passo
+## Fechamento pelo líder
 
-O líder integra os quatro commits, executa validação pós-merge e só então remove worktree e branch. Nenhum push ou publicação está autorizado.
+Os quatro commits foram integrados em `codex/estudio/governanca-v21`; a validação pós-merge passou e a worktree/branch delegada foi removida. Nenhum push ou publicação está autorizado.
