@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import statistics
 import subprocess
@@ -204,6 +205,8 @@ def _existing_script_step(root: Path, name: str, args: list[str], audit_only: bo
     if stderr:
         print(stderr, file=sys.stderr, end="" if stderr.endswith("\n") else "\n")
     status = "pass" if code == 0 else "audit_fail" if audit_only else "fail"
+    if code == 0 and re.search(r"(?:^|_)WARN(?:\s|$)", stdout, re.MULTILINE):
+        status = "warn"
     return _result(name, status, duration, exit_code=code, reason="" if code == 0 else f"exit {code}")
 
 
@@ -218,8 +221,15 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
         "source_sha": subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, text=True, capture_output=True, check=True).stdout.strip(),
         "profile": args.profile,
         "project_selector": selector,
+        "projects": sorted(selected),
         "lane": args.lane,
         "audit_only": args.audit_only,
+        "toolchain": {
+            "python": sys.version.split()[0],
+            "godot_expected": config["toolchain"]["godot_expected"],
+            "godot_executable": None,
+            "godot_actual": None,
+        },
         "steps": [],
     }
     started = time.monotonic()
@@ -239,6 +249,7 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
         report["steps"].append(_result(item.name, payload["status"], 0, issues=payload["issues"], metrics=payload["metrics"]))
     report["steps"].append(_existing_script_step(root, "dashboard_generated", ["tools/generate_fabio_dashboard.py", "--root", str(root), "--check"], args.audit_only))
     report["steps"].append(_existing_script_step(root, "local_doc_links", ["tools/check_local_doc_links.py", "--root", str(root), "--workspace", "estudio"], args.audit_only))
+    report["steps"].append(_existing_script_step(root, "docs_health", ["tools/check_docs_health.py", "--root", str(root), "--workspace", "estudio"], args.audit_only))
 
     if args.profile != "DocsOnly":
         godot_exe = _godot_executable(root, config, args.godot_exe)
@@ -246,6 +257,8 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
         if godot_exe:
             proc = subprocess.run([godot_exe, "--version"], text=True, capture_output=True, check=False)
             godot_version = proc.stdout.strip().splitlines()[0] if proc.stdout.strip() else None
+        report["toolchain"]["godot_executable"] = godot_exe
+        report["toolchain"]["godot_actual"] = godot_version
         baseline = read_json(root / config["fast_suite"]["baseline"])
         specific_project = selector not in config["groups"]
         for project in projects:

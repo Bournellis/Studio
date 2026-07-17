@@ -335,23 +335,35 @@ def validate_qa_manifest(data: Any, project: dict[str, Any], config: dict[str, A
     allowed_runners = set(config["qa"]["allowed_runner_types"])
     allowed_categories = set(config["qa"]["allowed_categories"])
     allowed_profiles = {"FastSuite", "Runtime", "Build", "FullLocal"}
+    allowed_tiers = {"QA", "Runtime", "Build"}
+    allowed_outputs = {"ignored_cache_only", "temporary_only", "read_only"}
     forbidden = [token.casefold() for token in config["qa"]["forbidden_tokens"]]
     for runner in runners:
         missing = sorted({"id", "category", "tier", "lane", "runner", "entrypoint", "args", "profiles", "timeout_seconds", "environments", "output_policy", "local_only"} - set(runner))
         if missing:
             report.fail("QA_RUNNER_REQUIRED", f"{runner.get('id')} missing: {', '.join(missing)}", path)
             continue
-        if runner["runner"] not in allowed_runners:
+        if not isinstance(runner["runner"], str) or runner["runner"] not in allowed_runners:
             report.fail("QA_RUNNER_TYPE", f"unsafe or unknown runner type: {runner['runner']}", path)
-        if runner["category"] not in allowed_categories:
+        if not isinstance(runner["category"], str) or runner["category"] not in allowed_categories:
             report.fail("QA_CATEGORY", f"unknown category: {runner['category']}", path)
-        if runner["lane"] not in project["lanes"]:
+        if not isinstance(runner["tier"], str) or runner["tier"] not in allowed_tiers:
+            report.fail("QA_TIER", f"unknown tier: {runner['tier']}", path)
+        if not isinstance(runner["lane"], str) or runner["lane"] not in project["lanes"]:
             report.fail("QA_LANE", f"lane {runner['lane']} is not enabled for {project['id']}", path)
+        if not isinstance(runner["output_policy"], str) or runner["output_policy"] not in allowed_outputs:
+            report.fail("QA_OUTPUT_POLICY", f"unknown output policy: {runner['output_policy']}", path)
         if not runner["local_only"]:
             report.fail("QA_LOCAL_ONLY", "all global-orchestrator runners must set local_only=true", path)
         profiles = runner.get("profiles", [])
-        if not profiles or not set(profiles) <= allowed_profiles:
+        if not isinstance(profiles, list) or not profiles or not all(isinstance(item, str) for item in profiles) or not set(profiles) <= allowed_profiles:
             report.fail("QA_PROFILES", f"invalid profiles for {runner.get('id')}: {profiles}", path)
+        if not isinstance(runner.get("entrypoint"), str) or not runner["entrypoint"]:
+            report.fail("QA_ENTRYPOINT", f"runner {runner.get('id')} needs a string entrypoint", path)
+        if not isinstance(runner.get("args"), list) or not all(isinstance(item, str) for item in runner["args"]):
+            report.fail("QA_ARGS", f"runner {runner.get('id')} args must be strings", path)
+        if not isinstance(runner.get("environments"), list) or not all(isinstance(item, str) for item in runner["environments"]):
+            report.fail("QA_ENVIRONMENTS", f"runner {runner.get('id')} environments must be strings", path)
         timeout = runner.get("timeout_seconds")
         if not isinstance(timeout, int) or timeout < 1 or timeout > 3600:
             report.fail("QA_TIMEOUT", f"invalid timeout for {runner.get('id')}: {timeout}", path)
@@ -362,12 +374,16 @@ def validate_qa_manifest(data: Any, project: dict[str, Any], config: dict[str, A
     allowed_statuses = set(config["qa"]["allowed_journey_statuses"])
     for journey in journeys:
         status = journey.get("status")
-        if status not in allowed_statuses:
+        if not isinstance(status, str) or status not in allowed_statuses:
             report.fail("QA_JOURNEY_STATUS", f"invalid status for {journey.get('id')}: {status}", path)
-        unknown = set(journey.get("runner_ids", [])) - runner_ids
+        journey_runners = journey.get("runner_ids", [])
+        if not isinstance(journey_runners, list) or not all(isinstance(item, str) for item in journey_runners):
+            report.fail("QA_JOURNEY_RUNNER_TYPE", f"{journey.get('id')} runner_ids must be strings", path)
+            journey_runners = []
+        unknown = set(journey_runners) - runner_ids
         if unknown:
             report.fail("QA_JOURNEY_RUNNER", f"{journey.get('id')} references unknown runners: {sorted(unknown)}", path)
-        if status == "covered" and not journey.get("runner_ids"):
+        if status == "covered" and not journey_runners:
             report.fail("QA_JOURNEY_COVERAGE", f"covered capability {journey.get('id')} has no runner", path)
         if active and status == "gap":
             exception = journey.get("exception")

@@ -161,9 +161,14 @@ def check_storage(root: Path, config: dict[str, Any], base_ref: str) -> CheckRep
     added_binaries = [rel for rel in added if (root / rel).is_file() and (root / rel).suffix.casefold() in binary_ext]
     all_binary_hashes: dict[str, list[str]] = {}
     min_duplicate = int(policy["duplicate_min_bytes"])
-    for rel in tracked_files(root):
+    tracked = set(tracked_files(root))
+    for rel in tracked:
         path = root / rel
         if path.is_file() and path.suffix.casefold() in binary_ext and path.stat().st_size >= min_duplicate:
+            all_binary_hashes.setdefault(_sha256(path), []).append(rel)
+    for rel in added_binaries:
+        path = root / rel
+        if rel not in tracked and path.stat().st_size >= min_duplicate:
             all_binary_hashes.setdefault(_sha256(path), []).append(rel)
     for rel in sorted(added_binaries):
         path = root / rel
@@ -196,6 +201,14 @@ def _validate_evidence_manifest(bundle: Path, manifest: Path, config: dict[str, 
         report.fail("EVIDENCE_MANIFEST_JSON", str(exc), rel_manifest)
         return
     policy = config["evidence"]
+    allowed_root = {"schema", "project", "task_id", "source_sha", "environment", "exception", "files"}
+    unexpected_root = sorted(set(data) - allowed_root)
+    if unexpected_root:
+        report.fail("EVIDENCE_UNEXPECTED_FIELD", f"unexpected manifest fields: {unexpected_root}", rel_manifest)
+    serialized = json.dumps(data, ensure_ascii=False).casefold()
+    for token in ["service_role", "sb_secret_", "database_password", "keystore_password", "authorization: bearer"]:
+        if token in serialized:
+            report.fail("EVIDENCE_SECRET", f"secret-like token is forbidden: {token}", rel_manifest)
     if data.get("schema") != policy["schema"]:
         report.fail("EVIDENCE_SCHEMA", f"schema must be {policy['schema']}", rel_manifest)
     for field in ["project", "task_id", "source_sha", "environment", "files"]:
@@ -209,6 +222,16 @@ def _validate_evidence_manifest(bundle: Path, manifest: Path, config: dict[str, 
     canonical: dict[str, int] = {}
     seen: set[str] = set()
     for entry in files:
+        if not isinstance(entry, dict):
+            report.fail("EVIDENCE_FILE_ENTRY", "each file entry must be an object", rel_manifest)
+            continue
+        allowed_entry = {"path", "role", "bytes", "sha256", "canonical"}
+        missing_entry = sorted(allowed_entry - set(entry))
+        unexpected_entry = sorted(set(entry) - allowed_entry)
+        if missing_entry:
+            report.fail("EVIDENCE_FILE_REQUIRED", f"file entry missing: {missing_entry}", rel_manifest)
+        if unexpected_entry:
+            report.fail("EVIDENCE_FILE_FIELD", f"unexpected file fields: {unexpected_entry}", rel_manifest)
         value = str(entry.get("path", ""))
         if not _safe_manifest_path(value):
             report.fail("EVIDENCE_PATH", f"unsafe relative path: {value!r}", rel_manifest)
@@ -222,6 +245,10 @@ def _validate_evidence_manifest(bundle: Path, manifest: Path, config: dict[str, 
             continue
         size = path.stat().st_size
         digest = _sha256(path)
+        if entry.get("role") not in {"image", "metrics", "stdout", "video", "report", "other"}:
+            report.fail("EVIDENCE_ROLE", f"invalid role for {value}: {entry.get('role')}", rel_manifest)
+        if not isinstance(entry.get("canonical"), bool):
+            report.fail("EVIDENCE_CANONICAL", f"canonical must be boolean for {value}", rel_manifest)
         if entry.get("bytes") != size:
             report.fail("EVIDENCE_BYTES", f"size mismatch for {value}: expected {entry.get('bytes')}, got {size}", rel_manifest)
         if entry.get("sha256") != digest:
