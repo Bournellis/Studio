@@ -1,7 +1,7 @@
 # Track 02 Linear Execution Plan
 
-- Last Updated: `2026-05-13`
-- Status: `ACTIVE_LINEAR_PLAN`
+- Last Updated: `2026-07-16`
+- Status: `COMPLETE`
 - Execution Owner: `Codex`
 - Scope: `RPG Turnos Track 02 - Draxos Lore And Progression Alignment`
 - Validation Command: `D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path D:\Estudio\Projetos\rpg-turnos -s res://tools/validate.gd`
@@ -37,9 +37,9 @@ It defines execution order only.
 
 ## Current Execution Cursor
 
-All prompts complete. Track 02 is done.
+All prompts complete. Track 02 is done and the project remains paused.
 
-Current focus: P20 complete — 8 chain encounter IDs migrated to stable Draxos operation names, SAVE_VERSION bumped to 2 with v1→v2 migration logic, all runtime files and tests updated. `.tres` regeneration and local validation pending.
+Current focus: P20 integrity repaired and validated. Eight chain encounter IDs use stable Draxos operation names, `SAVE_VERSION` is 2, v1-to-v2 migration is pure and covered, and the official `.tres` catalog is regenerated. Automation is green; human playability was not revalidated.
 
 ## Linear Prompt Sequence
 
@@ -421,4 +421,3 @@ Known future dependencies:
 - P16 should wait until at least P14, because reward/card meaning depends on the playable class baseline.
 - P18 can start now that P17 progression layer is done.
 - P20 must wait until player-facing naming stabilizes.
-                                                                                  
