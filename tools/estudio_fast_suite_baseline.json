@@ -1,28 +1,28 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-17T04:06:13.747684+00:00",
+  "generated_at": "2026-07-17T05:37:49.996063+00:00",
   "projects": {
     "JogoDaCopa": {
       "status": "measured",
       "godot_version": "4.6.2.stable.official.71f334935",
-      "contract_hash": "4aca9bac1ddf4c07d901d6a5e9b335fa930c9e8454aaca03b02dac2f4a23985e",
-      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "contract_hash": "dda49bbc9748224f74861e01463db92cfa7d179f08e410b0a18e9796784a188b",
+      "source_sha": "56eb99408400d973c6435f73cca5efd2dccf1779",
       "runners": {
         "structure_fast": {
-          "median_seconds": 1.016,
+          "median_seconds": 1.11,
           "budget_seconds": 30,
           "samples_seconds": [
             1.11,
-            1.016,
-            1.016
+            1.11,
+            1.109
           ]
         },
         "rules_fast": {
-          "median_seconds": 1.297,
+          "median_seconds": 1.281,
           "budget_seconds": 30,
           "samples_seconds": [
-            1.297,
-            1.235,
+            1.281,
+            1.281,
             1.297
           ]
         }
@@ -31,34 +31,34 @@
     "DraxosMobile": {
       "status": "measured",
       "godot_version": "4.6.2.stable.official.71f334935",
-      "contract_hash": "e71d525193a43128e22b7fecf84f2150037d351c5ba2ddd17433494bb3962873",
-      "source_sha": "11c2b3bcbf49843bda35540af02a4098e0a4461a",
+      "contract_hash": "7b897e080e131ab5da6eb46a45a6de0fd532d8efd659935cfe6f25aaa1b03fb0",
+      "source_sha": "56eb99408400d973c6435f73cca5efd2dccf1779",
       "runners": {
         "docs_contracts_fast": {
-          "median_seconds": 1.609,
+          "median_seconds": 1.719,
           "budget_seconds": 60,
           "samples_seconds": [
-            1.609,
-            1.578,
-            1.703
+            1.75,
+            1.719,
+            1.719
           ]
         },
         "server_quick_local": {
-          "median_seconds": 11.593,
+          "median_seconds": 11.718,
           "budget_seconds": 240,
           "samples_seconds": [
-            11.782,
-            11.593,
-            11.094
+            11.5,
+            11.718,
+            11.875
           ]
         },
         "client_gut_short_fast": {
-          "median_seconds": 1.61,
+          "median_seconds": 1.796,
           "budget_seconds": 60,
           "samples_seconds": [
-            1.61,
-            1.532,
-            1.656
+            1.625,
+            1.796,
+            1.859
           ]
         }
       }
@@ -66,33 +66,33 @@
     "FpsPlayground": {
       "status": "measured",
       "godot_version": "4.6.2.stable.official.71f334935",
-      "contract_hash": "22075c6406e753795c314dd52d6d666136e058a9380019c04b2687c3df9351cc",
-      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "contract_hash": "b6e655d57cfedb5db063c753632e9747f718591efbbd6e61e803d0cd1a828d2f",
+      "source_sha": "56eb99408400d973c6435f73cca5efd2dccf1779",
       "runners": {
         "fps_fast_structure": {
-          "median_seconds": 0.36,
+          "median_seconds": 0.453,
           "budget_seconds": 30,
           "samples_seconds": [
-            0.36,
-            0.36,
-            0.359
+            0.468,
+            0.453,
+            0.453
           ]
         },
         "fps_fast_rules": {
-          "median_seconds": 1.297,
+          "median_seconds": 1.282,
           "budget_seconds": 30,
           "samples_seconds": [
-            1.328,
-            1.297,
-            1.281
+            1.312,
+            1.281,
+            1.282
           ]
         },
         "fps_fast_telemetry": {
-          "median_seconds": 1.938,
+          "median_seconds": 1.937,
           "budget_seconds": 30,
           "samples_seconds": [
-            2.125,
-            1.938,
+            1.922,
+            1.937,
             1.937
           ]
         }
@@ -101,16 +101,16 @@
     "DraxosRoguelike": {
       "status": "measured",
       "godot_version": "4.6.2.stable.official.71f334935",
-      "contract_hash": "6c15bea767a6c371da8e0bca79c08542a371ddf8203a1aa389790c54f0456486",
-      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "contract_hash": "d0e0a70294c8616eca305838b20a327ecd9f3bc3caad4b48dddbc2c498fa3ad1",
+      "source_sha": "56eb99408400d973c6435f73cca5efd2dccf1779",
       "runners": {
         "roguelike_fast_contracts": {
-          "median_seconds": 2.953,
+          "median_seconds": 2.86,
           "budget_seconds": 30,
           "samples_seconds": [
-            2.953,
-            2.859,
-            2.969
+            2.86,
+            3.047,
+            2.859
           ]
         }
       }
@@ -118,16 +118,16 @@
     "RpgIsometrico": {
       "status": "measured",
       "godot_version": "4.6.2.stable.official.71f334935",
-      "contract_hash": "a3dd8a0896d5d4b2c2295edf7cee17d9ea65228fced51e75116416e5ed301e27",
-      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "contract_hash": "6e287bb49dc367f6585d0fcfff7cce8a74d3e6dcdb46df6eb8edcd3136e62550",
+      "source_sha": "56eb99408400d973c6435f73cca5efd2dccf1779",
       "runners": {
         "contracts_fast": {
-          "median_seconds": 12.031,
+          "median_seconds": 12.047,
           "budget_seconds": 30,
           "samples_seconds": [
-            12.031,
-            12.031,
-            11.906
+            12.047,
+            12.218,
+            11.938
           ]
         }
       }
@@ -135,16 +135,16 @@
     "RpgTurnos": {
       "status": "measured",
       "godot_version": "4.6.2.stable.official.71f334935",
-      "contract_hash": "bd33a427787d7d0ef8261f14dcacc2f790a2fc88a7034b9d62bea278e2d87ddd",
-      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "contract_hash": "ff4490ff67e2c3aceb0397ab9de3379cb52e3ae627038a56fa25b4f4fd014766",
+      "source_sha": "56eb99408400d973c6435f73cca5efd2dccf1779",
       "runners": {
         "rpg_turnos_fast_contracts": {
-          "median_seconds": 1.703,
+          "median_seconds": 1.657,
           "budget_seconds": 30,
           "samples_seconds": [
-            1.75,
-            1.703,
-            1.562
+            1.656,
+            1.657,
+            1.703
           ]
         }
       }
