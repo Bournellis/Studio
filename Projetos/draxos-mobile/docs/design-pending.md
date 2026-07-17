@@ -1,4 +1,4 @@
-﻿# DraxosMobile - Design Pending
+# DraxosMobile - Design Pending
 
 ## Metadata
 

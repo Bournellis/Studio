@@ -44,7 +44,10 @@
 - Build: `ReleaseDryRun` only; it prepares/checks local plans and never promotes a release.
 - FullLocal: declared local runners only; database-backed and external profiles remain out of scope.
 
-Login, Refúgio, Arena technical flow, resume, Android/Web local readiness and server authority have automated local evidence. Arena product proof, tuning, economy, PVP, final visual direction, external checks and release promotion remain human gates.
+Login, Refúgio, Arena technical flow, resume, Android/Web local readiness and server authority have automated local evidence.
 
-Every Runtime and Build command must execute twice with identical tracked Git state. A changed tracked snapshot is `VALIDATOR_SIDE_EFFECT`. New evidence bundles use `estudio_evidence_v1`; existing historical reports remain preserved in `docs/` and `implementation/tracks/`.
+Arena product proof, tuning, economy, PVP, final visual direction, external checks and release promotion remain human gates.
 
+Every Runtime and Build command must execute twice with identical tracked Git state. A changed tracked snapshot is `VALIDATOR_SIDE_EFFECT`.
+
+New evidence bundles use `estudio_evidence_v1`; existing historical reports remain preserved in `docs/` and `implementation/tracks/`.
