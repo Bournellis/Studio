@@ -14,6 +14,8 @@ if str(TOOLS) not in sys.path:
 
 from build_documentation_lite_manifests import (  # noqa: E402
     INDEX,
+    PROJECT_BY_KEY,
+    _local_candidates,
     _project_for_global,
     build_artifacts,
     write_artifacts,
@@ -62,6 +64,15 @@ class ManifestBuilderFixture(unittest.TestCase):
 
 
 class ManifestBuilderTests(ManifestBuilderFixture):
+    def test_promoted_release_authority_is_not_a_cleanup_candidate(self) -> None:
+        spec = PROJECT_BY_KEY["draxosmobile"]
+        historical_index = spec.root + "/docs/history/documentation-index-pre-governance-v2-2026-07-16.md"
+        paths = {historical_index, spec.release_history}
+        blobs = {
+            historical_index: b"| `docs/release-history.md` | `HISTORICO` | old classification |\n",
+        }
+        self.assertNotIn(spec.release_history, _local_candidates(spec, paths, blobs))
+
     def test_global_filename_ownership_wins_over_incidental_content(self) -> None:
         self.assertEqual(
             _project_for_global(

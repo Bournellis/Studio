@@ -246,6 +246,10 @@ def _local_candidates(spec: ProjectSpec, paths: set[str], blobs_by_path: dict[st
             "implementation/roadmap.md", "docs/cardgame-core-experiments.md", "docs/project-brief.md",
             "docs/lore-content-migration.md", "docs/open-gaps.md", "docs/first-playable-slice-smoke.md",
         ) if prefix + name in paths)
+    result.discard(spec.history)
+    result.discard(spec.qa)
+    if spec.release_history:
+        result.discard(spec.release_history)
     return result
 
 
