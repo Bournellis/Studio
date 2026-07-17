@@ -21,7 +21,6 @@ Projetos/**/build/
 Projetos/**/.wrangler/
 Projetos/**/*.import
 Projetos/**/*.translation
-Projetos/**/*.uid
 Projetos/**/export_presets.cfg
 Projetos/**/supabase/.branches/
 Projetos/**/supabase/.temp/
