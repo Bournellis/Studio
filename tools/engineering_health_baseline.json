@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "base_ref": "d69456d88e144d7170cf6b2e92d87e322ff3375f",
+  "generated_at": "2026-07-16",
+  "large_files": [
+    { "path": "Projetos/draxos-mobile/tests/client/test_boot_mobile_ui.gd", "baseline_lines": 3705, "reason": "Legacy integrated client test; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-roguelike-cardgame/battle/battle_engine.gd", "baseline_lines": 2965, "reason": "Legacy battle engine; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/rpg-turnos/battle/battle_engine.gd", "baseline_lines": 2081, "reason": "Paused-project legacy battle engine; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/JogoDaCopa/tests/unit/test_bootstrap.gd", "baseline_lines": 2000, "reason": "Legacy integrated test bootstrap; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/rpg-isometrico/modes/frontend/frontend_root.gd", "baseline_lines": 1920, "reason": "Paused-project legacy frontend root; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-roguelike-cardgame/modes/battle/battle_root.gd", "baseline_lines": 1742, "reason": "Legacy battle composition root; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/FpsPlayground/modes/arena/arena_root.gd", "baseline_lines": 1506, "reason": "Legacy arena composition root; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-mobile/ui/battle_stage_2d.gd", "baseline_lines": 1446, "reason": "Legacy battle presentation root; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-mobile/tests/client/test_openworld_mode_dev.gd", "baseline_lines": 1436, "reason": "Legacy integrated client test; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-mobile/modes/openworld/openworld_integrated_session_bridge.gd", "baseline_lines": 1363, "reason": "Legacy integration bridge; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-mobile/ui/battle_visual_mockup.gd", "baseline_lines": 1326, "reason": "Legacy visual mockup; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-roguelike-cardgame/tests/unit/test_card_impact_tooling.gd", "baseline_lines": 1299, "reason": "Legacy integrated tooling test; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-mobile/tests/client/test_session_shell.gd", "baseline_lines": 1279, "reason": "Legacy integrated client test; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-mobile/dev/battle_lab/battle_lab_screen.gd", "baseline_lines": 1240, "reason": "Legacy lab screen; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/JogoDaCopa/modes/menu/main_menu_root.gd", "baseline_lines": 1209, "reason": "Legacy menu composition root; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/JogoDaCopa/presentation/hud/football_hud.gd", "baseline_lines": 1148, "reason": "Legacy HUD presenter; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/JogoDaCopa/gameplay/avatar/player_avatar_3d.gd", "baseline_lines": 1100, "reason": "Legacy avatar controller; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-mobile/modes/boot/ui/mode_shell_overlay_controller.gd", "baseline_lines": 1089, "reason": "Legacy shell overlay controller; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/draxos-mobile/online/session_store.gd", "baseline_lines": 1089, "reason": "Legacy session store; decomposition is prospective.", "review_when": "when functional work touches this file" },
+    { "path": "Projetos/FpsPlayground/gameplay/bot/basic_duel_bot.gd", "baseline_lines": 1077, "reason": "Legacy bot controller; decomposition is prospective.", "review_when": "when functional work touches this file" }
+  ]
+}

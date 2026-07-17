@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://estudio.local/schemas/engineering_health_baseline.schema.json",
+  "title": "Estudio engineering health baseline v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "base_ref", "generated_at", "large_files"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "base_ref": { "type": "string" },
+    "generated_at": { "type": "string" },
+    "large_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "baseline_lines", "reason", "review_when"],
+        "properties": {
+          "path": { "type": "string" },
+          "baseline_lines": { "type": "integer", "minimum": 1001 },
+          "reason": { "type": "string" },
+          "review_when": { "type": "string" }
+        }
+      }
+    }
+  }
+}

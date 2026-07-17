@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://estudio.local/schemas/estudio_governance.schema.json",
+  "title": "Estudio Governance v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authority_documents",
+    "toolchain",
+    "groups",
+    "projects",
+    "documentation",
+    "qa",
+    "engineering_health",
+    "evidence",
+    "repository_storage",
+    "multiagent",
+    "fast_suite"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "authority_documents": {
+      "type": "object",
+      "required": ["portfolio", "snapshot", "registry"],
+      "properties": {
+        "portfolio": { "type": "string" },
+        "snapshot": { "type": "string" },
+        "registry": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "toolchain": { "type": "object" },
+    "groups": {
+      "type": "object",
+      "required": ["Active", "Paused", "AllOfficial"],
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" },
+        "uniqueItems": true
+      }
+    },
+    "projects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id", "name", "aliases", "root", "portfolio_key", "current_status",
+          "coordination_root", "qa_manifest", "qa_index", "lanes", "supported_profiles",
+          "evidence_roots"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9]*$" },
+          "name": { "type": "string" },
+          "aliases": { "type": "array", "items": { "type": "string" } },
+          "root": { "type": "string" },
+          "portfolio_key": { "type": "string" },
+          "kind": { "type": "string" },
+          "current_status": { "type": "string" },
+          "coordination_root": { "type": "string" },
+          "qa_manifest": { "type": "string" },
+          "qa_index": { "type": "string" },
+          "godot_root": { "type": ["string", "null"] },
+          "lanes": { "type": "array", "items": { "enum": ["godot", "web", "backend", "android", "lab"] } },
+          "supported_profiles": { "type": "array", "items": { "enum": ["DocsOnly", "FastSuite", "Runtime", "Build", "FullLocal"] } },
+          "evidence_roots": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "documentation": { "type": "object" },
+    "qa": { "type": "object" },
+    "engineering_health": { "type": "object" },
+    "evidence": { "type": "object" },
+    "repository_storage": { "type": "object" },
+    "multiagent": { "type": "object" },
+    "fast_suite": { "type": "object" }
+  }
+}

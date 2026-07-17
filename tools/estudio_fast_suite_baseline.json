@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "generated_at": null,
+  "projects": {
+    "JogoDaCopa": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
+    "DraxosMobile": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
+    "FpsPlayground": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
+    "DraxosRoguelike": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
+    "RpgIsometrico": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
+    "RpgTurnos": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} }
+  }
+}

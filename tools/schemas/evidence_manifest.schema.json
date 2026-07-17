@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://estudio.local/schemas/evidence_manifest.schema.json",
+  "title": "Estudio evidence manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "project", "task_id", "source_sha", "environment", "files"],
+  "properties": {
+    "schema": { "const": "estudio_evidence_v1" },
+    "project": { "type": "string" },
+    "task_id": { "type": "string" },
+    "source_sha": { "type": "string" },
+    "environment": { "type": "string" },
+    "exception": { "type": "string" },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "role", "bytes", "sha256", "canonical"],
+        "properties": {
+          "path": { "type": "string" },
+          "role": { "enum": ["image", "metrics", "stdout", "video", "report", "other"] },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "canonical": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

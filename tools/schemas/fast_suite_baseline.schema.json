@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://estudio.local/schemas/fast_suite_baseline.schema.json",
+  "title": "Estudio FastSuite baseline v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "projects"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "generated_at": { "type": ["string", "null"] },
+    "projects": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status", "godot_version", "contract_hash", "source_sha", "runners"],
+        "properties": {
+          "status": { "enum": ["unmeasured", "measured", "stale"] },
+          "godot_version": { "type": ["string", "null"] },
+          "contract_hash": { "type": ["string", "null"] },
+          "source_sha": { "type": ["string", "null"] },
+          "runners": { "type": "object" }
+        }
+      }
+    }
+  }
+}

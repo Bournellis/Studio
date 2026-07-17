@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "authority_documents": {
+    "portfolio": "08_Coordenacao_Agentes/Prioridades_Estudio.md",
+    "snapshot": "08_Coordenacao_Agentes/Estado_Atual.md",
+    "registry": "Projetos/README.md"
+  },
+  "toolchain": {
+    "python_minimum": "3.11",
+    "powershell_minimum": "5.1",
+    "godot_version_file": ".godot-version",
+    "godot_expected": "4.6.2-stable",
+    "godot_candidates": [
+      ".local-tools/godot/4.6.2/Godot_v4.6.2-stable_win64_console.exe",
+      "D:/Estudio/.local-tools/godot/4.6.2/Godot_v4.6.2-stable_win64_console.exe"
+    ]
+  },
+  "groups": {
+    "Active": ["JogoDaCopa", "DraxosMobile", "FpsPlayground"],
+    "Paused": ["DraxosRoguelike", "RpgIsometrico", "RpgTurnos"],
+    "AllOfficial": ["JogoDaCopa", "DraxosMobile", "FpsPlayground", "DraxosRoguelike", "RpgIsometrico", "RpgTurnos"]
+  },
+  "projects": [
+    {
+      "id": "JogoDaCopa",
+      "name": "JogoDaCopa",
+      "aliases": ["jogodacopa", "copa", "football"],
+      "root": "Projetos/JogoDaCopa",
+      "portfolio_key": "JogoDaCopa",
+      "kind": "godot_web",
+      "current_status": "Projetos/JogoDaCopa/implementation/current-status.md",
+      "coordination_root": "Projetos/JogoDaCopa/08_Coordenacao",
+      "qa_manifest": "Projetos/JogoDaCopa/qa/qa_manifest.json",
+      "qa_index": "Projetos/JogoDaCopa/qa/QA_INDEX.md",
+      "godot_root": "Projetos/JogoDaCopa",
+      "lanes": ["godot", "web"],
+      "supported_profiles": ["DocsOnly", "FastSuite", "Runtime", "Build", "FullLocal"],
+      "evidence_roots": ["Projetos/JogoDaCopa/qa/evidence"]
+    },
+    {
+      "id": "DraxosMobile",
+      "name": "DraxosMobile",
+      "aliases": ["draxosmobile", "draxos-mobile", "mobile"],
+      "root": "Projetos/draxos-mobile",
+      "portfolio_key": "DraxosMobile",
+      "kind": "godot_web_backend_android",
+      "current_status": "Projetos/draxos-mobile/implementation/current-status.md",
+      "coordination_root": "Projetos/draxos-mobile/08_Coordenacao",
+      "qa_manifest": "Projetos/draxos-mobile/qa/qa_manifest.json",
+      "qa_index": "Projetos/draxos-mobile/qa/QA_INDEX.md",
+      "godot_root": "Projetos/draxos-mobile",
+      "lanes": ["godot", "web", "backend", "android", "lab"],
+      "supported_profiles": ["DocsOnly", "FastSuite", "Runtime", "Build", "FullLocal"],
+      "evidence_roots": ["Projetos/draxos-mobile/qa/evidence"]
+    },
+    {
+      "id": "FpsPlayground",
+      "name": "FpsPlayground",
+      "aliases": ["fps", "fpsplayground", "fpsshooter"],
+      "root": "Projetos/FpsPlayground",
+      "portfolio_key": "FpsPlayground",
+      "kind": "godot_desktop",
+      "current_status": "Projetos/FpsPlayground/implementation/current-status.md",
+      "coordination_root": "Projetos/FpsPlayground/08_Coordenacao",
+      "qa_manifest": "Projetos/FpsPlayground/qa/qa_manifest.json",
+      "qa_index": "Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "godot_root": "Projetos/FpsPlayground",
+      "lanes": ["godot"],
+      "supported_profiles": ["DocsOnly", "FastSuite", "Runtime", "FullLocal"],
+      "evidence_roots": ["Projetos/FpsPlayground/qa/evidence"]
+    },
+    {
+      "id": "DraxosRoguelike",
+      "name": "Draxos Roguelike Cardgame",
+      "aliases": ["draxosroguelike", "draxos-roguelike-cardgame", "roguelike"],
+      "root": "Projetos/draxos-roguelike-cardgame",
+      "portfolio_key": "Draxos Roguelike Cardgame",
+      "kind": "godot_desktop",
+      "current_status": "Projetos/draxos-roguelike-cardgame/implementation/current-status.md",
+      "coordination_root": "Projetos/draxos-roguelike-cardgame/08_Coordenacao",
+      "qa_manifest": "Projetos/draxos-roguelike-cardgame/qa/qa_manifest.json",
+      "qa_index": "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "godot_root": "Projetos/draxos-roguelike-cardgame",
+      "lanes": ["godot", "lab"],
+      "supported_profiles": ["DocsOnly", "FastSuite", "Runtime", "FullLocal"],
+      "evidence_roots": ["Projetos/draxos-roguelike-cardgame/qa/evidence"]
+    },
+    {
+      "id": "RpgIsometrico",
+      "name": "RPG Isometrico",
+      "aliases": ["rpg-isometrico", "rpgisometrico", "isometrico"],
+      "root": "Projetos/rpg-isometrico",
+      "portfolio_key": "RPG Isometrico",
+      "kind": "godot_desktop_paused",
+      "current_status": "Projetos/rpg-isometrico/implementation/current-status.md",
+      "coordination_root": "Projetos/rpg-isometrico/08_Coordenacao",
+      "qa_manifest": "Projetos/rpg-isometrico/qa/qa_manifest.json",
+      "qa_index": "Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "godot_root": "Projetos/rpg-isometrico",
+      "lanes": ["godot"],
+      "supported_profiles": ["DocsOnly", "FastSuite", "Runtime", "FullLocal"],
+      "evidence_roots": ["Projetos/rpg-isometrico/qa/evidence"]
+    },
+    {
+      "id": "RpgTurnos",
+      "name": "RPG Turnos",
+      "aliases": ["rpg-turnos", "rpgturnos", "turnos"],
+      "root": "Projetos/rpg-turnos",
+      "portfolio_key": "RPG Turnos",
+      "kind": "godot_desktop_paused",
+      "current_status": "Projetos/rpg-turnos/implementation/current-status.md",
+      "coordination_root": "Projetos/rpg-turnos/08_Coordenacao",
+      "qa_manifest": "Projetos/rpg-turnos/qa/qa_manifest.json",
+      "qa_index": "Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "godot_root": "Projetos/rpg-turnos",
+      "lanes": ["godot"],
+      "supported_profiles": ["DocsOnly", "FastSuite", "Runtime", "FullLocal"],
+      "evidence_roots": ["Projetos/rpg-turnos/qa/evidence"]
+    }
+  ],
+  "documentation": {
+    "allowed_authorities": ["operational_contract", "portfolio_state", "portfolio_snapshot", "local_state", "product_contract", "technical_contract", "router", "runbook", "historical_record"],
+    "metadata_fields": ["status", "authority", "last_verified", "review_when", "supersedes", "superseded_by"],
+    "live_documents": [
+      { "path": "AGENTS.md", "authority": "operational_contract", "max_lines": 220 },
+      { "path": "08_Coordenacao_Agentes/Prioridades_Estudio.md", "authority": "portfolio_state", "max_lines": 120 },
+      { "path": "08_Coordenacao_Agentes/Estado_Atual.md", "authority": "portfolio_snapshot", "max_lines": 100 },
+      { "path": "08_Coordenacao_Agentes/documentation-index.md", "authority": "router", "max_lines": 100 },
+      { "path": "Projetos/README.md", "authority": "router", "max_lines": 100 },
+      { "path": "Projetos/JogoDaCopa/implementation/current-status.md", "authority": "local_state", "max_lines": 60 },
+      { "path": "Projetos/FpsPlayground/implementation/current-status.md", "authority": "local_state", "max_lines": 60 },
+      { "path": "Projetos/draxos-mobile/implementation/current-status.md", "authority": "local_state", "max_lines": 60 },
+      { "path": "Projetos/draxos-roguelike-cardgame/implementation/current-status.md", "authority": "local_state", "max_lines": 50 },
+      { "path": "Projetos/rpg-isometrico/implementation/current-status.md", "authority": "local_state", "max_lines": 50 },
+      { "path": "Projetos/rpg-turnos/implementation/current-status.md", "authority": "local_state", "max_lines": 50 }
+    ],
+    "pointer_documents": ["README.md", "CLAUDE.md", "Projetos/README.md"],
+    "pointer_forbidden_patterns": ["\\.pages\\.dev", "\\d+\\.\\d+\\.\\d+-alpha", "(?i)^[-*]\\s*(status|marker|proximo passo|próximo passo|track ativa|active stage):"],
+    "warn_line_length": 240,
+    "fail_line_length": 700,
+    "text_extensions": [".md", ".txt", ".json", ".jsonc", ".gd", ".tscn", ".tres", ".cfg", ".ini", ".ps1", ".psm1", ".py", ".ts", ".js", ".yml", ".yaml", ".csv", ".html", ".css", ".sql"]
+  },
+  "qa": {
+    "manifest_schema": "tools/schemas/qa_manifest.schema.json",
+    "allowed_runner_types": ["godot_script", "gut_scripts", "powershell", "python", "deno", "node"],
+    "allowed_categories": ["fast", "regression", "visual_human", "platform", "lab", "historical"],
+    "allowed_journey_statuses": ["covered", "manual", "gap", "not_applicable"],
+    "default_timeout_seconds": 30,
+    "forbidden_tokens": ["RemoteReadOnly", "FullPublish", "ConfirmRemoteMutation", "publish_internal_alpha", "publish_web", "--allow-net", "-IncludeRemoteReadOnly"]
+  },
+  "engineering_health": {
+    "warning_lines": 700,
+    "failure_lines": 1000,
+    "scan_patterns": ["Projetos/**/*.gd"],
+    "exclude_patterns": ["**/addons/**", "**/.godot/**", "**/build/**", "**/cache/**"],
+    "baseline": "tools/engineering_health_baseline.json"
+  },
+  "evidence": {
+    "manifest_name": "manifest.json",
+    "schema": "estudio_evidence_v1",
+    "normal_max_files": 30,
+    "normal_max_bytes": 10485760,
+    "warning_max_files": 60,
+    "warning_max_bytes": 26214400,
+    "canonical_limits": { "image": 6, "metrics": 5, "stdout": 1 }
+  },
+  "repository_storage": {
+    "warning_binary_bytes": 10485760,
+    "failure_binary_bytes": 26214400,
+    "duplicate_min_bytes": 1048576,
+    "binary_extensions": [".png", ".jpg", ".jpeg", ".webp", ".gif", ".ogg", ".wav", ".mp3", ".mp4", ".webm", ".zip", ".7z", ".exe", ".dll", ".pck", ".wasm", ".apk", ".aab"],
+    "exceptions": [],
+    "duplicate_exceptions": []
+  },
+  "multiagent": {
+    "base_branch": "main",
+    "worktree_root": "D:/Estudio-worktrees",
+    "overlap_exceptions": []
+  },
+  "fast_suite": {
+    "baseline": "tools/estudio_fast_suite_baseline.json",
+    "runs": 3,
+    "warmup_runs": 1,
+    "warning_ratio": 1.2,
+    "failure_ratio": 1.4,
+    "default_timeout_seconds": 30,
+    "calibration_is_explicit": true
+  }
+}
