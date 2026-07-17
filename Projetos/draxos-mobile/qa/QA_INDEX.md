@@ -50,4 +50,10 @@ Arena product proof, tuning, economy, PVP, final visual direction, external chec
 
 Every Runtime and Build command must execute twice with identical tracked Git state. A changed tracked snapshot is `VALIDATOR_SIDE_EFFECT`.
 
+Observed local baseline on 2026-07-16:
+
+- FastSuite: selected GUT `13/13`, `170` asserts; DocsOnly and ServerQuick green.
+- Runtime: client `287/287`, `4,208` asserts; server foundation `128` and Arena `23`; mode/platform `49`.
+- Build: `ReleaseDryRun` green; plan-only guard confirmed no package, upload, secret update, deploy or remote verification.
+
 New evidence bundles use `estudio_evidence_v1`; existing historical reports remain preserved in `docs/` and `implementation/tracks/`.
