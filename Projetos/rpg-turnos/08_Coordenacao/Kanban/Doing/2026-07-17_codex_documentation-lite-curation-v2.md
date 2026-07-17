@@ -10,8 +10,8 @@
 - coordination_scope: `documentation_alignment`
 - closure_protocol: `agent_local_merge_v3`
 - closure_contract: `estudio_lifecycle_v1`
-- closure_mode: `in_progress`
-- technical_status: `pending`
+- closure_mode: `merged_not_required_done`
+- technical_status: `pass`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none`
@@ -23,16 +23,16 @@
 - branch: `codex/rpg-turnos/documentation-lite-v2`
 - worktree: `D:\Estudio-worktrees\rpg-turnos--codex--documentation-lite-v2`
 - base_ref: `codex/estudio/documentation-lite-v2@b27f59b2980228440365a41e41c912cd0911dd8a`
-- commit: `n/a`
-- merged_to: `n/a`
+- commit: `a8470528; e4ba7d00`
+- merged_to: `codex/estudio/documentation-lite-v2@e4ba7d00`
 - merge_strategy: `ff-only`
-- merge_status: `pending`
-- worktree_status: `open`
-- branch_cleanup: `pending`
+- merge_status: `merged`
+- worktree_status: `removed`
+- branch_cleanup: `deleted`
 - validation_tier: `Docs`
-- validation_result: `pending`
-- post_merge_validation: `pending`
-- closure_summary: `pending`
+- validation_result: `DocsOnly RpgTurnos PASS; links and QA manifest coherent; no validator side effects`
+- post_merge_validation: `DocsOnly RpgTurnos PASS after ff-only integration`
+- closure_summary: `Track 01/P01-P20 lineage and dormant resume contracts integrated without product, runtime, priority or gate change`
 - global_sync_needed: `no`
 
 ## Goal

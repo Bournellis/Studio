@@ -10,7 +10,7 @@
 - coordination_scope: `documentation_alignment`
 - closure_protocol: `agent_local_merge_v3`
 - closure_contract: `estudio_lifecycle_v1`
-- closure_mode: `in_progress`
+- closure_mode: `merged_not_required_done`
 - technical_status: `pass`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
@@ -23,16 +23,16 @@
 - branch: `codex/rpg-isometrico/documentation-lite-v2`
 - worktree: `D:\Estudio-worktrees\rpg-isometrico--codex--documentation-lite-v2`
 - base_ref: `codex/estudio/documentation-lite-v2@b27f59b2`
-- commit: `n/a`
-- merged_to: `n/a`
-- merge_strategy: `n/a`
-- merge_status: `pending`
-- worktree_status: `open`
-- branch_cleanup: `pending`
+- commit: `ac9d1b8c; 43c9514a`
+- merged_to: `codex/estudio/documentation-lite-v2@43c9514a`
+- merge_strategy: `ff-only`
+- merge_status: `merged`
+- worktree_status: `removed`
+- branch_cleanup: `deleted`
 - validation_tier: `Docs`
 - validation_result: `DocsOnly RpgIsometrico AuditOnly PASS; links 27/27; docs health 0 warnings; secret scan 0; overlap 0; git diff --check PASS`
-- post_merge_validation: `pending`
-- closure_summary: `curadoria local pronta para integração; 73 fontes preservadas; sem gate humano, retomada ou exclusão`
+- post_merge_validation: `DocsOnly RpgIsometrico PASS; no validator side effects`
+- closure_summary: `curadoria local integrada; 73 fontes preservadas; sem gate humano, retomada ou exclusão`
 - global_sync_needed: `no`
 
 ## Objetivo

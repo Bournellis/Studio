@@ -10,8 +10,8 @@
 - coordination_scope: `documentation_alignment`
 - closure_protocol: `agent_local_merge_v3`
 - closure_contract: `estudio_lifecycle_v1`
-- closure_mode: `integration_pending`
-- technical_status: `complete`
+- closure_mode: `merged_not_required_done`
+- technical_status: `pass`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none`
@@ -23,15 +23,15 @@
 - branch: `codex/fpsplayground/documentation-lite-v2`
 - worktree: `D:\Estudio-worktrees\fpsplayground--codex--documentation-lite-v2`
 - base_ref: `codex/estudio/documentation-lite-v2@d55b9425`
-- commit: `this commit - docs(fps): consolidate roadmap and track lineage`
-- merged_to: `n/a`
-- merge_strategy: `ff-only planned by integration lead`
-- merge_status: `pending`
-- worktree_status: `open`
-- branch_cleanup: `pending`
+- commit: `5970d902`
+- merged_to: `codex/estudio/documentation-lite-v2@5970d902`
+- merge_strategy: `ff-only`
+- merge_status: `merged`
+- worktree_status: `removed`
+- branch_cleanup: `deleted`
 - validation_tier: `Docs`
 - validation_result: `pass with known warnings - DocsOnly exit 0 and 0 failures; links 62/27, docs health 0, closure pass, diff check pass, Git snapshot unchanged`
-- post_merge_validation: `pending`
+- post_merge_validation: `DocsOnly FpsPlayground PASS; overlap 0; no validator side effects`
 - closure_summary: `36 track sources plus rejected Track 08 decision indexed; superseded roadmap/audit/summary removed from normal routing; zero historical removals`
 - global_sync_needed: `no`
 

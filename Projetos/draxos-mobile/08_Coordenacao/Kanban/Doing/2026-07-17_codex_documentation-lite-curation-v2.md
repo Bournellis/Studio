@@ -10,8 +10,8 @@
 - coordination_scope: `documentation_alignment`
 - closure_protocol: `agent_local_merge_v3`
 - closure_contract: `estudio_lifecycle_v1`
-- closure_mode: `integration_pending`
-- technical_status: `complete`
+- closure_mode: `merged_not_required_done`
+- technical_status: `pass`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none; Arena proof remains an independent preserved gate`
@@ -23,15 +23,15 @@
 - branch: `codex/draxos-mobile/documentation-lite-v2`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--documentation-lite-v2`
 - base_ref: `codex/estudio/documentation-lite-v2@5970d902`
-- commit: `88eb8b70; a32b7c91; final consolidation commit`
-- merged_to: `n/a`
-- merge_strategy: `ff-only planned by integration lead`
-- merge_status: `pending`
-- worktree_status: `clean after final commit`
-- branch_cleanup: `pending`
+- commit: `0facb9c5; 126b285e; 82e1f6f9`
+- merged_to: `codex/estudio/documentation-lite-v2@82e1f6f9`
+- merge_strategy: `ff-only`
+- merge_status: `merged`
+- worktree_status: `removed`
+- branch_cleanup: `deleted`
 - validation_tier: `Docs`
 - validation_result: `pass; studio DocsOnly completed with pre-existing/audit warnings and zero failures`
-- post_merge_validation: `pending`
+- post_merge_validation: `DocsOnly DraxosMobile PASS; Deno 2/2 and release-safety checks PASS; no validator side effects`
 - closure_summary: `contracts promoted, path tests retargeted, history routed and 64 immutable roots consolidated without product or remote change`
 - global_sync_needed: `no`
 
