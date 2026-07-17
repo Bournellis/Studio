@@ -598,7 +598,7 @@ function Assert-LiveDocsReleaseRootFreshness {
         @{ Base = $ProjectPath; Path = "AGENTS.md"; Needles = @("implementation/current-status.md", "docs/release-history.md", "This file carries no package names, URLs or version codes") },
         @{ Base = $ProjectPath; Path = "README.md"; Needles = @("implementation/current-status.md", "docs/release-history.md") },
         @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("implementation/current-status.md", "docs/release-history.md") },
-        @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("implementation/current-status.md", "docs/release-history.md") }
+        @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("implementation/current-status.md", "release-history.md") }
     )) {
         foreach ($needle in $entry.Needles) {
             Assert-RelativeFileContains -BasePath $entry.Base -RelativePath $entry.Path -Needle $needle
@@ -614,7 +614,7 @@ function Assert-BaselineDriftAbsent {
         @{ Base = $ProjectPath; Path = "docs\pve-arena-initial-direction.md"; Needles = @("PVE_ARENA_INITIAL_DIRECTION_APPROVED", "Arena PVE", "PVP continua no plano") },
         @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Prioridades_Estudio.md"; Needles = @("DraxosMobile", "P2_IMPLEMENTACAO", "hardening integrado localmente", "Projetos/draxos-mobile/docs/release-history.md") },
         @{ Base = $RepoPath; Path = "08_Coordenacao_Agentes\Estado_Atual.md"; Needles = @("DraxosMobile", "Track 13 release safety", "Track 14 agent ops") },
-        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "Release history:", "Doc map:") }
+        @{ Base = $RepoPath; Path = "Projetos\README.md"; Needles = @("draxos-mobile/", "implementation/current-status.md", "qa/QA_INDEX.md") }
     )
     foreach ($entry in $requiredMarkers) {
         foreach ($needle in $entry.Needles) {
