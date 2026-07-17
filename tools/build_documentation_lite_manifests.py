@@ -186,7 +186,8 @@ def _local_candidates(spec: ProjectSpec, paths: set[str], blobs_by_path: dict[st
     result.update(
         path for path in paths
         if path.startswith(prefix + "08_Coordenacao/Kanban/Doing/")
-        and path.endswith("documentation-lite-curation-v2.md")
+        and "documentation-lite" in Path(path).name.casefold()
+        and path.endswith(".md")
     )
     tracks = prefix + "implementation/tracks/"
     result.update(path for path in paths if path.startswith(tracks) and path.endswith(".md"))

@@ -74,9 +74,11 @@ class ManifestBuilderTests(ManifestBuilderFixture):
     def test_dry_run_is_deterministic_and_excludes_review(self) -> None:
         track = "Projetos/JogoDaCopa/implementation/tracks/track-00.md"
         done = "08_Coordenacao_Agentes/Kanban/Done/2026-07-17_codex_jogodacopa_done.md"
+        curation = "Projetos/JogoDaCopa/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-v2.md"
         review = "Projetos/JogoDaCopa/08_Coordenacao/Kanban/Review/2026-07-17_gate.md"
         self._write(track, "# Track 00 result\n")
         self._write(done, "# JogoDaCopa technical closeout\n")
+        self._write(curation, "# Documentation Lite curation result\n")
         self._write(review, "# Pending human gate\n\nhuman_gate_status: pending\n")
         baseline, tag = self._commit_and_tag()
 
@@ -85,11 +87,12 @@ class ManifestBuilderTests(ManifestBuilderFixture):
 
         self.assertEqual(first, second)
         self.assertEqual(first_summary, second_summary)
-        self.assertEqual(first_summary["candidate_count"], 2)
+        self.assertEqual(first_summary["candidate_count"], 3)
         self.assertFalse((self.root / INDEX).exists(), "dry-run must not write")
         payload = b"\n".join(first.values())
         self.assertIn(track.encode(), payload)
         self.assertIn(done.encode(), payload)
+        self.assertIn(curation.encode(), payload)
         self.assertNotIn(review.encode(), payload)
 
     def test_written_artifacts_match_index_and_pass_audit(self) -> None:
