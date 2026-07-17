@@ -3,7 +3,7 @@
 ## Metadata
 
 - closure_protocol: agent_local_merge_v3
-- technical_status: ready_for_merge
+- technical_status: complete
 - human_gate_required: no
 - human_gate_status: not_required
 - human_gate_scope: none
@@ -15,9 +15,9 @@
 - branch: codex/jogodacopa/governanca-v2
 - worktree: D:\Estudio-worktrees\jogodacopa--codex--governanca-v2
 - base_ref: main@d69456d8
-- merge_status: pending
-- worktree_status: open
-- branch_cleanup: pending
+- merge_status: fast_forwarded_to_main
+- worktree_status: removed_after_post_merge_validation
+- branch_cleanup: deleted_and_pruned_after_merge
 - validation_tier: Runtime
 - validation_result: pass — Runtime 2x, 108/108 testes, 1.844 asserts, zero side effects
 - global_sync_needed: yes
@@ -40,3 +40,4 @@ Instalar a coordenação local-first, reduzir documentos vivos, manter uma únic
 - Segunda execução: status Git antes/depois vazio; nenhum side effect rastreado.
 - Manifesto JSON e correspondência exata de IDs verificados.
 - Nenhum pacote, remoto, publicação, tuning ou gate humano executado.
+- Validação pós-merge em `main`: 108/108 testes, 1.844 asserts e árvore limpa.
