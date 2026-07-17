@@ -9,6 +9,11 @@
       "lane": "godot",
       "runner": "gut_scripts",
       "entrypoint": "res://addons/gut/gut_cmdln.gd",
+      "paths": [
+        "res://tests/unit/test_content_and_session.gd",
+        "res://tests/unit/test_deck_setup_ui.gd",
+        "res://tests/unit/test_multi_class_regression.gd"
+      ],
       "args": [],
       "profiles": ["FastSuite", "FullLocal"],
       "timeout_seconds": 30,

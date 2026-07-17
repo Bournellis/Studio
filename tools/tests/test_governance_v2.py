@@ -22,7 +22,7 @@ from estudio_governance import (  # noqa: E402
     validate_qa_manifest,
 )
 from estudio_repository_checks import check_uids, git_snapshot  # noqa: E402
-from run_validation import _runner_command, _terminate_process_tree  # noqa: E402
+from run_validation import _gut_output_has_tests, _runner_command, _terminate_process_tree  # noqa: E402
 
 
 def git(cwd: Path, *args: str) -> None:
@@ -88,6 +88,22 @@ class GovernanceContractTests(unittest.TestCase):
         }
         with self.assertRaises(ValueError):
             _runner_command(ROOT, project, runner, self.config, None)
+
+    def test_gut_selection_disables_default_config_and_uses_user_args(self) -> None:
+        project = next(item for item in self.config["projects"] if item["id"] == "JogoDaCopa")
+        runner = {
+            "runner": "gut_scripts", "entrypoint": "res://addons/gut/gut_cmdln.gd",
+            "paths": ["res://tests/unit/test_rule_helpers.gd"], "args": [],
+            "local_only": True, "environments": ["headless"],
+        }
+        command = _runner_command(ROOT, project, runner, self.config, "godot")
+        self.assertIn("--", command)
+        self.assertIn("-gconfig=", command)
+        self.assertEqual(1, sum(item.startswith("-gtest=") for item in command))
+
+    def test_gut_zero_test_false_positive_is_rejected(self) -> None:
+        self.assertFalse(_gut_output_has_tests("Missing class_names.\n"))
+        self.assertTrue(_gut_output_has_tests("Run Summary\nTests                12\n"))
 
     def test_windows_timeout_terminates_exact_runner_tree(self) -> None:
         process = MagicMock()

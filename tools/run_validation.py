@@ -146,12 +146,17 @@ def _runner_command(
         gut = entrypoint or "res://addons/gut/gut_cmdln.gd"
         if not gut.startswith("res://") or ".." in gut:
             raise ValueError("gut_scripts entrypoint must be a safe res:// path")
-        command = [godot_exe, "--headless", "--path", str(project_root), "-s", gut, "-gexit"]
-        for test_path in runner.get("paths", []):
+        test_paths = [str(item) for item in runner.get("paths", [])]
+        gut_args = ["-gexit"]
+        if test_paths or any(item.startswith("-gtest") for item in args):
+            # Without this override GUT combines explicit tests with .gutconfig
+            # directories and silently executes the entire suite.
+            gut_args.append("-gconfig=")
+        for test_path in test_paths:
             if not str(test_path).startswith("res://") or ".." in str(test_path):
                 raise ValueError(f"unsafe GUT path: {test_path}")
-            command.append(f"-gtest={test_path}")
-        return [*command, *args]
+            gut_args.append(f"-gtest={test_path}")
+        return [godot_exe, "--headless", "--path", str(project_root), "-s", gut, "--", *gut_args, *args]
     path = _safe_project_path(project_root, entrypoint)
     if runner_type == "powershell":
         return ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(path), *args]
@@ -213,6 +218,9 @@ def _run_checked(
     if code != 0:
         status = "audit_fail" if audit_only else "fail"
         reason = f"runner exited with code {code}"
+    if code == 0 and runner["runner"] == "gut_scripts" and not _gut_output_has_tests(stdout + "\n" + stderr):
+        status = "audit_fail" if audit_only else "fail"
+        reason = "GUT_NO_TESTS: runner exited zero without a non-empty Run Summary"
     if side_effects:
         status = "audit_fail" if audit_only else "fail"
         reason = f"VALIDATOR_SIDE_EFFECT changed {', '.join(side_effects)}"
@@ -224,6 +232,10 @@ def _run_checked(
         f"{project['id']}:{runner['id']}", status, duration, reason=reason,
         exit_code=code, side_effects=side_effects, runner_type=runner["runner"], lane=runner["lane"],
     )
+
+
+def _gut_output_has_tests(output: str) -> bool:
+    return "Run Summary" in output and re.search(r"(?m)^\s*Tests\s+([1-9][0-9]*)\s*$", output) is not None
 
 
 def _existing_script_step(root: Path, name: str, args: list[str], audit_only: bool) -> dict[str, Any]:
