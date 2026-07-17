@@ -1,0 +1,50 @@
+name: Studio Governance
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout without persisted credentials
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: StudioDoctor Core
+        shell: powershell
+        run: .\tools\studio_doctor.ps1 -Mode Core -Project AllOfficial -Ci
+
+      - name: Governance unit tests
+        shell: powershell
+        run: python -m unittest discover -s tools\tests -p 'test_*.py'
+
+      - name: Documentation and repository contracts
+        shell: powershell
+        run: .\tools\validate_estudio.ps1 -Profile DocsOnly -Project AllOfficial
+
+      - name: Whitespace integrity
+        shell: powershell
+        run: git diff --check
+
+      - name: Clean checkout after validation
+        shell: powershell
+        run: |
+          $dirty = git status --porcelain=v1 --untracked-files=all
+          if ($dirty) {
+            $dirty
+            throw 'Validation changed the checkout.'
+          }
