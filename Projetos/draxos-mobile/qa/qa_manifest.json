@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "project": "DraxosMobile",
+  "runners": [
+    {
+      "id": "docs_contracts_fast",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "backend",
+      "runner": "powershell",
+      "entrypoint": "tools/validate_foundation.ps1",
+      "args": ["-ProjectDir", ".", "-Profile", "DocsOnly"],
+      "profiles": ["FastSuite", "FullLocal"],
+      "timeout_seconds": 60,
+      "environments": ["local", "PowerShell 5.1+"],
+      "output_policy": "read_only",
+      "local_only": true
+    },
+    {
+      "id": "server_quick_local",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "backend",
+      "runner": "powershell",
+      "entrypoint": "tools/validate_foundation.ps1",
+      "args": ["-ProjectDir", ".", "-Profile", "ServerQuick"],
+      "profiles": ["FastSuite", "Runtime", "FullLocal"],
+      "timeout_seconds": 240,
+      "environments": ["local", "Deno", "PowerShell 5.1+"],
+      "output_policy": "read_only",
+      "local_only": true
+    },
+    {
+      "id": "client_gut_short_fast",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "godot",
+      "runner": "gut_scripts",
+      "entrypoint": "res://addons/gut/gut_cmdln.gd",
+      "paths": [
+        "res://tests/client/test_project_info.gd",
+        "res://tests/client/test_session_state_facade.gd",
+        "res://tests/client/test_mode_descriptor_registry.gd"
+      ],
+      "args": [],
+      "profiles": ["FastSuite"],
+      "timeout_seconds": 60,
+      "environments": ["local", "headless", "Godot 4.6.2-stable"],
+      "output_policy": "ignored_cache_only",
+      "local_only": true
+    },
+    {
+      "id": "client_quick_runtime",
+      "category": "regression",
+      "tier": "Runtime",
+      "lane": "godot",
+      "runner": "powershell",
+      "entrypoint": "tools/validate_foundation.ps1",
+      "args": ["-ProjectDir", ".", "-Profile", "ClientQuick"],
+      "profiles": ["Runtime", "FullLocal"],
+      "timeout_seconds": 300,
+      "environments": ["local", "headless", "Godot 4.6.2-stable"],
+      "output_policy": "ignored_cache_only",
+      "local_only": true
+    },
+    {
+      "id": "mode_platform_runtime",
+      "category": "regression",
+      "tier": "Runtime",
+      "lane": "godot",
+      "runner": "powershell",
+      "entrypoint": "tools/validate_foundation.ps1",
+      "args": ["-ProjectDir", ".", "-Profile", "ModePlatform"],
+      "profiles": ["Runtime", "FullLocal"],
+      "timeout_seconds": 240,
+      "environments": ["local", "headless", "Godot 4.6.2-stable", "Deno"],
+      "output_policy": "ignored_cache_only",
+      "local_only": true
+    },
+    {
+      "id": "release_dry_run_build",
+      "category": "platform",
+      "tier": "Build",
+      "lane": "android",
+      "runner": "powershell",
+      "entrypoint": "tools/validate_foundation.ps1",
+      "args": ["-ProjectDir", ".", "-Profile", "ReleaseDryRun"],
+      "profiles": ["Build", "FullLocal"],
+      "timeout_seconds": 240,
+      "environments": ["local", "artifact_dry_run", "PowerShell 5.1+", "Deno"],
+      "output_policy": "temporary_only",
+      "local_only": true
+    }
+  ],
+  "critical_journey": [
+    {
+      "id": "login",
+      "status": "covered",
+      "runner_ids": ["client_quick_runtime", "server_quick_local"],
+      "evidence": "client session/auth contracts and local server authority checks"
+    },
+    {
+      "id": "refugio",
+      "status": "covered",
+      "runner_ids": ["client_gut_short_fast", "client_quick_runtime"],
+      "evidence": "boot/surface/session client regressions"
+    },
+    {
+      "id": "arena_technical_flow",
+      "status": "covered",
+      "runner_ids": ["server_quick_local", "client_quick_runtime"],
+      "evidence": "Arena catalog/domain and client attempt flow regressions"
+    },
+    {
+      "id": "session_resume",
+      "status": "covered",
+      "runner_ids": ["client_gut_short_fast", "client_quick_runtime", "server_quick_local"],
+      "evidence": "session facade, save and active-attempt recovery contracts"
+    },
+    {
+      "id": "android_local_readiness",
+      "status": "covered",
+      "runner_ids": ["release_dry_run_build"],
+      "evidence": "local export preset, keystore mode and artifact-plan safety gates"
+    },
+    {
+      "id": "web_local_readiness",
+      "status": "covered",
+      "runner_ids": ["release_dry_run_build", "client_quick_runtime"],
+      "evidence": "local Web export/shell contracts and client smoke matrix"
+    },
+    {
+      "id": "server_authority",
+      "status": "covered",
+      "runner_ids": ["server_quick_local", "mode_platform_runtime"],
+      "evidence": "mirrored server contracts, idempotency, account/save and mode reward authority tests"
+    },
+    {
+      "id": "arena_product_proof",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "docs/arena-pve-product-proof.md; result remains ARENA_CORE_NOT_PROVEN"
+    },
+    {
+      "id": "tuning_decision",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "human product decision after Arena proof"
+    },
+    {
+      "id": "economy_decision",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "human product decision; labs cannot approve economy"
+    },
+    {
+      "id": "pvp_decision",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "PVP remains outside the approved initial Arena package"
+    },
+    {
+      "id": "visual_decision",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "human visual review required"
+    },
+    {
+      "id": "external_validation",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "external services and physical device checks require separate authorization"
+    },
+    {
+      "id": "release_promotion",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "Fabio authorization and execution required"
+    }
+  ]
+}
+
