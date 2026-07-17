@@ -21,7 +21,9 @@
 - runner_id: `card_impact_v5_gate`
 - runner_id: `design_lab_sample_gate`
 
-Fast cobre contratos de dados, keywords, AI/intent, batalha por lanes e save/recompensas. Runtime executa `tools/validate.gd` integralmente. Labs existem somente na lane `lab` de `FullLocal`, escrevem em `user://` e nao aprovam produto.
+Fast executa o GUT completo e cobre dados, keywords, AI/intent, batalha por lanes e save/recompensas. Runtime executa `tools/validate.gd` integralmente.
+
+Labs existem somente na lane `lab` de `FullLocal`, escrevem em `user://` e nao aprovam produto.
 
 ## Jornadas criticas
 

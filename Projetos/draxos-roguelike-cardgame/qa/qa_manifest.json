@@ -9,13 +9,6 @@
       "lane": "godot",
       "runner": "gut_scripts",
       "entrypoint": "res://addons/gut/gut_cmdln.gd",
-      "paths": [
-        "res://tests/unit/test_data_contract.gd",
-        "res://tests/unit/test_keywords.gd",
-        "res://tests/unit/test_enemy_ai_intent.gd",
-        "res://tests/unit/test_battle_core.gd",
-        "res://tests/unit/test_run_rewards_shop_save.gd"
-      ],
       "args": [],
       "profiles": ["FastSuite"],
       "timeout_seconds": 30,
