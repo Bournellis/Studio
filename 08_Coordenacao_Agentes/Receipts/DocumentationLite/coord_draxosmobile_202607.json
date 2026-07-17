@@ -1,0 +1,36 @@
+{
+  "schema_version": 2,
+  "receipt_id": "receipt_coord_draxosmobile_202607",
+  "batch_id": "coord_draxosmobile_202607",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "generated_at": "2026-07-17T15:20:22.520530Z",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "manifest_sha256": "abe91d5575bf9df69fe448008f877645d150a98f1284ff0ea5b969a618b0e489",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-07-17_codex_estudio-governanca-v21.md",
+      "sha256": "53ee92e1c90764560fbec3deab8b3463ee2ac38ec17a99e063e5d3c446570fa4",
+      "git_blob": "786118fc00a240def0de643dc2ba34926ad4fef1",
+      "record_id": "rec_2026_07_17_codex_estudio_governanca_v21_c2998cbb6e",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-07.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-07.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-07-17_codex_estudio-governanca-v21.md",
+      "sha256": "5114a9caf3e1ecc2581603fd15c3b9ef98b994defb5e7c90514f3f09de9f67e3",
+      "git_blob": "3c7ed5f954696918f3b10eb6fae6568ad7dbf6aa",
+      "record_id": "rec_2026_07_17_codex_estudio_governanca_v21_b03637bd9a",
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-07.md",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-07.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    }
+  ]
+}
