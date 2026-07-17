@@ -9,11 +9,6 @@ $ProjectPath = (Resolve-Path -LiteralPath $ProjectDir).Path
 $RepoPath = (Resolve-Path -LiteralPath (Join-Path $ProjectPath '..\..')).Path
 $Failures = New-Object System.Collections.Generic.List[string]
 
-$AndroidHash = 'ad6d2579ce003769cfce2536b788c1330abb283d0ae90cc785d1d016ae514ca6'
-$PcHash = 'ad5fb8351bb001604479d95737fc702bb9b0ff6779afb9e3e31692b7bc189031'
-$WebHash = '75fdd260b889582cb723256e87ca9867ae35b7cdd3411cbb2ca21ace5585366a'
-$ReleasedAt = '2026-05-28T04:50:33Z'
-
 function Add-Failure([string]$Message) {
   $Failures.Add($Message) | Out-Null
   Write-Host "[FAIL] $Message" -ForegroundColor Red
@@ -82,7 +77,7 @@ function Test-DirectoriesMirror([string]$LeftPath, [string]$RightPath, [string]$
   Add-Failure "$Label mirrors differ: $($mismatch -join ', ')"
 }
 
-Write-Host "Track 11 readiness check"
+Write-Host "Track 11 historical recovery check"
 Write-Host "Project: $ProjectPath"
 Write-Host "Repo: $RepoPath"
 
@@ -90,14 +85,10 @@ $requiredProjectFiles = @(
   'AGENTS.md',
   'README.md',
   'implementation\current-status.md',
-  'implementation\tracks\track-11-product-foundation-consolidation\scope.md',
-  'implementation\tracks\track-11-product-foundation-consolidation\implementation-plan.md',
-  'implementation\tracks\track-11-product-foundation-consolidation\current-status.md',
-  'implementation\tracks\track-11-product-foundation-consolidation\foundation-audit.md',
-  'implementation\tracks\track-11-product-foundation-consolidation\agent-registry.md',
-  'docs\track-11-manual-walkthrough.md',
-  'docs\internal-alpha-v0-handoff.md',
-  'docs\internal-alpha-v0-publication-report.md',
+  'implementation\history.md',
+  'implementation\history-ledger\2026-05.md',
+  'implementation\history-ledger\2026-06.md',
+  'docs\release-history.md',
   'docs\release-ops-checklist.md',
   'tools\check_track11_readiness.ps1',
   'modes\boot\ui\app_shell_error_contract.gd'
@@ -107,35 +98,26 @@ foreach ($relative in $requiredProjectFiles) {
   Test-FileRequired $ProjectPath $relative
 }
 
-Test-FileContains $ProjectPath 'implementation\current-status.md' 'Track 11 - Product Foundation Consolidation'
-Test-FileContains $ProjectPath 'implementation\current-status.md' 'INTEGRATED_CONSOLIDATION_READY'
-Test-FileContains $ProjectPath 'README.md' 'Track 11 INTEGRATED_CONSOLIDATION_READY'
-Test-FileContains $ProjectPath 'AGENTS.md' 'Track 11 - Product Foundation Consolidation'
-Test-FileContains $ProjectPath 'docs\track-11-manual-walkthrough.md' 'Android APK, PC Windows ZIP, Web'
+Test-FileContains $ProjectPath 'implementation\current-status.md' 'docs/release-history.md'
+Test-FileContains $ProjectPath 'implementation\history.md' '| 11 | Product foundation consolidation integrated |'
+Test-FileContains $ProjectPath 'docs\release-history.md' 'single historical record'
 
-foreach ($relative in @(
-  'supabase\functions\release\index.ts',
-  'server\functions\release\index.ts',
-  'portal\internal-alpha\manifest.example.json',
-  'docs\internal-alpha-v0-handoff.md',
-  'docs\internal-alpha-v0-publication-report.md'
+foreach ($record in @(
+  @{ Ledger = 'implementation\history-ledger\2026-05.md'; Id = 'rec_scope_49b975c7ff' },
+  @{ Ledger = 'implementation\history-ledger\2026-05.md'; Id = 'rec_implementation_plan_4997dea04e' },
+  @{ Ledger = 'implementation\history-ledger\2026-05.md'; Id = 'rec_current_status_ad3ebd27dd' },
+  @{ Ledger = 'implementation\history-ledger\2026-05.md'; Id = 'rec_foundation_audit_08cc21d4dc' },
+  @{ Ledger = 'implementation\history-ledger\2026-05.md'; Id = 'rec_agent_registry_457f45f7ff' },
+  @{ Ledger = 'implementation\history-ledger\2026-05.md'; Id = 'rec_track_11_manual_walkthrough_bf445d6610' },
+  @{ Ledger = 'implementation\history-ledger\2026-05.md'; Id = 'rec_internal_alpha_v0_publication_report_8c69e132bd' },
+  @{ Ledger = 'implementation\history-ledger\2026-06.md'; Id = 'rec_internal_alpha_v0_handoff_7a30cd554f' }
 )) {
-  Test-FileContains $ProjectPath $relative $AndroidHash
-  Test-FileContains $ProjectPath $relative $PcHash
+  Test-FileContains $ProjectPath $record.Ledger $record.Id
+  Test-FileContains $RepoPath '08_Coordenacao_Agentes\Receipts\DocumentationLite\local_draxosmobile.json' $record.Id
 }
-
-Test-FileContains $ProjectPath 'docs\internal-alpha-v0-handoff.md' $WebHash
-Test-FileContains $ProjectPath 'docs\internal-alpha-v0-publication-report.md' $WebHash
-Test-FileContains $ProjectPath 'supabase\functions\release\index.ts' $ReleasedAt
-Test-FileContains $ProjectPath 'server\functions\release\index.ts' $ReleasedAt
-Test-FileContains $ProjectPath 'portal\internal-alpha\manifest.example.json' $ReleasedAt
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Receipts\DocumentationLite\local_draxosmobile.json' '52f52f7cd33d1711579f9cccbe4c848ab45a02e4'
 Test-FileContains $ProjectPath 'server\tests\release_artifacts_remote_smoke.ts' 'DRAXOS_RELEASE_ALLOW_CLOUDFLARE_ACCESS'
 Test-FileContains $ProjectPath 'server\tests\release_artifacts_remote_smoke.ts' 'DRAXOS_RELEASE_FULL_HASH'
-
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Prioridades_Estudio.md' 'Track 11'
-Test-FileContains $RepoPath '08_Coordenacao_Agentes\Estado_Atual.md' 'Track 11'
-Test-FileContains $RepoPath 'Projetos\README.md' 'Track 11'
-Test-FileContains $RepoPath 'AGENTS.md' 'Track 11'
 
 Test-DirectoriesMirror `
   (Join-Path $ProjectPath 'server\functions') `
@@ -164,9 +146,9 @@ if ($AllowActiveTrack11Doing) {
 
 if ($Failures.Count -gt 0) {
   Write-Host ""
-  Write-Host "Track 11 readiness failed with $($Failures.Count) issue(s)." -ForegroundColor Red
+  Write-Host "Track 11 historical recovery failed with $($Failures.Count) issue(s)." -ForegroundColor Red
   exit 1
 }
 
 Write-Host ""
-Write-Host 'Track 11 readiness OK.' -ForegroundColor Green
+Write-Host 'Track 11 historical recovery OK.' -ForegroundColor Green

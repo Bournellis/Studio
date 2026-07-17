@@ -529,7 +529,7 @@ function Test-LiveDocReleaseRootFreshness {
   foreach ($check in @(
     @{ Path = 'implementation\current-status.md'; Needles = @('Latest published remote package:', $currentPackage, $currentRoot, $currentPreview, 'docs/release-history.md') },
     @{ Path = 'docs\release-history.md'; Needles = @('single historical record', $currentPackage, $currentRoot, $currentPreview, $hardeningRoot, $hardeningPreview) },
-    @{ Path = 'docs\foundation-hardening-v2-readiness-report.md'; Needles = @('Status:', 'HISTORICO_BASELINE', $hardeningRoot, $hardeningPreview, 'not the latest remote Internal Alpha package') },
+    @{ Path = 'implementation\history-ledger\2026-06.md'; Needles = @('rec_foundation_hardening_v2_readiness_report_8ce6fdc925', 'Projetos/draxos-mobile/docs/foundation-hardening-v2-readiness-report.md', '52f52f7cd33d1711579f9cccbe4c848ab45a02e4') },
     @{ Path = 'AGENTS.md'; Needles = @('implementation/current-status.md', 'docs/release-history.md') },
     @{ Path = 'README.md'; Needles = @('implementation/current-status.md', 'docs/release-history.md') },
     @{ Path = 'docs\agent-operating-manual.md'; Needles = @('implementation/current-status.md', 'docs/release-history.md') },

@@ -126,14 +126,14 @@ func _check_documentation_contract() -> void:
 	_check_resource("res://docs/documentation-index.md")
 	_check_resource("res://docs/architecture-overview.md")
 	_check_resource("res://docs/work-plan.md")
-	_check_resource("res://docs/reuse-map.md")
 	_check_resource("res://docs/validation.md")
 	_check_resource("res://docs/mode-contract.md")
 	_check_resource("res://docs/bot-contract.md")
 	_check_resource("res://docs/tuning-guide.md")
 	_check_resource("res://docs/validation-profiles.md")
 	_check_resource("res://docs/publication-readiness.md")
-	_check_resource("res://docs/codebase-audit-track05.md")
+	_check_resource("res://implementation/history.md")
+	_check_resource("res://implementation/engineering-health-baseline.md")
 	_check_resource("res://docs/avatar-visual-contract.md")
 
 func _check_generated_scenes() -> void:

@@ -6,7 +6,7 @@
 - authority: `local_state`
 - last_verified: `2026-07-17`
 - review_when: `the observable technical baseline or next technical step changes`
-- supersedes: `implementation/tracks/governance-v2-pre-cutover-status-2026-07-16.md`
+- supersedes: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/draxos-mobile/implementation/tracks/governance-v2-pre-cutover-status-2026-07-16.md`
 - superseded_by: `none`
 
 ## Authority boundary
@@ -23,7 +23,7 @@
 - Deployment evidence: `https://a50d282b.draxos-mobile-internal-alpha.pages.dev`.
 - Build channel: `internal_alpha`; version `0.0.27-alpha.0`; Version code: `27`; Minimum supported: `13`.
 - The approved Web hosting hotfix and its newer preview evidence are recorded in `../docs/release-history.md`.
-- Arena PVE direction and implementation contracts: `../docs/pve-arena-initial-direction.md` and `../docs/pve-arena-v1.md`.
+- Arena PVE direction and implementation contracts: `../docs/pve-arena-initial-direction.md`, the Arena section of `../docs/game-design-document.md`, `../docs/contracts/` and the authored Arena definitions.
 - Server-authoritative account/save, battle, reward and mode boundaries remain preserved.
 - Release safety baseline: `TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED`.
 - Agent operations baseline: `TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE`.

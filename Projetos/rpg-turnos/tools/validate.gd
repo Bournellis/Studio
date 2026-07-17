@@ -36,7 +36,8 @@ func _run_validation() -> int:
 		printerr("[validate] GUT failed with exit code %d." % gut_exit_code)
 		return gut_exit_code
 
-	print("[validate] manual smoke: res://docs/first-playable-slice-smoke.md")
+	print("[validate] manual journeys and gates: res://qa/QA_INDEX.md")
+	print("[validate] historical smoke summary: res://implementation/history.md; exact source via Documentation Lite receipt local_rpgturnos.json")
 	print("[validate] success")
 	return 0
 

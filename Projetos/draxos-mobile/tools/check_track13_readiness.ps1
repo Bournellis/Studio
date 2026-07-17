@@ -141,7 +141,6 @@ Write-Host "Track 13 readiness check"
 Write-Host "Project: $ProjectPath"
 Write-Host "Repo: $RepoPath"
 
-$trackDir = 'implementation\tracks\track-13-validation-release-safety'
 $requiredProjectFiles = @(
   'AGENTS.md',
   'README.md',
@@ -149,9 +148,8 @@ $requiredProjectFiles = @(
   '08_Coordenacao\README.md',
   'qa\qa_manifest.json',
   'qa\QA_INDEX.md',
-  "$trackDir\scope.md",
-  "$trackDir\implementation-plan.md",
-  "$trackDir\current-status.md",
+  'implementation\history.md',
+  'implementation\history-ledger\2026-05.md',
   'qa\validation-matrix.md',
   'docs\contracts\release-safety.md',
   'docs\track-13-manual-walkthrough-gate.md',
@@ -174,9 +172,13 @@ foreach ($mode in @('Mode Plan', 'Mode Package', 'Mode Upload', 'Mode DeployMani
 Test-FileContains $ProjectPath 'tools\publish_internal_alpha.ps1' '[string]$Mode = "Plan"'
 Test-FileContains $ProjectPath 'tools\publish_internal_alpha.ps1' 'ConfirmRemoteMutation'
 Test-FileContains $ProjectPath 'tools\validate_foundation.ps1' 'foundation-validation-latest.json'
-Test-FileContains $ProjectPath "$trackDir\current-status.md" 'TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'docs/release-history.md'
+foreach ($recordId in @('rec_scope_d2c2aefc73', 'rec_implementation_plan_73a8730b35', 'rec_current_status_f7e6a984a6')) {
+  Test-FileContains $ProjectPath 'implementation\history-ledger\2026-05.md' $recordId
+  Test-FileContains $RepoPath '08_Coordenacao_Agentes\Receipts\DocumentationLite\local_draxosmobile.json' $recordId
+}
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Receipts\DocumentationLite\local_draxosmobile.json' '52f52f7cd33d1711579f9cccbe4c848ab45a02e4'
 Test-FileContains $ProjectPath 'README.md' 'implementation/current-status.md'
 Test-FileContains $ProjectPath 'README.md' 'docs/release-history.md'
 Test-FileContains $ProjectPath 'AGENTS.md' 'implementation/current-status.md'

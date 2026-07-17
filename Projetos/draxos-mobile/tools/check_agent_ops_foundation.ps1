@@ -105,9 +105,8 @@ $requiredProjectFiles = @(
   'tools\check_agent_ops_foundation.ps1',
   'tools\check_release_safety.ps1',
   'tools\check_track13_readiness.ps1',
-  'implementation\tracks\track-14-agent-ops-foundation\scope.md',
-  'implementation\tracks\track-14-agent-ops-foundation\implementation-plan.md',
-  'implementation\tracks\track-14-agent-ops-foundation\current-status.md'
+  'implementation\history.md',
+  'implementation\history-ledger\2026-05.md'
 )
 
 foreach ($relative in $requiredProjectFiles) {
@@ -138,6 +137,11 @@ Test-FileContains $ProjectPath 'implementation\current-status.md' 'ARENA_CORE_NO
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED'
 Test-FileContains $ProjectPath 'implementation\current-status.md' 'docs/release-history.md'
+foreach ($recordId in @('rec_scope_f7385ad1ea', 'rec_implementation_plan_780b78d888', 'rec_current_status_0a16133c29')) {
+  Test-FileContains $ProjectPath 'implementation\history-ledger\2026-05.md' $recordId
+  Test-FileContains $RepoPath '08_Coordenacao_Agentes\Receipts\DocumentationLite\local_draxosmobile.json' $recordId
+}
+Test-FileContains $RepoPath '08_Coordenacao_Agentes\Receipts\DocumentationLite\local_draxosmobile.json' '52f52f7cd33d1711579f9cccbe4c848ab45a02e4'
 
 foreach ($term in @('Instrumento Ritual', 'Doutrina', 'Familiar')) {
   Test-FileContains $ProjectPath 'docs\product-brief.md' $term

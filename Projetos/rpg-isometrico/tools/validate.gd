@@ -51,9 +51,9 @@ func _run_validation() -> int:
 	if shared_library != null:
 		shared_library.unload()
 
-	print("[validate] manual smoke expectations: res://docs/canonical-product-foundation-smoke.md")
-	print("[validate] campaign framework smoke: res://docs/campaign-framework-smoke.md")
-	print("[validate] B0 runtime smoke: res://docs/g4-shared-mode-foundation-smoke.md")
+	print("[validate] manual journeys and gates: res://qa/QA_INDEX.md")
+	print("[validate] historical smoke summaries: res://implementation/history.md")
+	print("[validate] exact removed smoke sources: Documentation Lite receipt local_rpgisometrico.json + recorded baseline")
 	print("[validate] success")
 	return 0
 

@@ -566,7 +566,7 @@ function Assert-LiveDocsReleaseRootFreshness {
     foreach ($entry in @(
         @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("Latest published remote package:", $currentPackage, $currentRoot, $currentPreview, $currentVersion, 'Version code: `27`', 'Minimum supported: `13`', "docs/release-history.md") },
         @{ Base = $ProjectPath; Path = "docs\release-history.md"; Needles = @("single historical record", $currentPackage, $currentRoot, $currentPreview, $currentVersion, 'vc `27`', 'Minimum supported version code: `13`', $hardeningRoot, $hardeningPreview) },
-        @{ Base = $ProjectPath; Path = "docs\foundation-hardening-v2-readiness-report.md"; Needles = @("Status:", "HISTORICO_BASELINE", $hardeningRoot, $hardeningPreview, "not the latest remote Internal Alpha package") }
+        @{ Base = $ProjectPath; Path = "implementation\history-ledger\2026-06.md"; Needles = @("rec_foundation_hardening_v2_readiness_report_8ce6fdc925", "Projetos/draxos-mobile/docs/foundation-hardening-v2-readiness-report.md", "52f52f7cd33d1711579f9cccbe4c848ab45a02e4") }
     )) {
         foreach ($needle in $entry.Needles) {
             Assert-RelativeFileContains -BasePath $entry.Base -RelativePath $entry.Path -Needle $needle
@@ -581,7 +581,7 @@ function Assert-LiveDocsReleaseRootFreshness {
         "docs\design-pending.md",
         "docs\product-vision.md",
         "docs\product-brief.md",
-        "docs\pve-arena-v1.md",
+        "docs\pve-arena-initial-direction.md",
         "docs\hardening-program.md",
         "docs\multi-agent-workflow.md",
         "docs\minigames\openworld.md",
@@ -608,7 +608,7 @@ function Assert-LiveDocsReleaseRootFreshness {
 
 function Assert-BaselineDriftAbsent {
     $requiredMarkers = @(
-        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "docs/pve-arena-v1.md", "docs/release-history.md") },
+        @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "docs/pve-arena-initial-direction.md", "docs/game-design-document.md", "docs/release-history.md") },
         @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Foundation Hardening V2", "Track 13", "Track 14", "Track 18", "implementation/current-status.md", "docs/release-history.md") },
         @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("implementation/history.md", "Arena PVE") },
         @{ Base = $ProjectPath; Path = "implementation\history.md"; Needles = @("track-18-pve-arena-initial", "track-21-arena-loop-unlock-friction", "docs/release-history.md") },
