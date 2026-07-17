@@ -6,29 +6,20 @@ This file governs agent behavior for the Godot implementation of RPG Isometrico.
 
 This workspace is the active implementation home for RPG Isometrico.
 
-Shared canon lives outside this project under:
-
-- `../../canon/product/product-vision.md`
-- `../../canon/design/game-design-document.md`
-- `../../canon/design/progression-design.md`
-- `../../canon/architecture/shared-architecture.md`
-- `../../canon/architecture/game-mode-standard.md`
-- `../../canon/roadmap/evolution-roadmap.md`
-- `../../canon/roadmap/release-horizons.md`
-- `../../canon/platform/steam-platform.md`
+Product canon lives locally under `docs/canon/`. Shared lore lives under `../../canon/shared-lore/`. Neither location carries operational state.
 
 ## Read Order
 
 Before substantial work:
 
-1. `../../canon/product/product-vision.md`
-2. `../../canon/design/game-design-document.md`
-3. `../../canon/design/progression-design.md`
-4. `../../canon/architecture/shared-architecture.md`
-5. `../../canon/architecture/game-mode-standard.md`
-6. `../../canon/roadmap/evolution-roadmap.md`
-7. `../../canon/roadmap/release-horizons.md`
-8. `../../canon/platform/steam-platform.md`
+1. `docs/canon/product/product-vision.md`
+2. `docs/canon/design/game-design-document.md`
+3. `docs/canon/design/progression-design.md`
+4. `docs/canon/architecture/shared-architecture.md`
+5. `docs/canon/architecture/game-mode-standard.md`
+6. `docs/canon/roadmap/evolution-roadmap.md`
+7. `docs/canon/roadmap/release-horizons.md`
+8. `docs/canon/platform/steam-platform.md`
 9. `implementation/current-status.md`
 10. the active track under `implementation/tracks/`
 11. this file
@@ -64,7 +55,7 @@ Agents must not hand-edit `.tscn` files as raw text. If a scene must be created 
 
 ## Canon Rule
 
-If any historical validation document conflicts with shared canon, shared canon wins.
+If any historical validation document conflicts with local product canon or shared lore, the applicable current authority wins.
 
 Do not treat old validation behavior as an implicit product decision.
 

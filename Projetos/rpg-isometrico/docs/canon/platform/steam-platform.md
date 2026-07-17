@@ -1,5 +1,14 @@
 # Steam Platform Strategy
 
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: estratégia Steam, online ou persistência de plataforma mudar
+- supersedes: none
+- superseded_by: none
+
 ## 1. Purpose
 
 This document defines the shared platform strategy for Steam-facing release work.

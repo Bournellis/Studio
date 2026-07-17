@@ -18,8 +18,8 @@ Use `../../current-status.md` as the short operational snapshot. Read this file 
 ## Read Next
 
 - `../AGENTS.md`
-- `../../../canon/lore/shared-lore.md`
-- `../../../canon/lore/draxos-invasion.md`
+- `../../../../../canon/shared-lore/shared-lore.md`
+- `../../../../../canon/shared-lore/draxos-invasion.md`
 - `../docs/game-design-document.md`
 - `../docs/architecture.md`
 - `../docs/cardgame-core-experiments.md`

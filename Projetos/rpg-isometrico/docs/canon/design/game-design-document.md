@@ -1,5 +1,14 @@
 # Game Design Document
 
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: regras centrais, modos, armas ou campanha mudarem
+- supersedes: none
+- superseded_by: none
+
 ## 1. Purpose of This Document
 
 This document is the detailed gameplay-design reference for RPG Isometrico.
@@ -199,7 +208,7 @@ Campaigns are the primary product mode: multi-stage authored PvE adventures for 
 - Normal: ~25-30 minutes
 - Hard: ~30-40 minutes
 
-Full campaign discovery remains in `../../materiais/references/discovery/campaign-design-discovery.md`.
+Full campaign discovery remains in `../../../../../materiais/references/discovery/campaign-design-discovery.md`.
 
 ### 4.2 PvE Extra Modes
 
@@ -462,7 +471,7 @@ Examples:
 - movement-skill duration
 - combo window timing
 
-Legacy combat-validation discovery values remain in `../../materiais/references/discovery/phase-3-design-discovery.md`.
+Legacy combat-validation discovery values remain in `../../../../../materiais/references/discovery/phase-3-design-discovery.md`.
 
 ---
 

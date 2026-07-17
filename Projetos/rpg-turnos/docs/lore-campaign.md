@@ -2,7 +2,7 @@
 
 - Last Updated: `2026-05-13`
 - Status: `pointer — lore authority delegated`
-- Shared Canon: `../../canon/lore/shared-lore.md`, `../../canon/lore/draxos-invasion.md`
+- Shared Canon: `../../../canon/shared-lore/shared-lore.md`, `../../../canon/shared-lore/draxos-invasion.md`
 
 ## Lore Authority
 
@@ -12,7 +12,7 @@ The authoritative lore document is:
 
 `Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`
 
-Do not maintain a parallel Draxos narrative here. Any story direction for RPG Turnos must be consistent with that document and with `canon/lore/draxos-invasion.md`.
+Do not maintain a parallel Draxos narrative here. Any story direction for RPG Turnos must be consistent with that document and with `canon/shared-lore/draxos-invasion.md`.
 
 ## What RPG Turnos Owns
 

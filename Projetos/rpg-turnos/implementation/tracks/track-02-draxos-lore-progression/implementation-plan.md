@@ -37,7 +37,7 @@ Status: `complete`
 
 Findings:
 - Slice atual tem todos os battle modes oficiais e validação verde.
-- `docs/lore-campaign.md` e `canon/lore/draxos-invasion.md` são a direção de lore ativa.
+- `docs/lore-campaign.md` e `canon/shared-lore/draxos-invasion.md` são a direção de lore ativa.
 - `docs/lore-content-migration.md` define o princípio seguro: player-facing names primeiro, IDs depois.
 - O catálogo já tem display names Draxos/elemental para heróis, cartas, tabuleiros e encontros.
 - As 5 classes foram projetadas e estão documentadas em `docs/classes/`.

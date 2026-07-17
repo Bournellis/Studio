@@ -1,5 +1,14 @@
 # Game Mode Standard
 
+## Metadata
+
+- status: living
+- authority: technical_contract
+- last_verified: 2026-07-16
+- review_when: responsabilidades obrigatórias de um modo jogável mudarem
+- supersedes: none
+- superseded_by: none
+
 ## 1. Purpose
 
 This document defines the mandatory shared structure for playable modes across implementations.

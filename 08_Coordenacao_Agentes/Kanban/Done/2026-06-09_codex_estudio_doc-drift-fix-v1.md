@@ -33,9 +33,9 @@ Alpha.
 ## Arquivos Alterados
 
 - `AGENTS.md`
-- `canon/design/progression-design.md`
-- `canon/lore/draxos-invasion.md`
-- `canon/lore/immortals.md`
+- `Projetos/rpg-isometrico/docs/canon/design/progression-design.md`
+- `canon/shared-lore/draxos-invasion.md`
+- `canon/shared-lore/immortals.md`
 - `Projetos/draxos-mobile/README.md`
 - `Projetos/draxos-mobile/docs/minigames/openworld.md`
 - `Projetos/draxos-mobile/docs/minigames/openworld-decision-pack.md`

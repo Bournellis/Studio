@@ -1,7 +1,13 @@
 # Imortais
 
-- Last Updated: `2026-05-06`
-- Status: `lore pending`
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: o lore detalhado de Imortais for decidido
+- supersedes: none
+- superseded_by: none
 
 ## Purpose
 

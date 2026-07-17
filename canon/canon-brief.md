@@ -1,88 +1,31 @@
 # Canon Brief
 
-This file is the token-efficient entry point for bounded work across the Godot-first workspace.
+## Metadata
 
-It summarizes the shared canon. It does not replace the full read order in `README.md` and `D:\Estudio\AGENTS.md`, and it carries no operational state: no project priorities, active tracks, published packages, URLs or next steps. For those, read `08_Coordenacao_Agentes/Prioridades_Estudio.md` and `08_Coordenacao_Agentes/Estado_Atual.md`.
+- status: living
+- authority: router
+- last_verified: 2026-07-16
+- review_when: o lore compartilhado ou as fronteiras entre projetos mudar
+- supersedes: none
+- superseded_by: none
 
-## Authority Map
+Este é o ponto de entrada curto para lore compartilhado. Não substitui os documentos completos e não carrega estado operacional, prioridade, mecânica, progressão, arquitetura de produto, plataforma ou próximos passos.
 
-- Shared lore and stable cross-project identity: this canon (`canon/`).
-- Portfolio state and allowed work: `08_Coordenacao_Agentes/Prioridades_Estudio.md` + `Estado_Atual.md`.
-- Per-project product/gameplay contracts: each project's local docs. `draxos-roguelike-cardgame`, `draxos-mobile`, `JogoDaCopa` and `FpsPlayground` own their local contracts; RPG Isometrico is the project most fully governed by this shared canon.
-- JogoDaCopa and FpsPlayground are independent tech probes: they may use a light Draxos visual theme but inherit no gameplay, economy, progression or backend systems from Draxos projects.
+## Lore compartilhado
 
-## Shared Lore Snapshot
+- A humanidade deixou o Sistema Solar em um futuro distante e se espalhou pela galáxia.
+- A Terra passou por um apocalipse nuclear; humanos se dividiram em facções.
+- Seres celestiais e intergalácticos fazem parte da continuidade.
+- Draxos são seres arcanos intergalácticos de origem incerta, movidos por energia astral, conquista e dominação.
+- Bases Draxos podem parecer naves, mas são plasmadas do éter em vez de construídas como tecnologia convencional.
+- Imortais é o nome voltado ao jogador que substitui o placeholder `Heroic`/`Heroico`; o lore detalhado permanece pendente.
 
-- the universe is a distant future where humanity has left the Solar System and spread across the galaxy
-- Earth is post-nuclear-apocalypse and humans are split into factions
-- other celestial/intergalactic beings are part of the main continuity
-- Draxos are arcane intergalactic beings of unclear origin who use astral energy for power, conquest, travel, and infrastructure
-- Draxos commonly dominate and enslave beings they consider inferior
-- Draxos bases may resemble spacecraft but are plasmated from ether, not built as conventional technology
-- Imortais is the player-facing name replacing the old `Heroic` / `Heroico` placeholder; detailed lore is pending
-- RPG Isometrico currently uses Imortais as the safe label for the direct-combat baseline while its detailed campaign lore remains TBD
-- RPG Turnos initially covers a Draxos mission that can succeed: invasion of an elemental planet, enslavement of elementals, and extraction of a powerful volcano crystal
+## Fronteiras
 
-## RPG Isometrico Core Contract
+- Compartilhar lore não concede adoção automática de gameplay, economia, progressão, backend, plataforma ou arquitetura.
+- RPG Isométrico possui canon de produto local em `Projetos/rpg-isometrico/docs/canon/`.
+- RPG Turnos, Draxos Roguelike Cardgame e DraxosMobile são produtos mecanicamente independentes.
+- JogoDaCopa e FpsPlayground são tech probes independentes.
+- Uma regra cruza projetos apenas quando o projeto receptor a adota explicitamente em contrato local.
 
-Treat RPG Isometrico as a campaign-first isometric action game, race-first in character identity, driven by kit mastery (not loot gear), built around authored PvE campaign progression for a buy-once Steam-first release.
-
-- loadout is `Race -> 1 Weapon -> 4 Skills -> 2 Potions`
-- Classic campaign may teach and unlock that kit gradually
-- Free campaign replay and extra modes may expose broader unlocked loadout selection
-- passive system is permanently removed
-- weapon swap is permanently removed
-- camera is fixed isometric and non-rotating
-- PvP is not a launch pillar; private duel is future or development-only direct-invite play
-- no public matchmaking, ranked PvP, or dedicated server requirement exists in the current plan
-- co-op is optional for Release 1 only if it preserves the solo-first campaign baseline
-- Steam (PC) is the primary platform; mobile is a future expansion
-
-## DraxosMobile Contract (stable parts)
-
-Treat DraxosMobile as:
-
-- an implementation project, not a concept archive
-- a multi-platform mobile-first product targeting Android native app, PC executable, and PC browser
-- a shared-account ecosystem around one Draxos mage, Refugio/Base management, PVE Arena-first async autobattler progression, later PVP/social systems, and shared account progression
-- server-authoritative: Godot never simulates battle results or mutates resources directly
-- backed by Supabase Auth, Postgres, Edge Functions, and eventually Realtime
-
-Local long-term product authority lives in `Projetos/draxos-mobile/docs/product-vision.md` until specific parts are promoted into shared canon. Operational stage, published package and next step live only in `Estado_Atual.md` and `Projetos/draxos-mobile/implementation/current-status.md`.
-
-Do not import rules from Draxos Roguelike Cardgame, RPG Turnos, or RPG Isometrico unless DraxosMobile local docs explicitly adopt them in `Projetos/draxos-mobile/docs/reuse-map.md` and the affected local contract.
-
-## RPG Turnos Contract
-
-Treat RPG Turnos as:
-
-- a clean Godot project, mechanically independent from RPG Isometrico
-- allowed to share the same broader studio lore
-- an RPG with free map exploration, NPC conversations, route choice, items, stats, level, and progression
-- a turn-based RPG-cardgame built around fixed board slots, cards, hero abilities, encounter objectives, and confrontation lanes
-- initially focused on a Draxos novice mage assigned to a respected strike team after that team lost a soldier
-- undecided between 2D, 3D, or hybrid presentation; built from visual-agnostic systems
-
-Do not apply RPG Isometrico's action loadout, real-time combat assumptions, or mode roadmap to RPG Turnos unless RPG Turnos local docs explicitly adopt them. Treat existing RPG Turnos mechanical IDs as stable placeholders unless a dedicated migration explicitly renames them.
-
-## Shared Architecture Snapshot
-
-Keep these boundaries clean:
-
-- `Foundation`: shared contracts and cross-cutting base data
-- `Gameplay`: reusable gameplay rules and runtime behavior
-- `Presentation`: player-facing UI, camera, and feedback
-- `Composition`: scene wiring, launch bootstrap, and mode assembly
-- `Online`: networking, persistence, sync, and platform-service seams
-
-Do not leak engine or vendor SDK concerns into `Gameplay`.
-
-## Shared Mode Standard Snapshot
-
-Every playable mode should have a clear equivalent of: launch context, bootstrap, session manager, game loop, simulation context, HUD presenter, and results presenter.
-
-## When To Escalate
-
-Use the full read order when the task may change product identity, the loadout model, progression, shared architecture boundaries, platform or online assumptions, or redefine a mode's structure beyond a local engine detail.
-
-If the task is purely operational, switch from this brief into the target project after reading `Prioridades_Estudio.md`.
+Para detalhes, leia `shared-lore/` e `studio-conventions/project-boundaries.md`. Para trabalho operacional, siga `08_Coordenacao_Agentes/Prioridades_Estudio.md`, o `implementation/current-status.md` local e a coordenação do projeto.

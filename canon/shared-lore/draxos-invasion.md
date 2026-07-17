@@ -1,7 +1,13 @@
 # Draxos Invasion
 
-- Last Updated: `2026-05-12`
-- Status: `active shared lore — authority: draxos-roguelike-cardgame`
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: o lore compartilhado de Draxos for promovido ou alterado
+- supersedes: none
+- superseded_by: none
 
 ## Purpose
 

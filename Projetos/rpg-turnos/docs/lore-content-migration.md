@@ -3,7 +3,7 @@
 - Last Updated: `2026-05-12`
 - Status: `planning`
 - Lore Authority: `../../Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`
-- Depends On: `lore-campaign.md`, `../../canon/lore/draxos-invasion.md`
+- Depends On: `lore-campaign.md`, `../../../canon/shared-lore/draxos-invasion.md`
 
 ## Purpose
 

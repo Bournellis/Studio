@@ -11,7 +11,7 @@ Gaps marcados com ⚠️ têm inconsistências ativas em arquivos existentes.
 
 ## Categoria: Narrativa e Mundo
 
-> Atualizacao 2026-05-06: `../../canon/lore/shared-lore.md`, `../../canon/lore/draxos-invasion.md` e `lore-campaign.md` definem a direcao ativa: uma campanha Draxos em um planeta elemental. IDs mecanicos antigos continuam temporariamente por estabilidade.
+> Atualizacao 2026-05-06: `../../../canon/shared-lore/shared-lore.md`, `../../../canon/shared-lore/draxos-invasion.md` e `lore-campaign.md` definem a direcao ativa: uma campanha Draxos em um planeta elemental. IDs mecanicos antigos continuam temporariamente por estabilidade.
 
 ### G-N1 - Premissa e setting do jogo
 **Status:** `em design`

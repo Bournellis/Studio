@@ -490,8 +490,8 @@ The placeholder stage exists to produce assets good enough to run real gameplay 
 
 This document is the production reference for any visual asset decision.
 
-For detailed game mode rules, weapon designs, and skill definitions, read `canon/design/game-design-document.md`.
+For detailed RPG Isometrico game mode rules, weapon designs, and skill definitions, read `Projetos/rpg-isometrico/docs/canon/design/game-design-document.md`.
 
-For the product vision, design pillars, and race system, read `canon/product/product-vision.md`.
+For the RPG Isometrico product vision, design pillars, and race system, read `Projetos/rpg-isometrico/docs/canon/product/product-vision.md`.
 
 If a visual decision conflicts with this document, the conflict must be explicitly resolved and this document updated. Silent drift from the art direction is not acceptable — it produces assets that do not look like the same game.

@@ -34,8 +34,8 @@ Current identity:
 Before substantial work:
 
 1. `../../canon/canon-brief.md`
-2. `../../canon/lore/shared-lore.md`
-3. `../../canon/lore/draxos-invasion.md`
+2. `../../canon/shared-lore/shared-lore.md`
+3. `../../canon/shared-lore/draxos-invasion.md`
 4. `docs/product-brief.md`
 5. `docs/game-design-document.md`
 6. `docs/architecture.md`

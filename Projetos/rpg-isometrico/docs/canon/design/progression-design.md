@@ -1,10 +1,19 @@
 # Progression Design
 
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: progressão, desbloqueios ou superfície de campanha mudarem
+- supersedes: none
+- superseded_by: none
+
 ## 1. Purpose of This Document
 
 This document defines how the player enters the game, how the first campaign teaches the kit, how gameplay content is permanently unlocked, and how the local menu exposes the campaign-first product surface over time.
 
-It does not replace `game-design-document.md` for combat rules or `../../materiais/references/discovery/campaign-design-discovery.md` for broader campaign exploration.
+It does not replace `game-design-document.md` for combat rules or `../../../../../materiais/references/discovery/campaign-design-discovery.md` for broader campaign exploration.
 
 Scope note: this progression contract governs RPG Isometrico. Do not apply its
 campaign, mode unlock, co-op or menu rules to DraxosMobile or Draxos Roguelike

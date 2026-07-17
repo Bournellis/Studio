@@ -1,5 +1,14 @@
 # Evolution Roadmap
 
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: princípios ou ordem de evolução do produto mudarem
+- supersedes: none
+- superseded_by: none
+
 ## 1. Purpose of This Document
 
 This document defines the intended order and principles of product growth for RPG Isometrico.

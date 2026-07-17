@@ -1,5 +1,14 @@
 # Product Vision
 
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: identidade, escopo ou pilares do produto mudarem
+- supersedes: none
+- superseded_by: none
+
 ## 1. Purpose of This Document
 
 This document defines the product vision of the game.

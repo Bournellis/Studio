@@ -1,5 +1,14 @@
 # Release Horizons
 
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: horizontes de lançamento do produto mudarem
+- supersedes: none
+- superseded_by: none
+
 ## 1. Purpose of This Document
 
 This document defines the future release horizons of the game as a product.

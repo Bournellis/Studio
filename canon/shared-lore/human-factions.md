@@ -1,7 +1,13 @@
 # Human Factions
 
-- Last Updated: `2026-05-14`
-- Status: `active shared lore canon`
+## Metadata
+
+- status: living
+- authority: product_contract
+- last_verified: 2026-07-16
+- review_when: o lore compartilhado das facções humanas mudar
+- supersedes: none
+- superseded_by: none
 
 ## Purpose
 

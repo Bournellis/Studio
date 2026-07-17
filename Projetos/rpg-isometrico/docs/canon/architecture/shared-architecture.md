@@ -1,5 +1,14 @@
 # Shared Architecture
 
+## Metadata
+
+- status: living
+- authority: technical_contract
+- last_verified: 2026-07-16
+- review_when: limites arquiteturais ou modelo de autoridade mudarem
+- supersedes: none
+- superseded_by: none
+
 ## 1. Purpose
 
 This document defines the engine-neutral software architecture of RPG Isometrico.

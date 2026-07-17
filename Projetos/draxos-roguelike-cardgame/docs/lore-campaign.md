@@ -2,7 +2,7 @@
 
 - Last Updated: `2026-05-07`
 - Status: `bootstrap narrative direction`
-- Shared Canon: `../../canon/lore/shared-lore.md`, `../../canon/lore/draxos-invasion.md`
+- Shared Canon: `../../../canon/shared-lore/shared-lore.md`, `../../../canon/shared-lore/draxos-invasion.md`
 
 ## Premise
 
@@ -44,4 +44,4 @@ RPG Turnos shares all Draxos lore from this document.
 
 RPG Turnos does not inherit exploration movement, campaign progression, combat economy, or board complexity from this project. Those are independent mechanics.
 
-The shared lore anchor is `../../canon/lore/draxos-invasion.md`.
+The shared lore anchor is `../../../canon/shared-lore/draxos-invasion.md`.

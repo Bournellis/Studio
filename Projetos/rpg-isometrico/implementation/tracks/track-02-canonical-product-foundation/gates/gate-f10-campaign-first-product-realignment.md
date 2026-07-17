@@ -33,11 +33,11 @@
 
 ## Acceptance
 
-- `canon/product/product-vision.md` presents the game as campaign PvE first.
-- `canon/design/game-design-document.md` places campaigns before PvP/MOBA in product reading and defines Classic versus Free responsibilities.
-- `canon/design/progression-design.md` defines Classic as the main progression path and Free as replay/buildcraft after Classic.
-- `canon/roadmap/release-horizons.md` states Release 1 is campaign PvE first, with co-op optional only if it preserves solo quality.
-- `canon/architecture/shared-architecture.md` and `canon/platform/steam-platform.md` state that co-op/private duel do not require dedicated servers in the current plan.
+- `Projetos/rpg-isometrico/docs/canon/product/product-vision.md` presents the game as campaign PvE first.
+- `Projetos/rpg-isometrico/docs/canon/design/game-design-document.md` places campaigns before PvP/MOBA in product reading and defines Classic versus Free responsibilities.
+- `Projetos/rpg-isometrico/docs/canon/design/progression-design.md` defines Classic as the main progression path and Free as replay/buildcraft after Classic.
+- `Projetos/rpg-isometrico/docs/canon/roadmap/release-horizons.md` states Release 1 is campaign PvE first, with co-op optional only if it preserves solo quality.
+- `Projetos/rpg-isometrico/docs/canon/architecture/shared-architecture.md` and `Projetos/rpg-isometrico/docs/canon/platform/steam-platform.md` state that co-op/private duel do not require dedicated servers in the current plan.
 - Active status docs record that Arena PvP / Private Duel is not a public product promise and must stay experimental or development-only until a later gate promotes or removes it.
 
 ## Validation

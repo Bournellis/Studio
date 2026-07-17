@@ -30,4 +30,4 @@
 
 ## Start Here
 
-Read `AGENTS.md`, `../../canon/lore/shared-lore.md`, `docs/lore-campaign.md`, `docs/game-design-document.md`, `docs/architecture.md`, and `implementation/current-status.md` before making meaningful changes.
+Read `AGENTS.md`, `../../canon/shared-lore/shared-lore.md`, `docs/lore-campaign.md`, `docs/game-design-document.md`, `docs/architecture.md`, and `implementation/current-status.md` before making meaningful changes.

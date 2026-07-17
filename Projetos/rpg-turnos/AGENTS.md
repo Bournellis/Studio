@@ -31,8 +31,8 @@ Current active combat rule:
 Before substantial work:
 
 1. `../../canon/canon-brief.md`
-2. `../../canon/lore/shared-lore.md`
-3. `../../canon/product/product-vision.md` for shared setting and lore context only
+2. `../../canon/shared-lore/shared-lore.md`
+3. `../../canon/shared-lore/draxos-invasion.md`
 4. `docs/lore-campaign.md`
 5. `docs/project-brief.md`
 6. `docs/game-design-document.md`
