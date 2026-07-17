@@ -1,0 +1,194 @@
+{
+  "schema_version": 2,
+  "receipt_id": "receipt_coord_estudio_202606",
+  "batch_id": "coord_estudio_202606",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "generated_at": "2026-07-17T15:20:26.132274Z",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "manifest_sha256": "4e12a673e077d22c48894021762db28228506db27fb8a9b3a18eb868856e89e4",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Docs_Status_Slimming_Plan.md",
+      "sha256": "55720000cd77464ac5c82ae98ba982132c6eb274fbccf4640bf1d51fccc78d14",
+      "git_blob": "2fd9dfeaf1d7a97c01b1a35e2faf6433ebc3cc7d",
+      "record_id": "rec_docs_status_slimming_plan_f829155e5e",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-09_codex_active-games-hardening-program.md",
+      "sha256": "8eb7a60f9b5a0ee16d50addb0e679010ff07a79e3d280fed7a0ee4e60dfdba0e",
+      "git_blob": "4159a28090da7550d8b4ebcdb6b61e07e7a0b1bc",
+      "record_id": "rec_2026_06_09_codex_active_games_hardening_progr_c0aabb7e14",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-09_codex_estudio_ops_doc_hardening.md",
+      "sha256": "9da98b8364880f7f5d376ddc7643231cc55bbf98761d591bff1cbbc363c7cc01",
+      "git_blob": "cf635f82e1bb8585b80ad3494fc6b742782886dc",
+      "record_id": "rec_2026_06_09_codex_estudio_ops_doc_hardening_1a0c428a55",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-01_codex_modes-integrated-alpha.md",
+      "sha256": "5f14985c4d5de7bd91c9bbdc949d2b3ae6acf7bfba526031f9117c438f8be24c",
+      "git_blob": "6011536898f0a84d9c579a6e9a9cabe1222de4f3",
+      "record_id": "rec_2026_06_01_codex_modes_integrated_alpha_47dbe4ecf1",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-04_codex_estudio_worktree-cleanup.md",
+      "sha256": "8637b9a63ae2efb27bd173870dc714d4b0a57691f9af5fd791144c59cfa1a1a8",
+      "git_blob": "e1029a67f04f1268770a28ba96e3fadbae82e7f7",
+      "record_id": "rec_2026_06_04_codex_estudio_worktree_cleanup_286fdc249f",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_active-games-hardening-program.md",
+      "sha256": "f0b2b8c769e587b4ac1ceb3ab2b449bfbe0f86c6467ab73a846ed23608c8bc11",
+      "git_blob": "ea8d7aaba34270ee182819954ef8bfb0dec046c3",
+      "record_id": "rec_2026_06_09_codex_active_games_hardening_progr_fb19a49e45",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_estudio_doc-drift-fix-v1.md",
+      "sha256": "dbb677d0ddbdb380772ffe293dd31337c63c196d1d1845f0309540d47628dc88",
+      "git_blob": "fbc366ac25a72ffafc3aa7e98afc06a9cec2391f",
+      "record_id": "rec_2026_06_09_codex_estudio_doc_drift_fix_v1_f4de0560b8",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_claude_estudio_doc-dedup-cleanup.md",
+      "sha256": "d597ffab03d2a76d9a3ffdd0a824353df93d07d3975f151d08314cc1190eddb3",
+      "git_blob": "29ec33c851385c853c3e1d985aeb2654e240349f",
+      "record_id": "rec_2026_06_10_claude_estudio_doc_dedup_cleanup_a84da1d047",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_estudio_git-housekeeping.md",
+      "sha256": "cbfa3c7a582205350ff149416d8d081b04184e54be8f52d53f1e47188fed634b",
+      "git_blob": "cd8ee52d3f9168b1dfb3cc1bcc6892c15b003267",
+      "record_id": "rec_2026_06_10_codex_estudio_git_housekeeping_8597074419",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_estudio_temporary-jogodacopa-focus.md",
+      "sha256": "b9f2158f970d1118997600667263a48b9bbea8f5da9f7d482af164230f57c9fa",
+      "git_blob": "0ede20063f854c8e533b49d69386480506182918",
+      "record_id": "rec_2026_06_10_codex_estudio_temporary_jogodacopa_aaf57dcc9a",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_playground_split-fpsplayground-jogodacopa.md",
+      "sha256": "a3efe7f625d9bfefdde850a896a6e64a0a638b2367d0e42c178f46ac85c50fad",
+      "git_blob": "1edae08beee4b0d743cf39946fd0bf150d5e198a",
+      "record_id": "rec_2026_06_10_codex_playground_split_fpsplaygrou_b8eda13ce2",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_claude_estudio_github-backup-workflow.md",
+      "sha256": "2a076cebec133aa7cfb08e23ade2ab2d46a420d12a64283a55c1d9ea55aa6a20",
+      "git_blob": "a7f31d3a480e1aaa3c60aa6e0ff257ee700a3384",
+      "record_id": "rec_2026_06_11_claude_estudio_github_backup_workf_76923cfdf2",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_estudio_git-push-policy-audit.md",
+      "sha256": "9d8c72a1084bbf1f5fc26db0f8e461c40be2c4dd851297fd0764b4bfc2d5bd3b",
+      "git_blob": "62f510a9fcac6583e9d95434617765525c8f05a4",
+      "record_id": "rec_2026_06_14_codex_estudio_git_push_policy_audi_0b1c267053",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Lifecycle_Cleanup_Audit_2026-06-29.md",
+      "sha256": "b3dda85893dfd879009b3a512bd371475f77a0ab53040f53a702eaeb12e18321",
+      "git_blob": "02ff21b8892a61e8050c32e1dddeff96c5afa3f8",
+      "record_id": "rec_lifecycle_cleanup_audit_2026_06_29_61dae7684e",
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    }
+  ]
+}
