@@ -35,7 +35,7 @@ function Invoke-Required {
     try {
         $detail = & $Action
         $timer.Stop()
-        $detailText = ([string]$detail).Trim()
+        $detailText = if ($null -eq $detail) { 'completed without pipeline output' } else { ([string]$detail).Trim() }
         $status = if ($detailText.StartsWith('WARN:')) { 'warn' } else { 'pass' }
         Add-Result -Name $Name -Status $status -Detail $detailText -DurationMs $timer.Elapsed.TotalMilliseconds
     } catch {
@@ -52,7 +52,8 @@ function Invoke-Optional {
     try {
         $detail = & $Action
         $timer.Stop()
-        Add-Result -Name $Name -Status 'pass' -Detail ([string]$detail).Trim() -DurationMs $timer.Elapsed.TotalMilliseconds
+        $detailText = if ($null -eq $detail) { 'completed without pipeline output' } else { ([string]$detail).Trim() }
+        Add-Result -Name $Name -Status 'pass' -Detail $detailText -DurationMs $timer.Elapsed.TotalMilliseconds
     } catch {
         $timer.Stop()
         Add-Result -Name $Name -Status 'warn' -Detail $_.Exception.Message -DurationMs $timer.Elapsed.TotalMilliseconds
@@ -123,7 +124,8 @@ if ($runCore) {
     Invoke-Required 'Tracked secret scan' {
         $output = & (Join-Path $PSScriptRoot 'check_secret_scan.ps1') -Root $root 2>&1
         if ($LASTEXITCODE -ne 0) { throw (($output | Select-Object -Last 20) -join [Environment]::NewLine) }
-        ($output | Select-Object -Last 1)
+        if ($null -eq $output) { 'tracked files scanned; scanner emitted host-only output' }
+        else { ($output | Select-Object -Last 1) }
     }
 }
 

@@ -167,6 +167,11 @@ class RealWorkspaceTests(unittest.TestCase):
         for pattern in ("**/Handoffs/**", "**/Kanban/Done/**", "**/archive/**", "**/Historico/**"):
             self.assertIn(pattern, text)
 
+    def test_studio_doctor_accepts_host_only_checker_output(self) -> None:
+        text = (TOOLS / "studio_doctor.ps1").read_text(encoding="utf-8")
+        self.assertIn("if ($null -eq $detail)", text)
+        self.assertIn("if ($null -eq $output) { 'tracked files scanned; scanner emitted host-only output' }", text)
+
 
 @unittest.skipUnless(sys.platform == "win32", "PowerShell helper contracts are Windows-only")
 class PowerShellHelperTests(GitFixture):
