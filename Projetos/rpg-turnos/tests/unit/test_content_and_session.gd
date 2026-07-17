@@ -542,18 +542,18 @@ func test_ondas_resistencia_wave1_has_two_ladrao_rapido() -> void:
 
 func test_p19_card_centelha_duplicada_exists() -> void:
 	var catalog = ContentLibrary.get_catalog()
-	var card: Dictionary = catalog.find_card("centelha_duplicada")
-	assert_false(card.is_empty(), "centelha_duplicada must exist in catalog after P19 expansion.")
-	assert_eq(str(card.get("type", "")), "magia",
+	var card = catalog.find_card("centelha_duplicada")
+	assert_not_null(card, "centelha_duplicada must exist in catalog after P19 expansion.")
+	assert_eq(str(card.card_type), "magia",
 		"centelha_duplicada must be of type magia.")
 
 func test_p19_card_espectro_veloz_exists() -> void:
 	var catalog = ContentLibrary.get_catalog()
-	var card: Dictionary = catalog.find_card("espectro_veloz")
-	assert_false(card.is_empty(), "espectro_veloz must exist in catalog after P19 expansion.")
-	assert_eq(str(card.get("type", "")), "criatura",
+	var card = catalog.find_card("espectro_veloz")
+	assert_not_null(card, "espectro_veloz must exist in catalog after P19 expansion.")
+	assert_eq(str(card.card_type), "criatura",
 		"espectro_veloz must be of type criatura.")
-	assert_true(Array(card.get("keywords", [])).has("rapido"),
+	assert_true(card.keywords.has("rapido"),
 		"espectro_veloz must have the rapido keyword.")
 
 func test_p19_reduto_eter_encounter_exists() -> void:
@@ -711,3 +711,54 @@ func test_p20_all_eight_chain_encounter_ids_exist_in_catalog() -> void:
 		var enc: Dictionary = catalog.find_encounter(enc_id)
 		assert_false(enc.is_empty(),
 			"Chain encounter '%s' must exist in catalog after P20 ID migration." % enc_id)
+
+func test_p20_save_migration_maps_all_eight_ids_in_both_lists() -> void:
+	var legacy_ids: Array = [
+		"emboscada_na_ponte", "duelista_bandido", "emboscada_no_cruzamento",
+		"fortaleza_do_desfiladeiro", "invasao_em_ondas", "defesa_do_portao",
+		"colosso_fragmentado", "enigma_da_ponte"
+	]
+	var expected_ids: Array = [
+		"operacao_pouso", "confronto_guardiao", "tomada_conduto", "avanco_bastiao",
+		"ondas_resistencia", "defesa_base_ether", "nucleo_fragmentado", "ruptura_selos"
+	]
+	var v1_save: Dictionary = {
+		"version": 1,
+		"active_encounter_id": legacy_ids[0],
+		"completed_encounter_ids": legacy_ids.duplicate(),
+		"claimed_encounter_reward_ids": legacy_ids.duplicate()
+	}
+	var migrated: Dictionary = GameSession._migrate_save_v1_to_v2(v1_save)
+	assert_eq(migrated.get("version"), 2, "Migration must upgrade the save version.")
+	assert_eq(migrated.get("completed_encounter_ids"), expected_ids,
+		"All eight completed encounter IDs must migrate in stable order.")
+	assert_eq(migrated.get("claimed_encounter_reward_ids"), expected_ids,
+		"All eight claimed reward encounter IDs must migrate in stable order.")
+
+func test_p20_save_migration_preserves_unknown_encounter_ids() -> void:
+	var v1_save: Dictionary = {
+		"version": 1,
+		"active_encounter_id": "future_encounter",
+		"completed_encounter_ids": ["future_encounter"],
+		"claimed_encounter_reward_ids": ["external_encounter"]
+	}
+	var migrated: Dictionary = GameSession._migrate_save_v1_to_v2(v1_save)
+	assert_eq(migrated.get("active_encounter_id"), "future_encounter",
+		"Migration must not rewrite unknown active encounter IDs.")
+	assert_eq(migrated.get("completed_encounter_ids"), ["future_encounter"],
+		"Migration must preserve unknown completed encounter IDs.")
+	assert_eq(migrated.get("claimed_encounter_reward_ids"), ["external_encounter"],
+		"Migration must preserve unknown claimed reward encounter IDs.")
+
+func test_p20_save_migration_does_not_mutate_input() -> void:
+	var v1_save: Dictionary = {
+		"version": 1,
+		"active_encounter_id": "emboscada_na_ponte",
+		"completed_encounter_ids": ["duelista_bandido"],
+		"claimed_encounter_reward_ids": ["defesa_do_portao"],
+		"nested_future_data": {"encounter_id": "emboscada_na_ponte"}
+	}
+	var original: Dictionary = v1_save.duplicate(true)
+	var migrated: Dictionary = GameSession._migrate_save_v1_to_v2(v1_save)
+	assert_eq(v1_save, original, "Migration must be pure and leave the input save untouched.")
+	assert_ne(migrated, v1_save, "Migration must return an upgraded copy.")
