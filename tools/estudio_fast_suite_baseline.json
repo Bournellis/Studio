@@ -1,12 +1,153 @@
 {
   "schema_version": 1,
-  "generated_at": null,
+  "generated_at": "2026-07-17T04:06:13.747684+00:00",
   "projects": {
-    "JogoDaCopa": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
-    "DraxosMobile": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
-    "FpsPlayground": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
-    "DraxosRoguelike": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
-    "RpgIsometrico": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} },
-    "RpgTurnos": { "status": "unmeasured", "godot_version": null, "contract_hash": null, "source_sha": null, "runners": {} }
+    "JogoDaCopa": {
+      "status": "measured",
+      "godot_version": "4.6.2.stable.official.71f334935",
+      "contract_hash": "4aca9bac1ddf4c07d901d6a5e9b335fa930c9e8454aaca03b02dac2f4a23985e",
+      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "runners": {
+        "structure_fast": {
+          "median_seconds": 1.016,
+          "budget_seconds": 30,
+          "samples_seconds": [
+            1.11,
+            1.016,
+            1.016
+          ]
+        },
+        "rules_fast": {
+          "median_seconds": 1.297,
+          "budget_seconds": 30,
+          "samples_seconds": [
+            1.297,
+            1.235,
+            1.297
+          ]
+        }
+      }
+    },
+    "DraxosMobile": {
+      "status": "measured",
+      "godot_version": "4.6.2.stable.official.71f334935",
+      "contract_hash": "e71d525193a43128e22b7fecf84f2150037d351c5ba2ddd17433494bb3962873",
+      "source_sha": "11c2b3bcbf49843bda35540af02a4098e0a4461a",
+      "runners": {
+        "docs_contracts_fast": {
+          "median_seconds": 1.609,
+          "budget_seconds": 60,
+          "samples_seconds": [
+            1.609,
+            1.578,
+            1.703
+          ]
+        },
+        "server_quick_local": {
+          "median_seconds": 11.593,
+          "budget_seconds": 240,
+          "samples_seconds": [
+            11.782,
+            11.593,
+            11.094
+          ]
+        },
+        "client_gut_short_fast": {
+          "median_seconds": 1.61,
+          "budget_seconds": 60,
+          "samples_seconds": [
+            1.61,
+            1.532,
+            1.656
+          ]
+        }
+      }
+    },
+    "FpsPlayground": {
+      "status": "measured",
+      "godot_version": "4.6.2.stable.official.71f334935",
+      "contract_hash": "22075c6406e753795c314dd52d6d666136e058a9380019c04b2687c3df9351cc",
+      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "runners": {
+        "fps_fast_structure": {
+          "median_seconds": 0.36,
+          "budget_seconds": 30,
+          "samples_seconds": [
+            0.36,
+            0.36,
+            0.359
+          ]
+        },
+        "fps_fast_rules": {
+          "median_seconds": 1.297,
+          "budget_seconds": 30,
+          "samples_seconds": [
+            1.328,
+            1.297,
+            1.281
+          ]
+        },
+        "fps_fast_telemetry": {
+          "median_seconds": 1.938,
+          "budget_seconds": 30,
+          "samples_seconds": [
+            2.125,
+            1.938,
+            1.937
+          ]
+        }
+      }
+    },
+    "DraxosRoguelike": {
+      "status": "measured",
+      "godot_version": "4.6.2.stable.official.71f334935",
+      "contract_hash": "6c15bea767a6c371da8e0bca79c08542a371ddf8203a1aa389790c54f0456486",
+      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "runners": {
+        "roguelike_fast_contracts": {
+          "median_seconds": 2.953,
+          "budget_seconds": 30,
+          "samples_seconds": [
+            2.953,
+            2.859,
+            2.969
+          ]
+        }
+      }
+    },
+    "RpgIsometrico": {
+      "status": "measured",
+      "godot_version": "4.6.2.stable.official.71f334935",
+      "contract_hash": "a3dd8a0896d5d4b2c2295edf7cee17d9ea65228fced51e75116416e5ed301e27",
+      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "runners": {
+        "contracts_fast": {
+          "median_seconds": 12.031,
+          "budget_seconds": 30,
+          "samples_seconds": [
+            12.031,
+            12.031,
+            11.906
+          ]
+        }
+      }
+    },
+    "RpgTurnos": {
+      "status": "measured",
+      "godot_version": "4.6.2.stable.official.71f334935",
+      "contract_hash": "bd33a427787d7d0ef8261f14dcacc2f790a2fc88a7034b9d62bea278e2d87ddd",
+      "source_sha": "0ac3debf855213659086ecc989bd7a3583823e05",
+      "runners": {
+        "rpg_turnos_fast_contracts": {
+          "median_seconds": 1.703,
+          "budget_seconds": 30,
+          "samples_seconds": [
+            1.75,
+            1.703,
+            1.562
+          ]
+        }
+      }
+    }
   }
 }
