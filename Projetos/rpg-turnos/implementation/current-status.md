@@ -1,10 +1,18 @@
 # Current Status
 
-- Last Updated: `2026-07-16`
-- Project: `rpg-turnos`
+## Metadata
+
+- status: `paused`
+- authority: `local_state`
+- last_verified: `2026-07-16`
+- review_when: `portfolio resumes the project or the runtime baseline changes`
+- supersedes: `current-status.md before Governance v2`
+- superseded_by: `none`
+
+## Operational Snapshot
+
 - Portfolio Status: `PAUSADO_INDEFINIDO`
 - Portfolio Authority: `../../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
-- Local Authority: technical snapshot only; this file does not authorize product work or change portfolio priority.
 - Preserved Track: `Track 02 - Draxos Lore And Progression Alignment`
 - Track Result: `COMPLETE` through P20; no active implementation prompt or next track.
 
@@ -32,6 +40,9 @@
 
 ## Read Next
 
+- `../08_Coordenacao/documentation-index.md`
+- `../qa/QA_INDEX.md`
+- `engineering-health-baseline.md`
 - `../AGENTS.md`
 - `tracks/track-02-draxos-lore-progression/linear-execution-plan.md`
 - `../docs/game-design-document.md`
