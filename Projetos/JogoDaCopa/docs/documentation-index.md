@@ -29,10 +29,9 @@
 ## História e evidência
 
 - linhagem única de releases: `release-history.md`
-- planos anteriores: `work-plan.md`, `release-plan.md`, `quality-upgrade-plan.md`, `arcade-upgrade-plan.md`, `series-06-broadcast-polish-plan.md`, `next-series-options.md`
-- implementação: `../implementation/tracks/`
+- história técnica e decisões curadas: `../implementation/history.md`
 - relatórios e dados: `playtest-reports/`
 - imagens: `screenshots/`
-- revisões históricas: arquivos `code-review-*.md`
+- licenças e origem: `asset-licenses.md`
 
-Arquivos históricos não definem estado, próxima track ou publicação atual. A história global pré-cutover permanece em `../../../08_Coordenacao_Agentes/`.
+Tracks, planos, reviews e relatórios narrativos pré-cutover continuam preservados até uma remoção autorizada por manifesto. Eles não definem estado, próxima track ou publicação atual.

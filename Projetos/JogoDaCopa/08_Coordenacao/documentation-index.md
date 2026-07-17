@@ -15,6 +15,7 @@
 2. `../implementation/current-status.md`
 3. `../qa/QA_INDEX.md`
 4. `TRIAGE.md`
+5. `../implementation/history.md` quando a tarefa exigir história curada
 
 ## Trabalho
 
@@ -24,4 +25,6 @@
 - encerrados: `Kanban/Done/`
 - handoffs: `Handoffs/`
 
-História pré-cutover permanece na coordenação global e em `../implementation/tracks/`, `../docs/release-history.md` e `../docs/playtest-reports/`.
+História técnica curada vive em `../implementation/history.md`; releases em `../docs/release-history.md`; evidência bruta em `../docs/playtest-reports/` e `../docs/screenshots/`.
+
+Tracks, reviews, planos e registros globais pré-cutover permanecem apenas como fontes de recuperação até uma remoção autorizada por manifesto.
