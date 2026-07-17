@@ -378,6 +378,21 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
                     status = "audit_fail" if args.audit_only else "fail"
                     report["steps"].append(_result(f"{project['id']}:{runner.get('id')}", status, 0, reason=str(exc)))
                     continue
+                warmup_failed = False
+                if runner.get("category") == "fast":
+                    # Calibration discards warm-up samples. Validation must use
+                    # the same thermal/cache state before applying relative
+                    # thresholds, otherwise sub-second process startup dominates.
+                    for warmup_index in range(int(config["fast_suite"]["warmup_runs"])):
+                        warmup = _run_checked(root, project, runner, command, args.audit_only)
+                        warmup["name"] = f"{warmup['name']}:warmup{warmup_index + 1}"
+                        warmup["performance_role"] = "warmup"
+                        report["steps"].append(warmup)
+                        if warmup["status"] in {"fail", "audit_fail"}:
+                            warmup_failed = True
+                            break
+                if warmup_failed:
+                    continue
                 result = _run_checked(root, project, runner, command, args.audit_only)
                 if runner.get("category") == "fast" and result["status"] == "pass":
                     code, message = _baseline_issue(baseline, project, manifest, runner, float(result["duration_seconds"]), godot_version)
