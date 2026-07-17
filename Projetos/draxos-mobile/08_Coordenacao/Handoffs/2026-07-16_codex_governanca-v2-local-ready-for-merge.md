@@ -8,7 +8,7 @@
 - projeto: `DraxosMobile`
 - coordination_scope: `project_local`
 - closure_protocol: `agent_local_merge_v3`
-- technical_status: `pass`
+- technical_status: `complete`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none; existing product gates remain independent`
@@ -19,12 +19,12 @@
 - delegated_scope: `all writes under Projetos/draxos-mobile`
 - branch: `codex/draxosmobile/governanca-v2`
 - worktree: `D:\Estudio-worktrees\draxosmobile--codex--governanca-v2`
-- base_ref: `main@a3fd2f34`
-- merge_status: `pending`
-- worktree_status: `open`
-- branch_cleanup: `pending`
+- base_ref: `main@7d4cbd7d`
+- merge_status: `integrated_ff_only`
+- worktree_status: `cleanup_after_closure_commit`
+- branch_cleanup: `cleanup_after_closure_commit`
 - validation_tier: `Build`
-- validation_result: `pass; FastSuite 2x, Runtime 2x, Build 2x and post-rebase matrix green with identical tracked snapshots`
+- validation_result: `pass; FastSuite 2x, Runtime 2x, Build 2x e matriz pós-merge verde com snapshots rastreados idênticos`
 - global_sync_needed: `yes`
 
 ## Outcome
