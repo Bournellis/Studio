@@ -187,6 +187,16 @@ class PowerShellHelperTests(GitFixture):
         self.assertEqual(before, run(self.root, "git", "rev-parse", "HEAD").stdout)
         self.assertEqual("", run(self.root, "git", "diff", "--cached", "--name-only").stdout)
 
+    def test_commit_helper_accepts_new_literal_file(self) -> None:
+        (self.root / "new.txt").write_text("new\n", encoding="utf-8")
+        result = run(
+            self.root, "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+            str(TOOLS / "git_commit_powershell.ps1"), "-WorktreePath", str(self.root),
+            "-Message", "test: new file", "-Paths", "new.txt", "-ExpectedBranch", "main", "-DryRun",
+        )
+        self.assertIn("?? new.txt", result.stdout)
+        self.assertEqual("", run(self.root, "git", "diff", "--cached", "--name-only").stdout)
+
     def test_worktree_lifecycle_emits_json_without_mutation(self) -> None:
         worktree_root = self.root / "worktrees"
         result = run(
