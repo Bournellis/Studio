@@ -35,14 +35,23 @@
       "category": "fast",
       "tier": "QA",
       "lane": "godot",
-      "runner": "gut_scripts",
-      "entrypoint": "res://addons/gut/gut_cmdln.gd",
+      "runner": "powershell",
+      "entrypoint": "tools/run_gut_short.ps1",
       "paths": [
         "res://tests/client/test_project_info.gd",
         "res://tests/client/test_session_state_facade.gd",
         "res://tests/client/test_mode_descriptor_registry.gd"
       ],
-      "args": [],
+      "args": [
+        "-ProjectDir",
+        ".",
+        "-TestPathCsv",
+        "res://tests/client/test_project_info.gd,res://tests/client/test_session_state_facade.gd,res://tests/client/test_mode_descriptor_registry.gd",
+        "-ExpectedTests",
+        "13",
+        "-ExpectedAsserts",
+        "170"
+      ],
       "profiles": ["FastSuite"],
       "timeout_seconds": 60,
       "environments": ["local", "headless", "Godot 4.6.2-stable"],
@@ -179,4 +188,3 @@
     }
   ]
 }
-
