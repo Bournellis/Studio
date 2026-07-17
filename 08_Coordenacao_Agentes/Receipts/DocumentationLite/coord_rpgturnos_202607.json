@@ -1,0 +1,24 @@
+{
+  "schema_version": 2,
+  "receipt_id": "receipt_coord_rpgturnos_202607",
+  "batch_id": "coord_rpgturnos_202607",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "generated_at": "2026-07-17T15:21:15.042212Z",
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "manifest_sha256": "53a4b44ae45d8e0c255c74cde709b50bad3ce6a9c85a3ddd24b626834d60c17a",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-07-16_codex_estudio-governanca-v2-migracao-completa.md",
+      "sha256": "45dcc59a2e50d40980a28e26f84a3b102cfc2555b095e757e762e460334d5b4d",
+      "git_blob": "6d976e8367608efa29640a7423794c6de0cacefc",
+      "record_id": "rec_2026_07_16_codex_estudio_governanca_v2_migrac_de8aba841d",
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    }
+  ]
+}
