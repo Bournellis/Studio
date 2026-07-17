@@ -4,7 +4,7 @@
 
 - status: living
 - authority: operational_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: pausa, governança, canon local ou arquitetura mudar
 - supersedes: AGENTS.md anterior ao cutover de governança v2
 - superseded_by: none
@@ -24,7 +24,8 @@ O canon de produto vive em `docs/canon/`; lore compartilhado vive em `../../cano
 3. `08_Coordenacao/README.md`
 4. `qa/QA_INDEX.md`
 5. `docs/canon/README.md` quando o pedido exigir produto/canon
-6. arquivos tocados
+6. `implementation/history.md` e ledger/receipt somente quando o pedido exigir história exata
+7. arquivos tocados
 
 Durante a pausa, não abra track, gate ou conteúdo de produto. História de Track 02 só é lida para responder pergunta específica ou executar reparo explicitamente autorizado.
 

@@ -6,10 +6,10 @@
 - authority: `technical_contract`
 - last_verified: `2026-07-17`
 - review_when: `validation profiles, typed runners, environments or external boundaries change`
-- supersedes: `implementation/tracks/track-13-validation-release-safety/validation-matrix.md as live authority`
+- supersedes: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/draxos-mobile/implementation/tracks/track-13-validation-release-safety/validation-matrix.md as live authority`
 - superseded_by: `none`
 
-`qa_manifest.json` is the machine authority for studio runners. This matrix explains the project runner profiles, evidence boundary and exclusions. Track 13 remains historical evidence.
+`qa_manifest.json` is the machine authority for studio runners. This matrix explains the project runner profiles, evidence boundary and exclusions. Track 13 is baseline-only historical evidence.
 
 ## Studio Profiles
 

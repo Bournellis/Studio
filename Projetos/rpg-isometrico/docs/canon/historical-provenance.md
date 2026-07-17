@@ -51,4 +51,4 @@ Os nomes `Heroic`, `heroic_hammer`, quatro skills e duas potions descrevem a bas
 
 ## Fontes auditadas
 
-A curadoria leu 29 documentos em `implementation/tracks/`, 35 em `implementation/phase-g1/` a `phase-g4/`, 4 checkpoints, `implementation/execution-log.md` e 4 smokes. As fontes permanecem intactas; recuperação final também continua disponível pelo Git.
+A curadoria leu 29 documentos de tracks, 35 das fases G1-G4, 4 checkpoints, o execution log e 4 smokes. Depois da absorção em `implementation/history.md` e `history-ledger/`, as fontes saíram do `HEAD`; a recuperação literal permanece no baseline `52f52f7cd33d1711579f9cccbe4c848ab45a02e4` e na tag Documentation Lite.

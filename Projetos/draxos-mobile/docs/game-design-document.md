@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `product_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `an implementation-facing design contract changes`
 - supersedes: `the promoted concept GDD for active implementation`
 - superseded_by: `none`
@@ -85,7 +85,7 @@ Regras de produto que preservam essa direcao:
 
 ### Character Systems Rework - 2026-05-25
 
-Referencia detalhada implementada: `character-systems-rework.md`.
+Esta secao e `contracts/content-definitions.md` preservam a referencia implementada; o documento de rework pre-cutover e recovery-only no baseline Documentation Lite.
 
 O personagem continua sendo um mago Draxos sem classes, mas a fantasia de build agora usa **Instrumentos Rituais**, **Spells**, **Doutrinas** e **Familiares**.
 
@@ -180,8 +180,8 @@ Fontes externas v0:
 Fontes atuais: Arcano, Fisico, Fogo, Agua, Gelo, Terra, Vento, Raio, Veneno,
 Sangue e Morte. Mental nao e fonte de dano: e familia de status aplicada por
 spells de mente, medo, terror e controle.
-DoTs, resistencias, barreiras e status effects: ver `character-systems-rework.md`
-e o simulador `FIRST_SLICE_SIM`.
+DoTs, resistencias, barreiras e status effects: ver as secoes de personagem deste GDD,
+`contracts/content-definitions.md`, `contracts/battle-event-log.md` e o simulador `FIRST_SLICE_SIM`.
 
 **Regra de stacking de DoT implementada em T00-P10:** reaplicar o mesmo DoT pelo mesmo lado aumenta stacks ate 5 e renova a duracao; cada stack aumenta o tick.
 
@@ -429,7 +429,7 @@ Ossos continuam raros. Batalhas, quests e Battle Pass seguem como fontes princip
 
 ## Arena PVE Inicial
 
-Contrato vivo do pacote: `pve-arena-v1.md`.
+Este GDD e `pve-arena-initial-direction.md` governam o produto; os detalhes executáveis vivem em `contracts/`, `data/definitions/pve_*.json` e `data/definitions/arena_*.json`.
 
 A Arena PVE inicial e o primeiro modo jogavel de produto. Ela usa duelos assincronos server-authoritative contra inimigos controlados pelo jogo, sem depender de playerbase PVP e sem exigir campanha tradicional com assets pesados.
 
@@ -650,7 +650,7 @@ Conquistas:
 - Recompensas: titulos, molduras, pequenos Diamantes e recursos leves.
 - Marcos v0: primeira batalha, primeira vitoria, 10/50/100 vitorias, levels 3/7/10/15/25/40, primeira construcao, primeira estrutura level 10, entrar em guilda e enviar primeira ajuda.
 
-Valores numericos detalhados de recompensas diarias, semanais e Battle Pass vivem em `docs/economy/README.md` e continuam `CALIBRAVEL_ALPHA` ate o playtest.
+Valores numericos detalhados de recompensas diarias, semanais e Battle Pass vivem nas definitions e em `economy/generated/season_economy_summary.json`; continuam `CALIBRAVEL_ALPHA` ate o playtest.
 
 ## Sistema Social
 

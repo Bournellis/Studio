@@ -30,7 +30,7 @@ Routers never override state or product contracts. Shared lore never imports mec
 - `Estado_Atual.md` is updated only by `portfolio_sync`, `cross_project` or `global_governance` work.
 - Local work records `global_sync_needed: yes` in `PortfolioSync_QUEUE.md`; it does not edit global snapshots.
 - `Prioridades_Estudio.md` changes only when Fabio changes priority, status or allowed work.
-- History belongs in tracks, release history, Kanban Done or handoffs.
+- History belongs in `implementation/history.md`, history ledgers and release history. Done cards and closed handoffs are transient inputs to the Documentation Lite lifecycle.
 
 ## Scope Classification
 
@@ -61,7 +61,7 @@ Every official project owns:
 ```
 
 - New project-local cards and handoffs live there.
-- Global Kanban and Handoffs preserve pre-cutover history and global/cross-project work.
+- Global Kanban and Handoffs contain current global/cross-project work. Pre-cutover history lives in compact History/ledgers and exact Documentation Lite receipts.
 - `TRIAGE.md` lists only live human gates in Review.
 - Do not create `08_Coordenacao/Estado.md`; point to `implementation/current-status.md`.
 

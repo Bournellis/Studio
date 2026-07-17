@@ -38,7 +38,7 @@ O manifest real da alpha v0 e servido pela Edge Function publica:
 https://<project-ref>.supabase.co/functions/v1/release/manifest
 ```
 
-O arquivo `manifest.example.json` e a copia documental do schema esperado para atualizar links/notas em `T03-P17`. Os hashes locais de `T03-P16` ficam registrados em `../../docs/internal-alpha-v0-export-report.md`.
+O arquivo `manifest.example.json` e a copia documental do schema esperado para atualizar links/notas em `T03-P17`. A linhagem e os hashes historicos de candidate ficam em `../../docs/release-history.md`; o export report literal e recuperavel pelo receipt Documentation Lite.
 
 Em `T03-P17`, o portal publicado foi gerado em `build/internal-alpha/publish/portal/` por `tools/publish_internal_alpha.ps1`, com os placeholders substituidos por URLs reais. O source versionado continua como template.
 

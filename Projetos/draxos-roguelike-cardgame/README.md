@@ -4,7 +4,7 @@
 
 - status: living
 - authority: router
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: entradas, contratos ou comandos oficiais mudarem
 - supersedes: README.md before Governance v2
 - superseded_by: none
@@ -27,7 +27,7 @@ Projeto Godot 4.6.2 independente, menu-first, com Ship Hub, mapa de run, Souls, 
 - coordenacao e gates humanos: `08_Coordenacao/`
 - QA executavel: `qa/qa_manifest.json`
 - fonte de conteudo: `data/definitions/`
-- historia da Track 02: `implementation/tracks/track-02-complete-run-evolution/`
+- historia da Track 02: `implementation/history.md` e `implementation/history-ledger/`
 - labs e uso humano: `docs/autorun-lab.md`, `docs/design-lab.md` e `docs/playtest-track-02.md`
 
 O portifolio e o trabalho permitido vivem apenas em `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`.

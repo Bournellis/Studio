@@ -6,10 +6,10 @@
 - authority: `technical_contract`
 - last_verified: `2026-07-17`
 - review_when: `release modes, candidate identity, artifact safety or publication authority changes`
-- supersedes: `implementation/tracks/track-13-validation-release-safety/release-safety-contract.md as live authority`
+- supersedes: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/draxos-mobile/implementation/tracks/track-13-validation-release-safety/release-safety-contract.md as live authority`
 - superseded_by: `none`
 
-This contract separates local validation and packaging from external mutation. The Track 13 source remains historical evidence; `../release-ops-checklist.md` is the procedural runbook.
+This contract separates local validation and packaging from external mutation. The Track 13 source is baseline-only historical evidence; `../release-ops-checklist.md` is the procedural runbook.
 
 ## Modes
 

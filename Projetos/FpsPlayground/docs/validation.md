@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `runbook`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `automated or human validation journeys change`
 - supersedes: `none`
 - superseded_by: `none`
@@ -260,7 +260,7 @@ D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --head
 
 ## Track 14A Refactor Safety Net Smoke
 
-- Confirm `docs/refactor-hardening-roadmap.md` documents Tracks 14A-14F and the next step after each subtrack.
+- Confirm `implementation/history.md` preserves the Track 14A-14F outcomes and `implementation/technical-debt-baseline.md` owns prospective controls.
 - Confirm jump pad tests describe the approved force contract, not a temporary old-force rollback.
 - Confirm validation still passes without gameplay, movement, jump pad, map, weapon, pickup or bot behavior changes.
 - Confirm the next implementation step is `Track 14B - Arena Root Boundary V1`.

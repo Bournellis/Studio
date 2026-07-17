@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `product_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `Fabio approves a product-direction change`
 - supersedes: `promoted mobile-universe product framing`
 - superseded_by: `none`
@@ -251,6 +251,6 @@ Esses itens podem virar projeto ou fase futura, mas nao devem ser tratados como 
 1. Rodar playtest humano do pacote publicado atual descrito em `../implementation/current-status.md`.
 2. Registrar o veredito em `arena-pve-product-proof.md`: `ARENA_CORE_READY_FOR_TUNING`, `ARENA_CORE_NEEDS_UX_FIX`, `ARENA_CORE_NOT_PROVEN` ou `BOSQUE_SHELL_DISTRACTS`.
 3. Se o veredito nao for `ARENA_CORE_READY_FOR_TUNING`, manter o proximo pacote em UX/readability/recovery ou bugfix estreito.
-4. Se o veredito for `ARENA_CORE_READY_FOR_TUNING`, confirmar que `docs/pve-arena-initial-direction.md` e `docs/pve-arena-v1.md` continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
+4. Se o veredito for `ARENA_CORE_READY_FOR_TUNING`, confirmar que `docs/pve-arena-initial-direction.md`, a secao Arena do GDD, os contratos executaveis e as definitions continuam suficientes para tutorial, primeiras arenas, inimigos, buffs, recovery e recompensas.
 5. Rodar Progression Lab e Battle Lab orientados a Arena PVE antes de mexer em valores calibraveis.
 6. Reintroduzir PVP como modo posterior/competitivo depois que o core PVE estiver claro.

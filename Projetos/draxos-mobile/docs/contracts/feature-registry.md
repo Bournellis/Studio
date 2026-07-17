@@ -6,10 +6,10 @@
 - authority: `technical_contract`
 - last_verified: `2026-07-17`
 - review_when: `a feature is planned, installed, integrated, blocked or retired`
-- supersedes: `implementation/tracks/track-06-feature-installation-rails-and-first-slices/feature-registry.md as live authority`
+- supersedes: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/draxos-mobile/implementation/tracks/track-06-feature-installation-rails-and-first-slices/feature-registry.md as live authority`
 - superseded_by: `none`
 
-This is the live contract for installing features in DraxosMobile. The original Track 06 registry remains historical evidence; new work updates this file before touching runtime, endpoint, schema, asset or test surfaces.
+This is the live contract for installing features in DraxosMobile. The original Track 06 registry is baseline-only historical evidence; new work updates this file before touching runtime, endpoint, schema, asset or test surfaces.
 
 ## Allowed Statuses
 

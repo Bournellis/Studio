@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `router`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `project identity or entrypoints change`
 - supersedes: `the pre-governance-v2 project portal`
 - superseded_by: `none`
@@ -24,7 +24,7 @@ DraxosMobile is the Godot/Supabase project for Android, Windows and PC browser: 
 
 - Product canon: `docs/product-vision.md`.
 - Early-game direction: `docs/pve-arena-initial-direction.md`.
-- Implemented Arena contract: `docs/pve-arena-v1.md`.
+- Implemented Arena contract: Arena section of `docs/game-design-document.md`, `docs/contracts/` and `data/definitions/pve_*.json`/`arena_*.json`.
 - Server authority: `docs/contracts/` plus mirrored `server/` and `supabase/` sources.
 - Unresolved product choices: `docs/design-pending.md`.
 - Historical concept archive: `../_conceitos/mobile-universe/` (read-only).

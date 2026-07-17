@@ -23,9 +23,12 @@ Global documentation router. It carries no package, marker, release URL or next 
 
 - `Decisoes/` - active and historical product/process decisions.
 - `Templates/` - gates v3 and lifecycle templates.
-- `Registers/` - observation/classification ledgers; they never authorize deletion or shared extraction.
+- `Registers/` - machine-readable governance and approved cleanup manifests; classification alone never authorizes deletion.
+- `History/` - compact monthly history absorbed from redundant global records.
+- `Receipts/DocumentationLite/` - exact cutover receipts and recovery provenance.
+- `Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md` - active lifecycle for compact history and recoverable cleanup.
 - `Runbooks/VISUAL_PRODUCTION_PIPELINE.md` - prospective visual production and independent gates.
-- `Kanban/` and `Handoffs/` - global work plus pre-cutover history.
+- `Kanban/` and `Handoffs/` - current global/cross-project work; closed narratives are absorbed into compact history.
 - Project `08_Coordenacao/` - new project-local cards, triage and handoffs.
 - `FABIO_DASHBOARD.md` / `.html` - human projection, never technical authority.
 
@@ -54,4 +57,4 @@ Use `../Projetos/README.md`, then the target `AGENTS.md`, `implementation/curren
 - `../tools/create_evidence_manifest.py` / `register_new_lfs_path.ps1` - dry-run-first evidence and literal LFS helpers.
 - `../tools/check_secret_scan.ps1` - read-only tracked-file secret scan.
 
-Historical slimming plans and lifecycle audits are evidence, not current contracts.
+Removed pre-cutover sources are not recreated as stubs. Inspect compact history first, then the approved receipt/manifest, and use the recorded baseline commit or blob only for an explicit historical recovery task.

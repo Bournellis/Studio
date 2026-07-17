@@ -2,14 +2,21 @@
 
 ## Metadata
 
-- status: `prepared`
+- status: `active`
 - authority: `runbook`
 - last_verified: `2026-07-17`
 - review_when: `o formato de card, ledger, receipt, recuperação ou autoridade documental mudar`
 - supersedes: `lições dispersas de drift, snapshots, worktrees e escritor único`
 - superseded_by: `none`
 
-Este runbook está preparado, mas só se torna o lifecycle obrigatório quando o índice v2 passar para `strict` depois de todos os receipts autorizados.
+Este é o lifecycle obrigatório para história compacta e limpeza documental recuperável. O índice v2 está em `strict`; toda remoção histórica futura exige novo manifesto e nova aprovação exata.
+
+## Cutover v2 concluído
+
+- Índice aprovado: `d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9`.
+- Baseline: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4`.
+- Tag local: `recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover`.
+- Resultado: 19 batches, 915 fontes e 19 receipts; verificação global repetida sem reincidência.
 
 ## Autoridades e superfície normal
 

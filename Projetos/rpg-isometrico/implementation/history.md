@@ -17,7 +17,7 @@ Este registro preserva a linhagem técnica e de validação que continua útil d
 - Canon e decisões de produto: `../docs/canon/README.md`.
 - Proveniência e supersessões do canon: `../docs/canon/historical-provenance.md`.
 - QA executável atual: `../qa/qa_manifest.json` e `../qa/QA_INDEX.md`.
-- Fontes históricas continuam presentes no worktree e no Git até um cutover destrutivo separado, literal e aprovado.
+- Fontes históricas detalhadas saíram do `HEAD` no cutover literal aprovado; `history-ledger/`, receipts e o baseline Git preservam a proveniência e o texto integral.
 
 O projeto permanece `PAUSADO_INDEFINIDO`, sem track, gate ou próximo passo. Aprovações abaixo são fatos históricos e não aprovações atuais de produto, publicação ou retomada.
 
@@ -131,4 +131,4 @@ Um checklist descreve como validar; não prova que uma execução ocorreu. Só c
 
 ## Recuperação
 
-As fontes originais permanecem recuperáveis pelos caminhos registrados e pelo Git. Uma eventual remoção do HEAD exige manifesto literal aprovado, autoridade retida e receipt de execução; este documento isoladamente não autoriza exclusão.
+As fontes originais removidas permanecem recuperáveis pelos caminhos registrados no receipt `../../../08_Coordenacao_Agentes/Receipts/DocumentationLite/local_rpgisometrico.json` e pelo baseline Git. Qualquer remoção histórica futura exige novo manifesto literal aprovado, autoridade retida e receipt de execução; este documento isoladamente não autoriza exclusão.

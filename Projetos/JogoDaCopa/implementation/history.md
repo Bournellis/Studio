@@ -15,11 +15,11 @@ Use `current-status.md` para estado técnico, os contratos em `../docs/` para co
 
 ## Inventário curado
 
-- 50 documentos em `implementation/tracks/`: 1.781 linhas.
+- 50 documentos de tracks pré-cutover: 1.781 linhas.
 - 23 reviews em `docs/code-review-*.md`: 674 linhas.
 - 6 planos ou documentos de opções: 570 linhas.
 - 46 relatórios Markdown em `docs/playtest-reports/`: 2.583 linhas, além de JSON, PNG e outros dados brutos preservados.
-- Nenhuma fonte foi removida durante esta curadoria; o cutover depende de manifesto e receipt próprios.
+- O cutover aprovado absorveu as fontes Markdown em `history-ledger/`; dados brutos de playtest permanecem no `HEAD`. Fontes literais removidas são recuperáveis pelo receipt e baseline Documentation Lite.
 
 ## Fronteira de origem
 

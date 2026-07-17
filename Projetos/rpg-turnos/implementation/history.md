@@ -13,9 +13,9 @@ Este registro preserva resultados e decisões já ocorridos. Ele não define est
 
 ## Inventário pré-cutover
 
-- Sete Markdown sob `implementation/tracks/`: índice, três registros da Track 01 e três da Track 02.
+- Sete Markdown de tracks pré-cutover: índice, três registros da Track 01 e três da Track 02.
 - Seis documentos históricos adicionais: roadmap, experimentos C1, project brief, migração de lore, open gaps e primeiro smoke.
-- As fontes continuam no `HEAD` até manifesto literal, hash aprovado e receipt. O Git preserva o texto integral depois do cutover.
+- As fontes foram retiradas do `HEAD` pelo manifesto aprovado e estão mapeadas em `history-ledger/`. O Git preserva o texto integral no baseline Documentation Lite.
 
 ## Fundação e Track 01
 

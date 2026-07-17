@@ -81,4 +81,4 @@ Observed local baseline on 2026-07-16:
 - Runtime: client `287/287`, `4,208` asserts; server foundation `128` and Arena `23`; mode/platform `49`.
 - Build: `ReleaseDryRun` green; plan-only guard confirmed no package, upload, secret update, deploy or remote verification.
 
-New evidence bundles use `estudio_evidence_v1`; existing historical reports remain preserved in `docs/` and `implementation/tracks/`.
+New evidence bundles use `estudio_evidence_v1`; compact historical results live in `implementation/history.md`, `implementation/history-ledger/` and `docs/release-history.md`. Exact removed reports remain recoverable through the Documentation Lite receipts and baseline Git.

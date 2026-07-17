@@ -20,7 +20,7 @@
 | validation profile detail | `../qa/validation-matrix.md` |
 | package lineage | `release-history.md` |
 | product canon | `product-vision.md` |
-| Arena PVE direction and contract | `pve-arena-initial-direction.md`, `pve-arena-v1.md` |
+| Arena PVE direction and contract | `pve-arena-initial-direction.md`, Arena section of `game-design-document.md`, `contracts/` and authored Arena definitions |
 | pending product decisions | `design-pending.md` |
 
 Workspace-relative package lineage: `Projetos/draxos-mobile/docs/release-history.md`.
@@ -29,7 +29,7 @@ Workspace-relative package lineage: `Projetos/draxos-mobile/docs/release-history
 
 - Agent/runbook: `agent-operating-manual.md`, `multi-agent-workflow.md`, `hardening-program.md`.
 - Product: `product-brief.md`, `game-design-document.md`, `arena-pve-product-proof.md`, `visual-direction-v1.md`.
-- Foundation: `foundation-responsive-layout-contract.md`, `foundation-expansion-readiness.md`, `behavior-potion-crafting-v1.md`, `contracts/feature-registry.md`.
+- Foundation: `foundation-responsive-layout-contract.md`, `foundation-expansion-readiness.md`, `contracts/content-definitions.md`, `contracts/feature-registry.md`.
 - Backend: `contracts/`, `architecture.md`, `backend-own-boundary.md`.
 - Modes: `minigames/`, `data/definitions/modes/` and `data/definitions/openworld/`.
 - Labs: `progression-lab/README.md`, `battle-lab/README.md`, `dev-lab-workflow.md`.
@@ -37,11 +37,9 @@ Workspace-relative package lineage: `Projetos/draxos-mobile/docs/release-history
 
 ## Historical records
 
-- Closed package reports (`internal-alpha-v0-*`, battle/progression delivery docs) are historical evidence, not competing release authorities.
-- `internal-alpha-release-plan.md` and `internal-alpha-remote-setup.md` are closed history; current procedures use `release-ops-checklist.md`.
-- `../implementation/history.md` is the compact route to preserved tracks, decisions and technical contract lineage.
-- `implementation/tracks/` remains the detailed delivery evidence behind that history router.
-- The pre-cutover status and full index are preserved in `../implementation/tracks/governance-v2-pre-cutover-status-2026-07-16.md` and `history/documentation-index-pre-governance-v2-2026-07-16.md`.
+- `../implementation/history.md` and `../implementation/history-ledger/` are the compact route to closed tracks, decisions and technical contract lineage.
+- Exact removed package reports, old plans and track files are recovery-only through the Documentation Lite receipt and baseline `52f52f7cd33d1711579f9cccbe4c848ab45a02e4`.
+- `history/documentation-index-pre-governance-v2-2026-07-16.md` remains a frozen pre-cutover index, not a current route.
 - `_conceitos/mobile-universe/` is a read-only design archive and never overrides local live contracts.
 
 ## Classification rule

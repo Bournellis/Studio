@@ -4,7 +4,7 @@
 
 - status: living
 - authority: local_state
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: pausa, baseline técnica ou autorização de retomada mudar
 - supersedes: current-status anterior ao cutover de governança v2
 - superseded_by: none
@@ -31,7 +31,7 @@
 - Lore compartilhado: `../../../canon/shared-lore/`.
 - QA: `../qa/qa_manifest.json` e `../qa/QA_INDEX.md`.
 - Dívida: `engineering-health-baseline.md`; não pode crescer quando tocada.
-- História consolidada: `history.md`; fontes detalhadas permanecem em `tracks/`, `phase-g*/`, `checkpoints/` e `execution-log.md`.
+- História consolidada: `history.md` e `history-ledger/`; fontes detalhadas retiradas do `HEAD` permanecem recuperáveis pelo baseline Documentation Lite.
 
 ## Gates
 

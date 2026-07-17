@@ -4,9 +4,9 @@
 
 - status: living
 - authority: technical_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: arquivo listado mudar de tamanho, responsabilidade ou cobertura
-- supersedes: divida dispersa em foundation-closeout.md
+- supersedes: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/draxos-roguelike-cardgame/docs/foundation-closeout.md`
 - superseded_by: none
 
 Contagens excluem `addons/` e foram medidas no cutover da Governanca v2.

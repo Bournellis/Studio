@@ -23,7 +23,9 @@
 - planned: `Kanban/Backlog/`
 - active: `Kanban/Doing/`
 - human decision: `Kanban/Review/`
-- closed: `Kanban/Done/`
-- continuation: `Handoffs/`
+- transient closure before absorption: `Kanban/Done/`
+- active, transient continuation: `Handoffs/`
 
-Pre-cutover global cards and handoffs remain in `../../../08_Coordenacao_Agentes/`. Product delivery history routes through `../implementation/history.md`; package lineage remains in `../docs/release-history.md`.
+Product delivery history routes through `../implementation/history.md` and its ledgers; package lineage remains in `../docs/release-history.md`.
+Exact removed sources use `../../../08_Coordenacao_Agentes/Receipts/DocumentationLite/local_draxosmobile.json` and the recorded Git baseline.
+Never recreate recovery stubs in `HEAD`.

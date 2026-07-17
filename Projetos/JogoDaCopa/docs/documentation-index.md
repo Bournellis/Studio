@@ -24,7 +24,7 @@
 - licenças: `asset-licenses.md`
 - validação: `validation.md`, `validation-profiles.md`
 - publicação local: `publication-readiness.md`
-- reuso: `reuse-map.md`
+- fronteiras de reuso: `../AGENTS.md` e `../../../canon/studio-conventions/project-boundaries.md`
 
 ## História e evidência
 
@@ -34,4 +34,4 @@
 - imagens: `screenshots/`
 - licenças e origem: `asset-licenses.md`
 
-Tracks, planos, reviews e relatórios narrativos pré-cutover continuam preservados até uma remoção autorizada por manifesto. Eles não definem estado, próxima track ou publicação atual.
+Tracks, planos, reviews e relatórios narrativos pré-cutover foram absorvidos em `../implementation/history.md` e `../implementation/history-ledger/`. Fontes literais permanecem recuperáveis pelo receipt e baseline Git; elas não definem estado, próxima track ou publicação atual.

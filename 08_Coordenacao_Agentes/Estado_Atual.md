@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `portfolio_snapshot`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `PortfolioSync_QUEUE has a pending local baseline change`
 - supersedes: `none`
 - superseded_by: `none`
@@ -14,7 +14,7 @@
 - Natureza: projecao curta; estados tecnicos locais vivem em `implementation/current-status.md`.
 - Painel Fabio local: `08_Coordenacao_Agentes/FABIO_DASHBOARD.html`
 - Indice global de documentacao: `08_Coordenacao_Agentes/documentation-index.md`
-- Regra de tamanho: maximo ~12 linhas por projeto. Historia de pacotes/validacoes vai para os arquivos de historico do projeto (`implementation/tracks/`, `docs/release-history.md`, Kanban Done), nunca para este snapshot.
+- Regra de tamanho: maximo ~12 linhas por projeto. Historia vai para `implementation/history.md`, history ledgers e, para pacotes, `docs/release-history.md`; nunca para este snapshot.
 
 ## Prioridade Do Estudio
 

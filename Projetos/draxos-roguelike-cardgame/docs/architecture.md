@@ -17,13 +17,13 @@ Keep roguelike run rules, card battle rules, data, validation, and presentation 
 
 The JSON Track 02 catalog is the authored source of truth for current content. Generated `.tres` resources must be deterministic and idempotent. `tools/catalog_source_loader.gd` now creates a domain seam for future composed sources while preserving the current single JSON semantics.
 
-For current ownership use this architecture file. Remaining debt is governed by `implementation/engineering-health-baseline.md`; `docs/foundation-closeout.md` is historical closeout evidence only.
+For current ownership use this architecture file. Remaining debt is governed by `implementation/engineering-health-baseline.md`; closed hardening results are summarized in `implementation/history.md`.
 
 ## Authority And Ownership
 
 | Layer | Live owner | Rule |
 |---|---|---|
-| Product status | `implementation/current-status.md` | Unica autoridade tecnica local; historia detalhada permanece nas tracks. |
+| Product status | `implementation/current-status.md` | Unica autoridade tecnica local; historia detalhada permanece em history e ledgers. |
 | Human playtest | `docs/playtest-track-02.md` | Human feedback decides balance and clarity after automated gates pass. |
 | Run state | `core/run_session.gd` | Public run API and snapshot v5 stay here; services delegate internal work. |
 | Rewards | `core/run_reward_service.gd` behind `RunSession` | Reward payloads, pending queues and category state remain compatible. |
@@ -203,4 +203,4 @@ Run Lab is not a replacement for human playtest.
 
 Track 02 is the live baseline. Track 01 / 13-map architecture notes are historical unless explicitly adopted by current docs or code.
 
-Planning documents under `implementation/tracks/` and promoted design proposals do not own runtime boundaries. When they disagree with this file or the current code/data contracts, this architecture and the validated implementation prevail.
+Pre-cutover planning documents and design proposals do not own runtime boundaries. Their compact results live in `implementation/history.md`; exact removed sources are recovery-only through the Documentation Lite baseline. When historical text disagrees with this file or current code/data contracts, this architecture and the validated implementation prevail.

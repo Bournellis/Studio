@@ -111,7 +111,7 @@ Status: implementado parcialmente em migrations locais/remotas espelhadas. Tenta
 duelos, progresso e first clears vivem nas migrations de Arena PVE; perfis de
 recompensa calibraveis vivem em `arena_reward_profiles`.
 
-Contrato de produto: `../pve-arena-v1.md`.
+Contrato de produto: `../pve-arena-initial-direction.md` e a secao Arena de `../game-design-document.md`; este arquivo governa o schema executavel.
 
 Novas tabelas futuras devem usar `game_saves.id` como autoridade primaria. `players.id` pode aparecer apenas como compatibilidade historica ou cache denormalizado.
 
@@ -771,7 +771,7 @@ Estado apos Foundation Closeout:
 - tabelas de dominio ainda podem manter `player_id` como compatibilidade, mas novas mutations devem resolver e travar `game_saves.id`;
 - o alpha gate ainda e simples: convite + username no primeiro save; admin minimo interno existe para lookup, diagnostico, reconciliacao, ajuste auditado e flag de conta, nao como painel publico.
 
-Decisao Track 04 em `../../implementation/tracks/track-04-post-handoff-hardening-and-hub-modularization/account-save-gate-decision.md` foi superseded pela Foundation Expansion Readiness/Closeout. Ela permanece como historico, nao como direcao ativa.
+A decisao Track 04 de account/save foi superseded pela Foundation Expansion Readiness/Closeout. Sua fonte literal permanece recuperavel no baseline Documentation Lite; `account-save.md` e este schema sao as autoridades atuais.
 
 Regras de seguranca:
 

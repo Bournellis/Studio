@@ -304,7 +304,7 @@ Regras:
 
 Status: **implementado/publicado em Track 18; Track 19 Arena Consistency Pass publicado**.
 
-Contrato de produto: `../pve-arena-v1.md`.
+Contrato de produto: `../pve-arena-initial-direction.md` e a secao Arena de `../game-design-document.md`; este arquivo governa a API executavel.
 
 Regras comuns:
 

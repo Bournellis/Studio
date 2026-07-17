@@ -3,13 +3,13 @@
 - Ultima atualizacao: `2026-05-27`
 - Alvo: Android + PC executavel + PC browser com backend remoto.
 - Testadores: Fabio + 1 amigo.
-- QA local automatizado: `PASS_LOCAL_AUTOMATED_QA` em `internal-alpha-v0-qa-report.md`.
+- QA local automatizado historico: `PASS_LOCAL_AUTOMATED_QA`; fonte literal recuperavel pelo ledger/receipt Documentation Lite.
 
 ## Status Release Prep
 
 - O roteiro abaixo continua sendo o alvo da build fechada real com remoto/builds.
 - A cobertura automatizada local ja validou batalha, Base, Social, Competicao, Loja, Progression Lab, dois saves, reset separado, telemetria e presets de export.
-- A passada manual inicial de Fabio nao apontou bloqueios graves de backend/saves; Supabase remoto, email/senha, manifest/version gate, exports locais, downloads, Portal/Web no Cloudflare Pages e QA remoto automatizado ja passaram em `T03-P13` a `T03-P17`. T03-P17A aplicou uma passada local de ergonomia Android no Hub/abas, gerou novo APK local e foi aprovada por Fabio em 2026-05-27 como boa o suficiente para seguir. APK/PC ZIP, manifest e Cloudflare Pages foram republicados; `T03-P18` fechou o handoff em `internal-alpha-v0-handoff.md`.
+- A passada manual inicial de Fabio nao apontou bloqueios graves de backend/saves; o resultado T03-P13 a T03-P18 e a linhagem de pacotes permanecem em `release-history.md` e `../implementation/history.md`. Fontes de QA/handoff removidas sao recuperaveis pelo receipt Documentation Lite.
 
 ## Pre-Flight
 

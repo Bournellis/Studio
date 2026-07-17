@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `router`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `coordination paths or authority order changes`
 - supersedes: `none`
 - superseded_by: `none`
@@ -25,7 +25,9 @@
 - Backlog: `Kanban/Backlog/`
 - Doing: `Kanban/Doing/`
 - Review: `Kanban/Review/`
-- Done: `Kanban/Done/`
-- Handoffs: `Handoffs/`
+- Transient closure before absorption: `Kanban/Done/`
+- Active, transient transfers: `Handoffs/`
 
-Global cards and handoffs before the Governance v2 cutover remain historical in `../../../08_Coordenacao_Agentes/`; they are not copied here.
+Resolved history routes through `../implementation/history.md` and its ledgers.
+For exact provenance, use `../../../08_Coordenacao_Agentes/Receipts/DocumentationLite/local_fpsplayground.json` and the recorded Git baseline.
+Removed cards, handoffs and tracks are not recreated in `HEAD`.

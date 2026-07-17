@@ -189,10 +189,9 @@ Esse diretorio guarda sessoes locais e nao deve entrar no Git.
 Ultima rodada viva de Battle Lab versionada:
 `2026-05-25_source_identity_balance_v02`.
 Generated atual dos labs: Track 16 Lab Alignment em `2026-05-30`.
-Ultima rodada tecnica registrada de Progression Lab:
-`2026-05-27-t04-progression-economia.md`.
-Runbook humano Track 05:
-`2026-05-27-t05-progression-human-runbook.md`.
+As rodadas tecnicas fechadas estao resumidas em `../../implementation/history.md`
+e `../../implementation/history-ledger/2026-05.md`. Para validacao humana atual,
+use `../../qa/QA_INDEX.md`; fontes literais antigas sao recovery-only pelo baseline Documentation Lite.
 
 - `25` saves saudaveis e `75` bots gerados.
 - Status geral: `REVIEW`.
@@ -220,8 +219,8 @@ a proxima evidencia promovivel precisa incluir Arena PVE.
 
 ## Rodada Humana Track 05
 
-Antes de tuning numerico, executar o runbook
-`2026-05-27-t05-progression-human-runbook.md`.
+Antes de tuning numerico, executar as jornadas manuais e gates atuais em
+`../../qa/QA_INDEX.md`.
 
 Casos obrigatorios de foco:
 

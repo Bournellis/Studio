@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `router`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `official project registry changes`
 - supersedes: `Projetos/README.md before Governance v2`
 - superseded_by: `none`
@@ -34,4 +34,6 @@ Stable registry of official projects and entrypoints. Portfolio status and allow
 
 ## Local-First Rule
 
-Project work uses the target `08_Coordenacao/` for cards, triage and handoffs. Global coordination is reserved for portfolio sync, cross-project work, global governance and pre-cutover history.
+Project work uses the target `08_Coordenacao/` for cards, triage and real handoffs.
+Global coordination is reserved for portfolio sync, cross-project work and global governance.
+Compact pre-cutover history is routed through History/ledgers and Documentation Lite receipts.

@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `product_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `the approved product framing changes`
 - supersedes: `none`
 - superseded_by: `none`
@@ -60,9 +60,9 @@ Lab para pocoes, comportamento, crafting e `po_osso`; Foundation Final Polish,
 Hardening Platform V1 e Foundation Hardening V2 ficam como baselines
 tecnicas/historicas preservadas.
 
-A decisao de produto seguinte e `docs/pve-arena-initial-direction.md`: o jogo
+A decisao de produto seguinte e `pve-arena-initial-direction.md`: o jogo
 deve comecar por Arena PVE, nao por PVP-first. O pacote contratual/data-driven
-inicial vive em `docs/pve-arena-v1.md` e promove os arquivos
+inicial vive na secao Arena do GDD, em `contracts/` e nos arquivos
 `data/definitions/pve_arenas.json`, `pve_arena_difficulties.json`,
 `pve_enemies.json`, `arena_buffs.json` e `arena_rewards.json` como fonte
 autorada para a proxima implementacao. O loop interno pos-login aceito continua
@@ -149,7 +149,7 @@ A base tecnica ja contem:
 - release manifest, build channel e runbooks de publicacao segura;
 - validacao local por `validate_foundation.ps1`.
 
-Behavior/potion/crafting esta registrado em `behavior-potion-crafting-v1.md`
+Behavior/potion/crafting esta registrado no GDD e em `contracts/content-definitions.md`
 como base tecnica viva: Ossos inteiros, Po de Osso, Fogueira como estacao, tres
 pocoes simples, slot de pocao e comportamento simples de habilidade/pocao. Ele
 nao libera tuning, economia, novas pocoes ou comportamento avancado sem novo
@@ -170,17 +170,14 @@ pacote explicito.
 
 ## Documentos Vivos
 
-- `foundation-app-v0-audit.md` - bussola historica preservada da Foundation Audit aceita.
 - `../implementation/current-status.md` - snapshot vivo da etapa operacional, proximo passo e limites atuais.
 - `release-history.md` - historico de pacotes, endpoints estaveis e downloads.
 - `pve-arena-initial-direction.md` - direcao viva do early game por Arena PVE.
-- `pve-arena-v1.md` - contrato inicial de Arena PVE para dados, endpoints, schema e labs.
-- `first-session-clarity-v1.md` - pacote publicado de clareza da primeira sessao.
 - `product-vision.md` - visao longa local.
 - `game-design-document.md` - referencia de implementacao e substancia/mock existente.
-- `behavior-potion-crafting-v1.md` - estado vivo de pocoes, crafting inicial e comportamento simples.
+- `contracts/content-definitions.md` - estado executavel de Arena, pocoes, crafting e conteudo autorado.
 - `design-pending.md` - pendencias vivas e ordem de decisao.
 - `documentation-index.md` - classificacao de docs vivos, contratos, runbooks, historico e arquivo de design.
 - `contracts/` - contratos tecnicos antes de migrations/codigo.
-- `internal-alpha-v0.md` - runbook operacional da build fechada.
+- `release-ops-checklist.md` e `contracts/release-safety.md` - runbooks locais de candidate/build sem publicacao automatica.
 - `../../_conceitos/mobile-universe/gdd.md` - GDD historico completo, somente contexto.

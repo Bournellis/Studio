@@ -22,7 +22,9 @@
 - fila: `Kanban/Backlog/`
 - execucao: `Kanban/Doing/`
 - decisao humana: `Kanban/Review/`
-- encerrados: `Kanban/Done/`
-- handoffs: `Handoffs/`
+- encerramento transitorio antes da absorcao: `Kanban/Done/`
+- transferencia ativa e transitoria: `Handoffs/`
 
-Historia consolidada: `../implementation/history.md`. Consulte `../implementation/tracks/`, propostas antigas, Done, Handoffs e relatorios preservados somente quando a proveniencia detalhada for necessaria.
+Historia consolidada: `../implementation/history.md` e `../implementation/history-ledger/`.
+Para proveniencia detalhada, consulte `../../../08_Coordenacao_Agentes/Receipts/DocumentationLite/local_roguelike.json` e recupere somente a fonte literal no baseline Git.
+Nao procure tracks, Done ou Handoffs removidos no `HEAD`.

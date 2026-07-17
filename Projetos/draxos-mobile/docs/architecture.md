@@ -125,9 +125,9 @@ Hotspot hardening priority:
 
 ## Arena PVE Architecture
 
-Arena PVE is the first approved core. Its runtime contract is in
-`docs/pve-arena-v1.md`; the original direction is in
-`docs/pve-arena-initial-direction.md`.
+Arena PVE is the first approved core. Product direction lives in
+`docs/pve-arena-initial-direction.md` and the Arena section of the GDD;
+runtime boundaries live in `docs/contracts/` and authored Arena definitions.
 
 Key runtime rules:
 

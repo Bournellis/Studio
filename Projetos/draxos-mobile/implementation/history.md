@@ -11,6 +11,8 @@
 
 This is the compact route into implementation history. It does not define current state, priority, product approval or the next step. The living technical snapshot remains `current-status.md`; package lineage remains `../docs/release-history.md`.
 
+Every `Historical source` entry below is relative to baseline `52f52f7cd33d1711579f9cccbe4c848ab45a02e4`, not the current `HEAD`. Use `history-ledger/` and the Documentation Lite receipt before recovering a literal source.
+
 ## Track Index
 
 | Track | Preserved result | Historical source |
@@ -44,7 +46,7 @@ Track 19 has no retained directory. Its package facts are preserved in `../docs/
 ## Decision And Contract Lineage
 
 - Open/calibratable/deferred product decisions: `../docs/design-pending.md`.
-- Resolved product decisions and prior rationale: `../docs/design-resolved-archive.md`.
+- Resolved product decisions live in their current product contract; prior rationale is compacted into this history and `history-ledger/`.
 - Current Arena proof: `DMOB-D082` remains open with `ARENA_CORE_NEEDS_UX_FIX` plus `ARENA_CORE_NOT_PROVEN`.
 - Feature installation authority: `../docs/contracts/feature-registry.md`; Track 06 is retained as delivery evidence.
 - Release safety authority: `../docs/contracts/release-safety.md`; Track 13 is retained as delivery evidence.
@@ -53,4 +55,4 @@ Track 19 has no retained directory. Its package facts are preserved in `../docs/
 
 ## Reading Rule
 
-Use track files only to answer historical questions. Do not restore their old status, next-step text, package pointers or approvals into living routers. Git is the recovery layer for detail removed by documented curation.
+For a historical question, consult this record and `history-ledger/` first. Recover a literal track file only from the approved baseline/receipt, and do not restore its old status, next-step text, package pointers or approvals into living routers.

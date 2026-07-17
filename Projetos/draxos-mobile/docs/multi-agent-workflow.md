@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `runbook`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `lane ownership or worktree closure changes`
 - supersedes: `none`
 - superseded_by: `none`
@@ -42,14 +42,14 @@ Read in this order before touching files:
 For Arena PVE or tuning-adjacent work, also read:
 
 1. `docs/pve-arena-initial-direction.md`
-2. `docs/pve-arena-v1.md`
-3. `implementation/tracks/track-23-arena-pve-first-real-run/README.md`
-4. `implementation/tracks/track-21-arena-loop-unlock-friction/README.md`
+2. Arena section of `docs/game-design-document.md`
+3. `docs/contracts/content-definitions.md`
+4. `docs/contracts/api-endpoints.md` and `docs/contracts/database-schema.md`
 
 For behavior, potion, crafting or consumable work, also read:
 
-1. `docs/behavior-potion-crafting-v1.md`
-2. `implementation/tracks/track-16-behavior-crafting/current-status.md`
+1. Behavior/crafting sections of `docs/game-design-document.md`
+2. `docs/contracts/content-definitions.md`, `docs/contracts/api-endpoints.md` and `docs/contracts/database-schema.md`
 
 For release or validation work, also read:
 
@@ -71,13 +71,10 @@ Later link/status hotfixes may be recorded in
 `implementation/current-status.md` or portfolio docs, but they do not reopen
 Track 18/19/20 contracts unless the current task explicitly says so.
 
-Track 18 remains the implemented Arena PVE domain contract. Track 16 remains a
-technical baseline for behavior, potion and crafting systems already in alpha.
-Tracks 1 and 2 are historical evidence for alpha hardening, telemetry, labs and
-playtest flow. They are not active implementation tracks.
-
-Do not start from Track 4, Track 8, Track 10, Track 15 or Track 16 as the active
-product stage. Use them only when a live doc points to a specific detail.
+Closed tracks remain historical delivery context in `implementation/history.md`
+and `implementation/history-ledger/`; they are not active implementation
+contracts. Recover an exact removed track file only through the approved
+Documentation Lite receipt and baseline Git when a historical question requires it.
 
 ## Worktree Rule
 
@@ -108,10 +105,10 @@ intervention.
 
 ## Required Registration
 
-Every lane must register a Doing or Handoff note before edits. Use:
+Every lane must register a local Doing or Handoff note before edits. Use:
 
-- `../../08_Coordenacao_Agentes/Kanban/Doing/YYYY-MM-DD_<agent>_draxos-mobile_<slug>.md`
-- `../../08_Coordenacao_Agentes/Handoffs/YYYY-MM-DD_<agent>_draxos-mobile_<slug>.md`
+- `08_Coordenacao/Kanban/Doing/YYYY-MM-DD_<agent>_<slug>.md`
+- `08_Coordenacao/Handoffs/YYYY-MM-DD_<agent>_<slug>.md`
 
 Use the DraxosMobile templates:
 
@@ -167,13 +164,13 @@ Use coherent commits by stage. Suggested split:
 
 1. Coordination/workflow docs.
 2. Entrypoint/status link sync.
-3. Kanban/Handoff registration.
+3. Local coordination registration or compact closure history.
 
 Do not mix runtime changes into a docs/coord commit.
 
 ## Handoff Protocol
 
-Every final handoff must list:
+Every real transfer handoff must list:
 
 - files changed;
 - commits created;
@@ -183,7 +180,8 @@ Every final handoff must list:
 - next owner/lane.
 
 If the worktree is not clean, list every remaining changed file and why it
-remains changed.
+remains changed. A closed handoff is transient and is later absorbed by the
+Documentation Lite lifecycle.
 
 ## Drift Checks
 

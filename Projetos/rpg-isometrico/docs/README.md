@@ -4,7 +4,7 @@
 
 - status: living
 - authority: router
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: canon local ou guias técnicos mudarem
 - supersedes: README anterior à separação do canon
 - superseded_by: none
@@ -16,6 +16,6 @@
 - QA: `../qa/QA_INDEX.md`.
 - Validação: `validation.md`.
 - Guias Godot: `godot-patterns.md` e `platform-art-and-export-guidance.md`.
-- Smokes históricos são fontes explícitas; sua função e linhagem estão resumidas em `../implementation/history.md`.
+- Smokes históricos removidos estão resumidos em `../implementation/history.md`; o texto literal é recuperado pelo receipt Documentation Lite e baseline Git registrados.
 
 Lore compartilhado vive em `../../../canon/shared-lore/`. Guias e smokes não definem estado, retomada ou próximo gate.

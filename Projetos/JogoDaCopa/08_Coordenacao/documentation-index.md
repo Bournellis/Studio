@@ -22,9 +22,11 @@
 - fila: `Kanban/Backlog/`
 - execução: `Kanban/Doing/`
 - decisão humana: `Kanban/Review/`
-- encerrados: `Kanban/Done/`
-- handoffs: `Handoffs/`
+- encerramento transitório antes da absorção: `Kanban/Done/`
+- transferência ativa e transitória: `Handoffs/`
 
 História técnica curada vive em `../implementation/history.md`; releases em `../docs/release-history.md`; evidência bruta em `../docs/playtest-reports/` e `../docs/screenshots/`.
 
-Tracks, reviews, planos e registros globais pré-cutover permanecem apenas como fontes de recuperação até uma remoção autorizada por manifesto.
+Fontes removidas no cutover não são procuradas no `HEAD`.
+Use a história/ledger, `../../../08_Coordenacao_Agentes/Receipts/DocumentationLite/local_jogodacopa.json` e o baseline Git registrado.
+Novas narrativas encerradas seguem o mesmo lifecycle mediante manifesto aprovado.

@@ -27,14 +27,14 @@ No local file may redefine portfolio priority. DraxosMobile owns its mechanics; 
 - Read `08_Coordenacao/TRIAGE.md`, open a v3 card, and use a dedicated worktree before editing.
 - `Review` is only for an actual pending human decision. Technical work may be integrated while its independent human gate remains pending.
 - Local work records `global_sync_needed`; only a later `portfolio_sync` writer updates global hot files.
-- Keep history in `implementation/tracks/`, local `Kanban/Done/` or `docs/release-history.md`, never in the live status.
+- Keep history in `implementation/history.md`, `implementation/history-ledger/` or `docs/release-history.md`, never in the live status. Closed cards and handoffs are transient.
 
 ## Read by task
 
 - Runtime/client: `docs/agent-operating-manual.md`, then the affected contract.
 - Account/save/server authority: `docs/contracts/account-save.md`, `docs/contracts/database-schema.md`, `docs/contracts/api-endpoints.md`.
 - Feature installation: `docs/contracts/feature-registry.md`.
-- Arena: `docs/pve-arena-initial-direction.md`, `docs/pve-arena-v1.md`, `docs/arena-pve-product-proof.md`.
+- Arena: `docs/pve-arena-initial-direction.md`, the Arena section of `docs/game-design-document.md`, executable contracts under `docs/contracts/`, and `docs/arena-pve-product-proof.md`.
 - Release/build: `docs/contracts/release-safety.md`, `docs/release-ops-checklist.md`; stay local unless Fabio explicitly authorizes external mutation.
 - QA profile detail: `qa/validation-matrix.md`.
 - Parallel lanes: `docs/multi-agent-workflow.md`.

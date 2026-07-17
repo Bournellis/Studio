@@ -68,7 +68,7 @@ durable Bosque structure and the first approved Openworld station. It may create
 global account consumables only through `POST /crafting/station-craft`, after an
 accepted Bosque checkpoint, while consuming materials from durable `Bau` and
 global `po_osso`. This exception approves only the three simple potion recipes
-listed in `docs/behavior-potion-crafting-v1.md`.
+listed in `docs/contracts/content-definitions.md`.
 
 Persistence rebase exception approved on 2026-06-08: Openworld/Bosque abandons
 `full spawn reset per visit` as the primary persistence model. Durable progress

@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `router`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `workspace structure or authority model changes`
 - supersedes: `README.md before Governance v2`
 - superseded_by: `none`
@@ -24,11 +24,13 @@ Godot-first multi-project workspace for studio projects, shared lore, coordinati
 - `Projetos/`: official projects and read-only concept archives.
 - `canon/shared-lore/`: reusable lore and stable cross-project identity.
 - `canon/studio-conventions/`: explicit cross-project adoption boundaries.
-- `08_Coordenacao_Agentes/`: global governance, portfolio sync and pre-cutover history.
-- `07_Aprendizados/`: durable operational lessons.
+- `08_Coordenacao_Agentes/`: global governance, portfolio sync, compact history, cleanup manifests and receipts.
 - `materiais/`: supporting guides and non-canonical references.
-- `migration/`: historical cutover and legacy comparison archive.
 - `tools/`: machine-readable governance, validation and worktree lifecycle.
+
+Redundant pre-cutover coordination, lessons and migration notes are outside the normal search path after Documentation Lite v2.
+Use project `implementation/history.md`, history ledgers, `08_Coordenacao_Agentes/History/` and the Documentation Lite receipts.
+Recover exact removed sources only through the recorded Git baseline/tag.
 
 ## Boundaries
 

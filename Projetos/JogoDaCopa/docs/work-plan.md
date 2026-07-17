@@ -4,7 +4,7 @@
 
 - status: historical
 - authority: historical_record
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: consulta histórica exigir correção factual
 - supersedes: none
 - superseded_by: ../implementation/current-status.md
@@ -171,7 +171,8 @@ Focus:
 - Fixed lateral A/D camera feel by reducing ball-focus pull when lateral velocity dominates and by rebuilding the chase-camera basis with a level horizon.
 - Added focused red/green tests for visible mesh field clearance and lateral strafe camera ball-focus/horizon behavior.
 - Local gates passed: import headless, `tools/validate.gd`, Web export, gzip `30.61 MiB / 50.00 MiB`, `node --check tools/track04f_chrome_probe.mjs`, Chrome local 90s Web smoke with `pageErrors=0`, `consoleErrorCount=0` and `stabilityPassed=true`.
-- Evidence: `docs/playtest-reports/track-09r-foot-camera-hotfix.md` and `docs/playtest-reports/track-09r-data/`.
+- Evidence summary/lineage: `../implementation/history.md`; raw data: `docs/playtest-reports/track-09r-data/`.
+- Exact removed report: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/JogoDaCopa/docs/playtest-reports/track-09r-foot-camera-hotfix.md` via the project Documentation Lite receipt.
 - Published as `Super Campeao v1.2.1+33ba1a2b`; remote menu, first-minute, stability 5min and luma gates passed.
 - Human retest was not approved as a baseline; 09R was superseded by 09S because of the residual quick `A/D` camera perception issue, and 09Q remained the fallback until 09S approval.
 
@@ -184,7 +185,8 @@ Focus:
 - Added focused red/green coverage for quick lateral tap focus shift.
 - Local gates passed: import headless, `tools/validate.gd` (`107/107`, `1835` asserts), Web export, `node --check tools/track04f_chrome_probe.mjs`, Chrome local 90s Web smoke with `pageErrors=0`, `consoleErrorCount=0`, `firstMinuteHitches=0` and `stabilityPassed=true`, `git diff --check` and doc drift.
 - Published as `Super Campeao v1.2.1+925f3b9f`; remote menu, first-minute, stability 5min and luma gates passed.
-- Evidence: `docs/playtest-reports/track-09s-camera-strafe-smoothing-hotfix.md` and `docs/playtest-reports/track-09s-data/`.
+- Evidence summary/lineage: `../implementation/history.md`; raw data: `docs/playtest-reports/track-09s-data/`.
+- Exact removed report: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/JogoDaCopa/docs/playtest-reports/track-09s-camera-strafe-smoothing-hotfix.md` via the project Documentation Lite receipt.
 - Human retest approved by Fabio/tester on 2026-06-20; 09S is the latest approved fallback behind 10A and 09Q remains the fallback behind 09S.
 
 ## Completed Track 10B - Web Goal Feel Reintroduction V1
@@ -199,7 +201,8 @@ Focus:
 - Remote menu and first-minute gates passed with release root matched, `pageErrors=0`, `consoleErrorCount=0` and `firstMinuteHitches=0`.
 - Remote 5-minute stability failed only on `js_heap_growth +13.85%` against the `<10%` gate; peak was `+17.71%`, `wasmSampleCount=0`, counters/caches passed and worst 5s FPS was `117.2`.
 - Rollback restored Track 10A as production with preview `https://f375997e.copa-arena-futebol.pages.dev`; stable URL confirmation passed for `web/v1-copa-arena-futebol-20260620-fc3c72bb`.
-- Evidence: `docs/playtest-reports/track-10b-web-goal-feel-reintroduction.md` and `docs/playtest-reports/track-10b-data/`.
+- Evidence summary/lineage: `../implementation/history.md`; raw data: `docs/playtest-reports/track-10b-data/`.
+- Exact removed report: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/JogoDaCopa/docs/playtest-reports/track-10b-web-goal-feel-reintroduction.md` via the project Documentation Lite receipt.
 - Result: blocked publication attempt; 10A remains the public human-approved baseline.
 
 ## Completed Track 10C - Web Goal Feedback Heap-Safe V1
@@ -211,7 +214,8 @@ Focus:
 - Added a GUT contract test asserting default Web feedback includes `goal_visual` and excludes `goal_audio`, `goal` and `crowd_goal`.
 - Local gates passed: import headless, `tools/validate.gd` (`108/108`, `1840` asserts), Web export, gzip `30.62 MiB / 50.00 MiB`, `node --check tools/track04f_chrome_probe.mjs`, 90s Chrome Web visual-only smoke and 5-minute Chrome stability.
 - 5-minute local stability: `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`, `js_heap_growth -8.10%`, peak `+1.10%`, worst 5s FPS `137.4`, Godot counters/caches stable.
-- Evidence: `docs/playtest-reports/track-10c-web-goal-feedback-heap-safe.md` and `docs/playtest-reports/track-10c-data/`.
+- Evidence summary/lineage: `../implementation/history.md`; raw data: `docs/playtest-reports/track-10c-data/`.
+- Exact removed report: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/JogoDaCopa/docs/playtest-reports/track-10c-web-goal-feedback-heap-safe.md` via the project Documentation Lite receipt.
 - Published as `Super Campeao v1.2.1+39054f31`; remote menu, first-minute, 5-minute stability, luma and stable URL confirmation gates passed.
 - Remote 5-minute stability: `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`, `js_heap_growth -0.59%`, peak `+2.31%`, worst 5s FPS `142.2`, Godot counters/caches stable.
 - Stable URL `https://copa-arena-futebol.pages.dev/` confirmed `web/v1-copa-arena-futebol-20260620-39054f31`.
@@ -227,7 +231,8 @@ Focus:
 - Local gates passed: import headless, `tools/validate.gd` (`108/108`, `1844` asserts), Web export/gzip, `node --check`, Chrome local 90s Web smoke and Chrome local 5min stability.
 - Published as `Super Campeao v1.2.1+45da58b1`; remote menu, first-minute, 5-minute stability, luma and stable URL confirmation gates passed.
 - Remote 5-minute stability: `firstMinuteHitches=0`, `pageErrors=0`, `consoleErrorCount=0`, `js_heap_growth -5.35%`, peak `+0.04%`, worst 5s FPS `139.8`, goal mode `visual=true audio=false`.
-- Evidence: `docs/playtest-reports/track-10d-web-goal-golden-pop-hotfix.md`, `docs/playtest-reports/track-10d-publication.md` and `docs/playtest-reports/track-10d-data/`.
+- Evidence summary/lineage: `../implementation/history.md`; raw data: `docs/playtest-reports/track-10d-data/`.
+- Exact removed reports use baseline `52f52f7cd33d1711579f9cccbe4c848ab45a02e4`: `Projetos/JogoDaCopa/docs/playtest-reports/track-10d-web-goal-golden-pop-hotfix.md` and `Projetos/JogoDaCopa/docs/playtest-reports/track-10d-publication.md`, via the project Documentation Lite receipt.
 - Result: public with remote automated gates passed; human retest pending; 10A remains the latest human-approved fallback.
 
 ## Out Of Scope

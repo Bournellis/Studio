@@ -4,7 +4,7 @@
 
 - status: living
 - authority: router
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: as rotas documentais locais mudarem
 - supersedes: none
 - superseded_by: none
@@ -20,7 +20,7 @@
 - `Kanban/Backlog/`
 - `Kanban/Doing/`
 - `Kanban/Review/`
-- `Kanban/Done/`
-- `Handoffs/`
+- `Kanban/Done/` — encerramento transitório antes da absorção
+- `Handoffs/` — transferência ativa e transitória
 
-História local consolidada: `../implementation/history.md`. Fontes pré-cutover detalhadas são abertas apenas quando uma evidência específica for necessária.
+História local consolidada: `../implementation/history.md` e seus ledgers. Quando uma evidência pré-cutover específica for necessária, use o receipt Documentation Lite e o baseline Git registrado; não recrie a fonte removida no `HEAD`.

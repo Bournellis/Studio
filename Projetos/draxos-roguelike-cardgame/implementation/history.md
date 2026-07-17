@@ -13,6 +13,8 @@ Este registro preserva a linhagem tecnica e de produto necessaria para recuperar
 
 Autoridades vivas: `current-status.md` para estado local, `../docs/game-design-document.md` para produto, `../docs/architecture.md` para arquitetura, JSON/testes para conteudo e `../qa/QA_INDEX.md` para validacao.
 
+As fontes listadas na proveniencia pre-cutover sairam do `HEAD` depois de absorvidas em `history-ledger/`. A recuperacao literal usa o receipt Documentation Lite e o baseline `52f52f7cd33d1711579f9cccbe4c848ab45a02e4`.
+
 ## Linha do tempo das tracks
 
 ### Track 00 - bootstrap local

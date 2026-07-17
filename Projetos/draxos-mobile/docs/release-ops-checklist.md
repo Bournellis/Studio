@@ -4,9 +4,9 @@
 
 - status: `living`
 - authority: `runbook`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `local build, artifact or release safety changes`
-- supersedes: `internal-alpha-release-plan.md as the active procedure`
+- supersedes: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/draxos-mobile/docs/internal-alpha-release-plan.md as the active procedure`
 - superseded_by: `none`
 
 - Data: `2026-06-24`

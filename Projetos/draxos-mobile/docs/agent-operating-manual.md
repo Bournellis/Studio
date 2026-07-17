@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `runbook`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `task routing, validation or hard stops change`
 - supersedes: `none`
 - superseded_by: `none`
@@ -23,18 +23,17 @@ Read live docs in this order:
 1. `AGENTS.md` - fast operating rules.
 2. `implementation/current-status.md` - short decision snapshot.
 3. `docs/documentation-index.md` - where each doc belongs.
-4. `docs/foundation-app-v0-audit.md` - historical Foundation Audit compass for closed baseline context.
-5. `docs/foundation-expansion-readiness.md` - delivered pre-expansion gate and closeout contract base.
-6. `docs/foundation-loop-audit.md` - executed audit of post-login loop ergonomics.
-7. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
-8. `docs/product-vision.md` - local long-term product canon.
-9. `docs/pve-arena-initial-direction.md` - approved early-game direction.
-10. `docs/arena-pve-product-proof.md` - current Arena proof/verdict guardrail.
-11. `docs/arena-ux-proof-release-discipline-plan.md` - next Arena UX proof execution and anti-micro-release plan.
-12. `docs/game-design-document.md` - implementation reference and mock/substance context.
-13. `docs/design-pending.md` - only live register of unresolved design decisions.
-14. `docs/multi-agent-workflow.md` - required when coordinating parallel hardening lanes or mode work.
-15. `docs/hardening-program.md` - required for long-term refactor/hardening gates across active lanes.
+4. `docs/foundation-expansion-readiness.md` - delivered pre-expansion gate and closeout contract base.
+5. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
+6. `docs/product-vision.md` - local long-term product canon.
+7. `docs/pve-arena-initial-direction.md` - approved early-game direction.
+8. `docs/arena-pve-product-proof.md` - current Arena proof/verdict guardrail.
+9. `docs/arena-ux-proof-release-discipline-plan.md` - Arena UX proof execution and anti-micro-release plan.
+10. `docs/game-design-document.md` - implementation reference and mock/substance context.
+11. `docs/contracts/` - executable backend, content, feature and release contracts.
+12. `docs/design-pending.md` - only live register of unresolved design decisions.
+13. `docs/multi-agent-workflow.md` - required when coordinating parallel hardening lanes or mode work.
+14. `docs/hardening-program.md` - required for long-term refactor/hardening gates across active lanes.
 
 If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
 
@@ -56,7 +55,7 @@ Track 18 through Track 23 remain the Arena PVE/Autobattler context: server-autho
 
 Social Basico Guilda v1, Visual Direction v1, Battle Presentation v1, Battle Drama v1.1, Battle Preparation Complete v1, Progression Clarity v1 and First Session Clarity v1 have since been published. Do not open feature expansion outside the Arena PVE initial package.
 
-Track 16 remains the latest technical package, but it is not the current product focus. Its current behavior/potion/crafting state is summarized in `docs/behavior-potion-crafting-v1.md`. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
+Track 16 remains historical delivery context, not current product focus. Current behavior/potion/crafting rules live in the GDD, `docs/contracts/content-definitions.md`, API/schema contracts and authored definitions. Current spells, weapons, economy values, Battle Pass, battle flavor and visual identity are mock/substance, not priority areas.
 
 Foundation Expansion Readiness adds:
 
@@ -107,7 +106,7 @@ git status --short
 git worktree list
 ```
 
-Register work in `../../08_Coordenacao_Agentes/Kanban/Doing/` or a handoff note. Include:
+Register project work in `../08_Coordenacao/Kanban/Doing/` or a local handoff note. Include:
 
 - objective;
 - branch and worktree;
@@ -122,24 +121,24 @@ and the DraxosMobile templates in `../../08_Coordenacao_Agentes/Templates/`.
 Those templates force lane, mode, write scope, latest Track 21 context and
 remote-mutation status into the handoff.
 
-For Foundation Audit, the expected DraxosMobile Doing card must state the branch, worktree and current loop/UX objective. Historical DraxosMobile cards belong in `Kanban/Done/`.
+Every DraxosMobile Doing card must state the branch, worktree and bounded objective. Closed cards are absorbed into local history by the Documentation Lite lifecycle.
 
 ## Read Order By Task
 
 | Task type | Required docs |
 |---|---|
 | Small code fix | `AGENTS.md`, `implementation/current-status.md`, touched files |
-| Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `docs/foundation-app-v0-audit.md`, `docs/foundation-loop-audit.md` |
-| Multi-agent hardening | `AGENTS.md`, this manual, `docs/multi-agent-workflow.md`, `docs/documentation-index.md`, `docs/foundation-hardening-v2-readiness-report.md` |
+| Agent/doc operation | `AGENTS.md`, this manual, `docs/documentation-index.md`, `implementation/history.md` only when history is required |
+| Multi-agent hardening | `AGENTS.md`, this manual, `docs/multi-agent-workflow.md`, `docs/documentation-index.md`, `docs/hardening-program.md` |
 | Long-term refactor/hardening | `AGENTS.md`, this manual, `docs/hardening-program.md`, `docs/multi-agent-workflow.md`, touched lane contracts |
 | Product/design | `docs/product-vision.md`, `docs/pve-arena-initial-direction.md`, `docs/arena-pve-product-proof.md`, `docs/arena-ux-proof-release-discipline-plan.md`, `docs/product-brief.md`, `docs/game-design-document.md`, `docs/design-pending.md` |
 | Backend/contracts | `docs/architecture.md`, `docs/contracts/`, `server/schema/`, `server/functions/`, `supabase/` mirrors |
 | Foundation expansion/final polish | `docs/foundation-expansion-readiness.md`, `docs/contracts/account-save.md`, `docs/contracts/ruleset-registry.md`, `docs/contracts/admin-ops.md`, `docs/contracts/minigame-integration.md` |
-| Crafting/potions/behavior | `docs/behavior-potion-crafting-v1.md`, `docs/contracts/api-endpoints.md`, `docs/contracts/database-schema.md`, `docs/contracts/content-definitions.md`, `docs/contracts/battle-event-log.md` |
+| Crafting/potions/behavior | `docs/game-design-document.md`, `docs/contracts/api-endpoints.md`, `docs/contracts/database-schema.md`, `docs/contracts/content-definitions.md`, `docs/contracts/battle-event-log.md` |
 | Godot client | `AGENTS.md`, `modes/boot/surfaces/README.md`, relevant tests, relevant flow/presenter |
 | Entry/Refugio/Battle layout | `docs/foundation-responsive-layout-contract.md`, `tools/smoke_responsive_layout.gd`, relevant UI tests |
 | Release/publication | `docs/contracts/release-safety.md`, `docs/release-ops-checklist.md`, `tools/README.md`; for Arena proof packages also `docs/arena-ux-proof-release-discipline-plan.md` |
-| Manual QA | `docs/track-13-manual-walkthrough-gate.md`, `docs/internal-alpha-v0-handoff.md`; for Arena proof also `docs/arena-pve-product-proof.md` |
+| Manual QA | `qa/QA_INDEX.md`, `docs/track-13-manual-walkthrough-gate.md`; for Arena proof also `docs/arena-pve-product-proof.md` |
 
 ## Validation By Task
 
@@ -221,4 +220,4 @@ Every handoff should say:
 - whether the worktree is clean;
 - next safe action for the following agent.
 
-Keep `implementation/current-status.md` short. Put detailed history, logs and validation notes in the Foundation Audit handoff, Kanban Done card or relevant historical track directory.
+Keep `implementation/current-status.md` short. Put durable closed results in `implementation/history.md`, `implementation/history-ledger/` or `docs/release-history.md`; Done cards and closed handoffs are transient lifecycle inputs.

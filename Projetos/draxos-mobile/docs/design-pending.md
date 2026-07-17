@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `product_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `a question is opened, calibrated, resolved or deferred`
 - supersedes: `distributed unresolved-design lists`
 - superseded_by: `none`
@@ -19,7 +19,7 @@
 
 Este documento e o unico lugar para registrar pendencias de design do projeto ativo. Ele nao resolve design; ele nomeia o que ainda precisa ser decidido, classifica o bloqueio e aponta para o documento que deve receber a resposta quando a decisao existir.
 
-Pendencias resolvidas ficam preservadas em `docs/design-resolved-archive.md`; este arquivo deve permanecer enxuto e acionavel.
+Ao resolver uma pendencia, atualize o contrato vivo de destino e absorva a decisao em `../implementation/history.md`/history-ledger pelo lifecycle Documentation Lite; este arquivo permanece enxuto e acionavel.
 
 ## Como Usar
 
@@ -76,7 +76,7 @@ Revisao manual do build publicado identificou regressao de responsividade: Labs 
 
 Armas, spells, nomes, tema, imagens, economia, Battle Pass, apresentacao de batalha e visual final existem como substancia/mock. Eles so devem ser ajustados agora quando forem necessarios para o pacote pequeno de Arena PVE inicial: tutorial de 1 luta, primeiras arenas de 3 lutas, dificuldade escalavel, loadout travado, buffs temporarios de stat, vida resetada por duelo e sem cooldown de combate.
 
-`docs/pve-arena-v1.md` fecha o contrato data-driven inicial para tamanho maximo, primeira lista de inimigos, buffs e perfis de recompensa. Os valores de recompensa continuam calibraveis ate Battle Lab, Progression Lab e rodada humana.
+O GDD, `contracts/content-definitions.md` e as definitions da Arena fecham o contrato data-driven inicial para tamanho maximo, primeira lista de inimigos, buffs e perfis de recompensa. Os valores de recompensa continuam calibraveis ate Battle Lab, Progression Lab e rodada humana.
 
 ## Estado Do MVP Tecnico
 
@@ -90,20 +90,20 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 
 | ID | Sistema | Bloqueia | Pergunta | Impacto | Documento destino | Status | Resolvido em |
 |---|---|---|---|---|---|---|---|
-| DMOB-D066 | Recompensas Arena PVE | CALIBRAVEL_ALPHA | Formula inicial contratada em `arena_rewards.json`: primeira clear, conclusao, recorde, repeticao reduzida, bonus diario/semanal e caps. Valores numericos continuam calibraveis. | Sem validacao dos labs e rodada humana, ainda ha risco de grind infinito ou progressao lenta demais. | `pve-arena-v1.md` | CALIBRAR | - |
+| DMOB-D066 | Recompensas Arena PVE | CALIBRAVEL_ALPHA | Formula inicial contratada em `arena_rewards.json`: primeira clear, conclusao, recorde, repeticao reduzida, bonus diario/semanal e caps. Valores numericos continuam calibraveis. | Sem validacao dos labs e rodada humana, ainda ha risco de grind infinito ou progressao lenta demais. | `contracts/content-definitions.md` | CALIBRAR | - |
 | DMOB-D067 | Labs Arena PVE | CALIBRAVEL_ALPHA | Contrato v1 exige que Progression Lab e Battle Lab representem listas de duelos, buffs temporarios, vida resetada, loadout travado e comportamento ajustavel. Labs ja existem no Web export e no runner remoto, mas a modelagem fina da Arena PVE nos labs ainda precisa revisao/calibracao humana. | Sem modelagem dos labs, tuning integrado de leveling/upgrades/recompensas/poder fica opinativo demais. | `docs/progression-lab/README.md` | CALIBRAR | - |
 | DMOB-D069 | Towerdefense | POS_SLICE | Qual contrato de gameplay, build, recompensas e UX do modo Towerdefense? | Sem contrato, o modo permanece planned/disabled no registry tecnico e oculto ao player; decision pack v1 lista perguntas e bloqueios sem aprovar gameplay. | `docs/minigames/towerdefense-decision-pack.md` | ABERTO | - |
 | DMOB-D070 | Cardgame | POS_SLICE | Qual contrato proprio do Cardgame mobile sem herdar mecanicas do projeto Steam? | Sem contrato, o modo permanece planned/disabled no registry tecnico e oculto ao player; decision pack v1 fixa a regra de nao-heranca mecanica. | `docs/minigames/cardgame-decision-pack.md` | ABERTO | - |
 | DMOB-D071 | Openworld continuo | POS_SLICE | Como o Openworld evolui de Bosque para mundo continuo, incluindo mapa, risco, combate e fronteira com Basebuilder? | Playtest aprovou o slice Bosque como modo ativo Internal Alpha; expansao de mundo continuo continua bloqueada sem novo decision pack. | `docs/minigames/openworld-decision-pack.md` | ABERTO | - |
 | DMOB-D073 | Openworld conflito minimo | POS_SLICE | Existe evidencia suficiente para testar um pacote minimo com monstros, NPCs e quests dentro do Openworld sem virar campanha, MMO, economia paralela ou substituto da Arena PVE? | Sem decisao, combate/quests podem contaminar o Bosque relaxante, quebrar fronteiras com Arena/Basebuilder ou criar expectativas de Openworld completo. | `docs/minigames/openworld-decision-pack.md` | ABERTO | - |
 | DMOB-D082 | Prova Arena PVE | OPERACIONAL | Fabio registrou resultado combinado: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`. A proxima rodada precisa executar UX/readability/recovery e nova prova humana antes de escolher outro veredito. | Sem manter este gate aberto, agentes podem interpretar a prova como autorizacao para calibrar numeros ou expandir produto antes de resolver clareza/UX/recovery da Arena. | `docs/arena-pve-product-proof.md` | ABERTO | - |
-| DMOB-D006 | XP Livre | PLAYTEST_ALPHA | Quais sao os valores de XP por tipo/level de construcao e por quest? | Baseline calibravel criado no simulador economico; valores finais dependem de iteracao com dados. | `docs/economy/README.md` | CALIBRAR | - |
-| DMOB-D007 | Energia | PLAYTEST_ALPHA | Qual curva de Energia e esperada para jogador free, battle pass e gasto com Diamante? | Baseline calibravel criado no simulador economico; valores finais dependem de iteracao com dados. | `docs/economy/README.md` | CALIBRAR | - |
+| DMOB-D006 | XP Livre | PLAYTEST_ALPHA | Quais sao os valores de XP por tipo/level de construcao e por quest? | Baseline calibravel criado no simulador economico; valores finais dependem de iteracao com dados. | `game-design-document.md` + `economy/generated/season_economy_summary.json` | CALIBRAR | - |
+| DMOB-D007 | Energia | PLAYTEST_ALPHA | Qual curva de Energia e esperada para jogador free, battle pass e gasto com Diamante? | Baseline calibravel criado no simulador economico; valores finais dependem de iteracao com dados. | `game-design-document.md` + `economy/generated/season_economy_summary.json` | CALIBRAR | - |
 | DMOB-D029 | Poder | CALIBRAVEL_ALPHA | Quais pesos finais da formula de poder apos incluir summons e todos os upgrades? | Source Identity Balance v2 usa pesos alpha `level=42`, `instrument=28`, `spell=40`, `familiar=34`, `doutrina=22`, `quality=30`; aliases tecnicos antigos `weapon/pet/passive` podem existir no simulador. Manter calibravel ate playtest manual confirmar matchmaking. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D030 | Balanceamento | CALIBRAVEL_ALPHA | Quais valores finais de dano, cooldown, mana, DoT, Familiar, Doutrina e anti-stall? | Run oficial `2026-05-25_source_identity_balance_v02` e Track 16 Lab Alignment continuam evidencia historica/tecnica. A proxima rodada precisa simular Arena PVE com listas de duelos, vida resetada, buffs temporarios e comportamento entre lutas antes de promover tuning. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D031 | Guilda | CALIBRAVEL_ALPHA | Os bonus de guilda estao leves o suficiente para nao serem obrigatorios? | Tuning social/economico precisa dados reais. | `game-design-document.md` | CALIBRAR | - |
 | DMOB-D032 | Diamante | CALIBRAVEL_ALPHA | A economia de Diamante cobre o gap esperado sem substituir gameplay? | Requer observacao de progressao free vs paga. | `game-design-document.md` | CALIBRAR | - |
-| DMOB-D044 | Progression Lab | CALIBRAVEL_ALPHA | Quais estados saudaveis representam 2h, 5h, 10h, 15h e 20h para cada perfil de jogador? | Rodada tecnica 2026-05-27 registrada em `docs/progression-lab/2026-05-27-t04-progression-economia.md`: 25 estados/75 bots, sem divida de recurso e `REVIEW` concentrado em free/freemium 20h. Ainda precisa validacao manual no Godot/Supabase local. | `docs/progression-lab/README.md` | CALIBRAR | - |
+| DMOB-D044 | Progression Lab | CALIBRAVEL_ALPHA | Quais estados saudaveis representam 2h, 5h, 10h, 15h e 20h para cada perfil de jogador? | A rodada tecnica de 2026-05-27 esta resumida no history/ledger: 25 estados/75 bots, sem divida de recurso e `REVIEW` concentrado em free/freemium 20h. Ainda precisa validacao manual no Godot/Supabase local. | `docs/progression-lab/README.md` | CALIBRAR | - |
 | DMOB-D045 | Poder | CALIBRAVEL_ALPHA | Quais pesos de poder devem sair dos dados de Progression Lab + Battle Lab para pareamento inicial? | Pesos alpha v2 seguem `PASS` na rodada tecnica 2026-05-27; recomendacao atual e manter pesos ate rodada humana confirmar bots/poder e nova comparacao Battle Lab justificar mudanca. | `docs/progression-lab/README.md` | CALIBRAR | - |
 | DMOB-D046 | Premium | CALIBRAVEL_ALPHA | Qual gap aceitavel entre free, freemium, gastador leve e max_spender sem vender poder exclusivo acima do cap? | `premium_gap.csv` segue em `REVIEW` sem `CRITICAL`; alertas atuais sao `spender_light` 10h, `max_spender` 10h e `max_spender` 20h. Nao alterar economia antes de decisao explicita. | `docs/progression-lab/README.md` | CALIBRAR | - |
 | DMOB-D034 | Cardgame Roguelike | POS_SLICE | Qual formato competitivo e progressao propria do PVP Cardgame Roguelike? | Fora da Track 00. | `game-design-document.md` | ADIADO | - |
@@ -116,6 +116,6 @@ O MVP tecnico ja implementou conta guest server-authoritative, cliente de sessao
 ## Regras De Atualizacao
 
 - Ao resolver uma pendencia, atualizar este arquivo e o documento destino no mesmo commit.
-- Depois de registrada a decisao, mover a linha resolvida para `docs/design-resolved-archive.md` para manter este documento vivo focado em decisoes abertas, calibraveis ou adiadas.
+- Depois de registrada a decisao no contrato de destino, retirar a linha resolvida pelo lifecycle Documentation Lite e manter a proveniencia no history/ledger.
 - Se uma implementacao precisar de uma decisao nao listada aqui, adicionar nova linha antes de implementar.
 - Nao mover pendencias para o GDD historico em `../../_conceitos/mobile-universe/`; a fonte viva do projeto ativo fica em `Projetos/draxos-mobile/`.

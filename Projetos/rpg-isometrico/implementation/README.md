@@ -4,7 +4,7 @@
 
 - status: living
 - authority: router
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: rotas de implementação ou estado de pausa mudar
 - supersedes: README anterior ao cutover de governança v2
 - superseded_by: none
@@ -19,6 +19,7 @@
 
 - `history.md`: rota consolidada para G1–G4, Tracks 01–02, gates, validações e smokes.
 - `../docs/canon/historical-provenance.md`: decisões e supersessões mapeadas para o canon atual.
-- `tracks/`, `phase-g1/` a `phase-g4/`, `checkpoints/` e `execution-log.md`: fontes históricas explícitas, fora da leitura normal.
+- `history-ledger/`: proveniência compacta das fontes retiradas do `HEAD`.
+- `../../../08_Coordenacao_Agentes/Receipts/DocumentationLite/local_rpgisometrico.json` + baseline Git: recuperação literal, somente para consulta histórica explícita.
 
 Nada nesta história abre track ou gate durante `PAUSADO_INDEFINIDO`.
