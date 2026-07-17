@@ -14,7 +14,7 @@
 - delegated_scope: `coordenação, documentação, QA e baseline de dívida locais`
 - branch: `codex/draxosmobile/governanca-v2`
 - worktree: `D:\Estudio-worktrees\draxosmobile--codex--governanca-v2`
-- base_ref: `main@20542ce3`
+- base_ref: `main@a3fd2f34`
 - merge_status: `ready_for_merge`
 - worktree_status: `open`
 - branch_cleanup: `pending`
@@ -46,7 +46,7 @@ Migrar o DraxosMobile para coordenação local-first, documentos vivos curtos, Q
 - Runtime 2x: cliente `287/287`, `4.208` asserts; servidor `128 + 23`; modo/plataforma `49`.
 - Build 2x: `ReleaseDryRun` verde e limitado a plano local; nenhuma publicação ou mutação externa.
 - Todos os snapshots rastreados antes/depois foram idênticos.
-- Rebase limpo em `main@20542ce3`; validação pós-rebase proporcional executada antes do handoff.
+- Rebase limpo em `main@a3fd2f34`; validação pós-rebase proporcional executada antes do handoff.
 
 ## Hard stops
 

@@ -19,7 +19,7 @@
 - delegated_scope: `all writes under Projetos/draxos-mobile`
 - branch: `codex/draxosmobile/governanca-v2`
 - worktree: `D:\Estudio-worktrees\draxosmobile--codex--governanca-v2`
-- base_ref: `main@20542ce3`
+- base_ref: `main@a3fd2f34`
 - merge_status: `pending`
 - worktree_status: `open`
 - branch_cleanup: `pending`
