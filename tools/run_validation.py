@@ -23,6 +23,8 @@ from contextlib import ExitStack
 from pathlib import Path
 from typing import Any
 
+from check_agent_closure_protocol import check_closure
+from check_portfolio_sync_queue import check_queue
 from execution_lock import ExecutionLock, ExecutionLockTimeout
 
 from estudio_governance import (
@@ -424,6 +426,20 @@ def _existing_script_step(root: Path, name: str, args: list[str], audit_only: bo
     return _result(name, status, duration, exit_code=code, reason="" if code == 0 else f"exit {code}")
 
 
+def _powershell_script_step(root: Path, name: str, script: str, audit_only: bool) -> dict[str, Any]:
+    path = root / script
+    if not path.is_file():
+        return _result(name, "audit_fail" if audit_only else "fail", 0, reason=f"missing {script}")
+    command = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(path), "-Root", str(root)]
+    code, duration, stdout, stderr = _run_process(command, root, 180)
+    if stdout:
+        print(stdout, end="" if stdout.endswith("\n") else "\n")
+    if stderr:
+        print(stderr, file=sys.stderr, end="" if stderr.endswith("\n") else "\n")
+    status = "pass" if code == 0 else "audit_fail" if audit_only else "fail"
+    return _result(name, status, duration, exit_code=code, reason="" if code == 0 else f"exit {code}")
+
+
 def run_validation(args: argparse.Namespace) -> dict[str, Any]:
     root = Path(args.root).resolve()
     config = load_governance(root, args.config)
@@ -451,6 +467,8 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
         check_config(root, args.config),
         check_text(root, config),
         check_docs(root, config),
+        check_closure(root, config, selected),
+        check_queue(root, config),
         check_qa(root, config, selected),
         check_uids(root, config, selected),
         check_health(root, config, selected),
@@ -464,6 +482,7 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
     report["steps"].append(_existing_script_step(root, "dashboard_generated", ["tools/generate_fabio_dashboard.py", "--root", str(root), "--check"], args.audit_only))
     report["steps"].append(_existing_script_step(root, "local_doc_links", ["tools/check_local_doc_links.py", "--root", str(root), "--workspace", "estudio"], args.audit_only))
     report["steps"].append(_existing_script_step(root, "docs_health", ["tools/check_docs_health.py", "--root", str(root), "--workspace", "estudio"], args.audit_only))
+    report["steps"].append(_powershell_script_step(root, "secret_scan", "tools/check_secret_scan.ps1", args.audit_only))
 
     if args.profile != "DocsOnly":
         godot_exe = _godot_executable(root, config, args.godot_exe)
