@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "project": "RpgTurnos",
+  "runners": [
+    {
+      "id": "rpg_turnos_fast_contracts",
+      "category": "fast",
+      "tier": "QA",
+      "lane": "godot",
+      "runner": "gut_scripts",
+      "entrypoint": "res://addons/gut/gut_cmdln.gd",
+      "args": [],
+      "profiles": ["FastSuite", "FullLocal"],
+      "timeout_seconds": 30,
+      "environments": ["Godot 4.6.2-stable", "headless", "local"],
+      "output_policy": "ignored_cache_only",
+      "local_only": true
+    },
+    {
+      "id": "rpg_turnos_runtime_full",
+      "category": "regression",
+      "tier": "Runtime",
+      "lane": "godot",
+      "runner": "godot_script",
+      "entrypoint": "res://tools/validate.gd",
+      "args": [],
+      "profiles": ["Runtime", "FullLocal"],
+      "timeout_seconds": 120,
+      "environments": ["Godot 4.6.2-stable", "headless", "local"],
+      "output_policy": "ignored_cache_only",
+      "local_only": true
+    }
+  ],
+  "critical_journey": [
+    {
+      "id": "boot_and_new_game",
+      "status": "covered",
+      "runner_ids": ["rpg_turnos_fast_contracts", "rpg_turnos_runtime_full"],
+      "evidence": "boot and session tests plus full tools/validate.gd contract"
+    },
+    {
+      "id": "class_selection_and_persistence",
+      "status": "covered",
+      "runner_ids": ["rpg_turnos_fast_contracts", "rpg_turnos_runtime_full"],
+      "evidence": "content/session selection and save round-trip tests"
+    },
+    {
+      "id": "deck_setup_contract",
+      "status": "covered",
+      "runner_ids": ["rpg_turnos_runtime_full"],
+      "evidence": "full runtime includes deck rules and deck setup UI tests"
+    },
+    {
+      "id": "world_exploration_and_encounters",
+      "status": "covered",
+      "runner_ids": ["rpg_turnos_runtime_full"],
+      "evidence": "world placeholder, rank gate, encounter catalog and runtime tests"
+    },
+    {
+      "id": "c1_battle_modes",
+      "status": "covered",
+      "runner_ids": ["rpg_turnos_fast_contracts", "rpg_turnos_runtime_full"],
+      "evidence": "BattleEngine coverage for all six official encounter modes"
+    },
+    {
+      "id": "three_class_baseline",
+      "status": "covered",
+      "runner_ids": ["rpg_turnos_fast_contracts", "rpg_turnos_runtime_full"],
+      "evidence": "Invocador, Arcano and Necromante multi-class regression"
+    },
+    {
+      "id": "save_v1_to_v2_migration",
+      "status": "covered",
+      "runner_ids": ["rpg_turnos_fast_contracts", "rpg_turnos_runtime_full"],
+      "evidence": "P20 migration tests cover eight IDs, unknown IDs, purity and version handling"
+    },
+    {
+      "id": "human_playability",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "docs/first-playable-slice-smoke.md; not revalidated after the P20 integrity repair"
+    }
+  ]
+}
