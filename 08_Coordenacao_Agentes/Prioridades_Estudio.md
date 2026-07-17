@@ -13,7 +13,9 @@ Este documento e a unica fonte de verdade para foco, status de portfolio e traba
 
 ## Foco Atual
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (10D publicada e aprovada; 10A fallback aprovado) + `Projetos/draxos-mobile/` (hardening integrado localmente preservado; Web Static Assets Hotfix v1 aprovada sobre Arena Runtime Config Sync Ready v3; Arena core ainda aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14I limpeza de debugger Godot aprovada em teste humano; movimento atual preservado)
+- Foco operacional ativo: `Projetos/JogoDaCopa/` — Track 10D aprovada; Track 10A preservada como fallback.
+- Foco operacional ativo: `Projetos/draxos-mobile/` — Hotfix v1 aprovada; Arena core ainda aguardando prova humana.
+- Foco operacional ativo: `Projetos/FpsPlayground/` — Track 14I aprovada; movimento atual preservado.
 - Pausa temporaria por poucos dias: `Projetos/draxos-roguelike-cardgame/`
 - Arquivo de design: `Projetos/_conceitos/mobile-universe/` (referencia - nao e o projeto ativo)
 - Projetos pausados: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
@@ -51,4 +53,5 @@ Baselines, markers e detalhes por projeto vivem em `Estado_Atual.md` e no `imple
 - Nao mova mecanicas, decisoes ou escopo entre projetos sem documento local adotando a regra.
 - Em `_conceitos/mobile-universe/`, apenas leitura e referencia de design - o projeto ativo e `draxos-mobile/`.
 - Em RPG Isometrico e RPG Turnos, nao implemente nem expanda escopo sem pedido explicito do usuario.
-- Ao concluir tarefa que mude status observavel, atualize `Estado_Atual.md` e, se foco/prioridade mudou, a tabela deste arquivo. Nao replique estado em outros documentos.
+- Tarefas locais enfileiram `global_sync_needed` em `PortfolioSync_QUEUE.md`; somente uma tarefa `portfolio_sync` atualiza `Estado_Atual.md`.
+- Esta tabela muda apenas quando Fabio altera foco, status de portfolio ou trabalho permitido. Nao replique estado em outros documentos.

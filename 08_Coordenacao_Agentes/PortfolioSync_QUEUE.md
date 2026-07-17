@@ -13,13 +13,15 @@ Esta fila separa trabalho local de atualizacoes nos hot files globais. Ela nao e
 
 ## Pending
 
-| id | project | source | requested_at | fields | state |
-|---|---|---|---|---|---|
-| `governanca-v2-cutover` | `AllOfficial` | `2026-07-16_estudio-governanca-v2` | `2026-07-16` | `baseline, validation, local coordination` | `pending` |
+Nenhuma entrada pendente.
 
 ## Reflected
 
-Entradas consumidas devem ser movidas para esta secao com commit e data de reflexao. O conteudo refletido vive em `Estado_Atual.md`; a fila registra somente o ato de sincronizacao.
+| id | project | source | requested_at | reflected_at | fields | state |
+|---|---|---|---|---|---|---|
+| `governanca-v2-cutover` | `AllOfficial` | `2026-07-16_estudio-governanca-v2` | `2026-07-16` | `2026-07-16` | `baseline, validation, local coordination` | `reflected` |
+
+O conteudo refletido vive em `Estado_Atual.md`; esta fila registra somente o ato de sincronizacao.
 
 ## Rules
 

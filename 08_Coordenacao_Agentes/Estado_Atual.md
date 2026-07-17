@@ -9,7 +9,7 @@
 - supersedes: `none`
 - superseded_by: `none`
 
-- Ultima atualizacao: `2026-06-25`
+- Ultima atualizacao: `2026-07-16`
 - Autoridade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Natureza: projecao curta; estados tecnicos locais vivem em `implementation/current-status.md`.
 - Painel Fabio local: `08_Coordenacao_Agentes/FABIO_DASHBOARD.html`
@@ -18,64 +18,67 @@
 
 ## Prioridade Do Estudio
 
-- Foco operacional ativo: `Projetos/JogoDaCopa/` (10D publicada e aprovada; 10A fallback aprovado) + `Projetos/draxos-mobile/` (Arena Web Static Assets Hotfix v1 aprovada; Arena core ainda aguardando prova humana) + `Projetos/FpsPlayground/` (Track 14I limpeza de debugger Godot aprovada em teste humano; movimento atual preservado)
-- Pausados temporariamente (poucos dias): `Projetos/draxos-roguelike-cardgame/`
-- Arquivo de design: `Projetos/_conceitos/mobile-universe/`
-- Pausados por tempo indeterminado: `Projetos/rpg-isometrico/`, `Projetos/rpg-turnos/`
+- Ativo: `Projetos/JogoDaCopa/` — Track 10D aprovada; Track 10A preservada como fallback.
+- Ativo: `Projetos/draxos-mobile/` — Web Static Assets Hotfix v1 aprovada; Arena core ainda sem prova humana.
+- Ativo: `Projetos/FpsPlayground/` — Track 14I aprovada; movimento atual preservado.
+- Pausa temporaria: `Projetos/draxos-roguelike-cardgame/`.
+- Pausa indefinida: `Projetos/rpg-isometrico/` e `Projetos/rpg-turnos/`.
+- Arquivo de design: `Projetos/_conceitos/mobile-universe/`.
 
 ## JogoDaCopa
 
 - Status: `P2_IMPLEMENTACAO - TRACK10D_HUMAN_APPROVED`
 - Marker: `JOGO_DA_COPA_TRACK10D_HUMAN_APPROVED`
-- Publicacao atual aprovada: Track 10D `Super Campeao v1.2.1+45da58b1` (`web/v1-copa-arena-futebol-20260620-45da58b1`) em `https://copa-arena-futebol.pages.dev/`; gates remotos PASS e reteste humano aprovado.
-- Track 10D: gol Web por pop dourado maior, audio default ainda desligado; remoto 5min PASS com `js_heap_growth -5.35%`, pico `+0.04%`, pior 5s `139.8 FPS`.
-- Fallback aprovado anterior: Track 10A `Super Campeao v1.2.1+fc3c72bb` (`web/v1-copa-arena-futebol-20260620-fc3c72bb`); reteste humano 10A aprovado.
-- Fallback historico aprovado: Track 09S `Super Campeao v1.2.1+925f3b9f`; gates remotos 09S PASS e reteste humano aprovado.
-- Fallback historico aprovado: Track 09Q `Super Campeao v1.2.1+bb604c77`; remote menu/first-minute/stability/luma PASS (`js_heap_growth +8.41%`) e aprovada por Fabio/tester.
+- Release aprovada: Track 10D; linhagem e fallbacks vivem somente em `Projetos/JogoDaCopa/docs/release-history.md`.
+- Baseline local: governanca local-first e QA tipada; Runtime `108/108`, `1.844 asserts`, sem side effects.
+- Gates humanos preservados: feel, camera, audio, visual e publicacao.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
 - Proximo passo: decidir a proxima etapa de `JogoDaCopa`: continuar reducoes locais conservadoras ou abrir nova melhoria de feel/polish.
 
 ## draxos-roguelike-cardgame
 
-- Status: `PAUSADO_TEMPORARIO - retomada pontual de tooling por pedido explicito`
-- Track ativa preservada: `Track 02 - Complete Run Evolution` (T02-P09_COMPLETE)
-- Baseline: Track 02 completa em Godot 4.6.2 (rota de 29 mapas, save v5, keywords, AI/intent, Card Impact V5 e Design Lab Content Wave 01 lab-only). Detalhes em `Projetos/draxos-roguelike-cardgame/implementation/current-status.md`.
-- Meta preservada: revisar/promover candidatos de conteudo via Design Lab antes de playtests completos de sensacao.
-- Trabalho permitido: consulta historica; tooling Design Lab em branch local quando pedido explicitamente.
+- Status: `PAUSADO_TEMPORARIO`; governanca e QA nao retomam produto.
+- Baseline: Track 02 `T02-P09_COMPLETE`, rota `29/29`, save v5 e tres classes.
+- Validacao local: `226/226`, `1.975 asserts`; labs continuam evidencias, nao autoridade de produto.
+- Gates em Review: promocao Design Lab, balance e sensacao da run.
+- Trabalho permitido: consulta historica e retomada somente por pedido explicito.
 - Proximo passo: escolher candidatos Wave 01 para promocao manual e priorizar suporte real para mecanicas bloqueadas.
 
 ## DraxosMobile
 
-- Status: `P2_IMPLEMENTACAO` - Web Static Assets Hotfix v1 aprovada por Fabio em 2026-06-24 sobre Arena runtime_config recovery v3; Arena core ainda aguardando prova humana
+- Status: `P2_IMPLEMENTACAO`; Web Static Assets Hotfix v1 aprovada; Arena core ainda sem prova humana.
 - Marker: `ARENA_WEB_STATIC_ASSETS_HOTFIX_V1_HUMAN_APPROVED`
-- Pacote publicado: app/runtime `Arena Runtime Config Sync Ready v3`, Web/APK/PC `0.0.27-alpha.0` / vc `27`; Web host hotfix preview `https://10efff9c.draxos-mobile-internal-alpha.pages.dev`. Historico: `Projetos/draxos-mobile/docs/release-history.md`.
-- Programa de hardening: Web runtime assets sairam do Supabase Storage publico para Cloudflare Pages (`index.pck` local + `index.wasm.part*`); runtime_config Web repinta rota ao sair de fallback.
-- Resultado de produto Arena PVE: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`; decisao em `08_Coordenacao_Agentes/Decisoes/2026-06-14_draxos-mobile_arena-core-ux-fix-not-proven.md`.
-- Guardrails preservados: Track 13 release safety, Track 14 agent ops; fundacao server-authoritative/idempotencia/RLS NAO deve ser refatorada.
-- Restricao operacional: ver `Projetos/draxos-mobile/AGENTS.md` (Hard Stops); secrets nunca no cliente; publicacao remota exige `-ConfirmRemoteMutation`; sem tuning numerico/PVP/economia/visual final sem decisao.
+- Release aprovada: `0.0.27-alpha.0` / vc `27`; linhagem vive somente em `Projetos/draxos-mobile/docs/release-history.md`.
+- Resultado Arena PVE preservado: `ARENA_CORE_NEEDS_UX_FIX` + `ARENA_CORE_NOT_PROVEN`.
+- Baseline local: cliente `287/287` e `4.208 asserts`; server `128 + 23`; modos `49`; `ReleaseDryRun` verde.
+- Guardrails: autoridade server-side, idempotencia, RLS, Track 13 e Track 14; nenhum remoto ou publicacao automatica.
 - Proximo passo: Fabio/tester executar a prova humana do roteiro Arena seguindo `docs/arena-pve-product-proof.md`; registrar veredito antes de tuning, economia, PVP, conteudo novo, visual final ou expansao Openworld.
 
 ## FpsPlayground
 
 - Status: `P2_IMPLEMENTACAO - TRACK14I_HUMAN_APPROVED`
 - Marker: `FPS_PLAYGROUND_TRACK14I_HUMAN_APPROVED`
-- Baseline: Track 14I aprovada por Fabio/tester; debugger/editor Godot limpos de warnings GUT UID/text-path e leak headless; gameplay Track 14H preservado.
-- Guardrail recente: Track 08 movement feel descartada antes de merge; movimento atual, jump pads, mapas e bot route-control preservados.
-- Validacao: editor/menu/arena headless sem warnings; `tools/validate.gd` quick/full PASS `67/67`, `599 asserts`; `tools/check_doc_drift.ps1` PASS.
+- Baseline: Track 14I aprovada; gameplay Track 14H, movimento, jump pads, mapas e bot route-control preservados.
+- Validacao local: governanca local-first e QA tipada; Runtime `67/67`, `599 asserts`, sem side effects.
+- Gates humanos preservados: movimento, armas, fairness do bot, mapas e tuning.
 - Trabalho permitido: codigo, design, validacao, playtest no editor e documentacao local.
 - Proximo passo: executar `Multi-Arena Balance Baseline V1` antes de novas armas, buffs, mapas, tuning ou bot intelligence.
 
 ## rpg-isometrico
 
-- Status: `PAUSADO_INDEFINIDO` (current-status de `2026-04-26`)
-- Baseline preservada: B0 interno com Arena / Survival / Boss jogaveis e frontend campaign-first.
+- Status: `PAUSADO_INDEFINIDO`; sem track ou gate humano ativo.
+- Canon de produto local: `Projetos/rpg-isometrico/docs/canon/`.
+- Baseline preservada: B0 interno; Runtime `63/63`, `1.310 asserts`; geracao de cenas byte-estavel.
 - Trabalho permitido: consulta historica com pedido explicito; nao implementar nem expandir escopo.
+- Proximo passo: nenhum enquanto pausado.
 
 ## rpg-turnos
 
-- Status: `PAUSADO_INDEFINIDO` (current-status de `2026-05-13`)
-- Baseline preservada: slice Godot 4.6.2 jogavel com runtime C1, modos de batalha, 3 classes, 13 encontros e save/load JSON v2.
+- Status: `PAUSADO_INDEFINIDO`; sem proxima track.
+- Baseline reparada: P20 completo, tres classes, 13 encontros e save v1→v2 puro e deterministico.
+- Validacao local: `249/249`, `954 asserts`; automacao verde, playabilidade humana nao revalidada.
 - Trabalho permitido: consulta historica com pedido explicito; nao implementar, nao regenerar `.tres`.
+- Proximo passo: nenhum enquanto pausado.
 
 ## Kanban Rapido
 
