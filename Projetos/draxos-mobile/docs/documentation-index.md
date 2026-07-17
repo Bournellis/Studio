@@ -39,7 +39,8 @@ Workspace-relative package lineage: `Projetos/draxos-mobile/docs/release-history
 
 - Closed package reports (`internal-alpha-v0-*`, battle/progression delivery docs) are historical evidence, not competing release authorities.
 - `internal-alpha-release-plan.md` and `internal-alpha-remote-setup.md` are closed history; current procedures use `release-ops-checklist.md`.
-- `implementation/tracks/` preserves delivery history. In particular, `track-18-pve-arena-initial/` is Arena PVE implementation history and `track-21-arena-loop-unlock-friction/` is preserved loop context.
+- `../implementation/history.md` is the compact route to preserved tracks, decisions and technical contract lineage.
+- `implementation/tracks/` remains the detailed delivery evidence behind that history router.
 - The pre-cutover status and full index are preserved in `../implementation/tracks/governance-v2-pre-cutover-status-2026-07-16.md` and `history/documentation-index-pre-governance-v2-2026-07-16.md`.
 - `_conceitos/mobile-universe/` is a read-only design archive and never overrides local live contracts.
 

@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `local_state`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `the observable technical baseline or next technical step changes`
 - supersedes: `implementation/tracks/governance-v2-pre-cutover-status-2026-07-16.md`
 - superseded_by: `none`
@@ -13,6 +13,7 @@
 
 - Portfolio status and allowed work come only from `../../../08_Coordenacao_Agentes/Prioridades_Estudio.md`.
 - Package lineage, stable endpoints and older evidence live only in `../docs/release-history.md`.
+- Implementation and decision history routes through `history.md`.
 - This file is the only short local technical snapshot; it does not approve priority, product or release.
 
 ## Technical baseline

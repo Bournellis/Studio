@@ -11,7 +11,7 @@
 - closure_protocol: `agent_local_merge_v3`
 - closure_contract: `estudio_lifecycle_v1`
 - closure_mode: `integration_pending`
-- technical_status: `in_progress`
+- technical_status: `complete`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none; Arena proof remains an independent preserved gate`
@@ -23,16 +23,16 @@
 - branch: `codex/draxos-mobile/documentation-lite-v2`
 - worktree: `D:\Estudio-worktrees\draxos-mobile--codex--documentation-lite-v2`
 - base_ref: `codex/estudio/documentation-lite-v2@5970d902`
-- commit: `three planned commits recorded below`
+- commit: `88eb8b70; a32b7c91; final consolidation commit`
 - merged_to: `n/a`
 - merge_strategy: `ff-only planned by integration lead`
 - merge_status: `pending`
-- worktree_status: `open`
+- worktree_status: `clean after final commit`
 - branch_cleanup: `pending`
 - validation_tier: `Docs`
-- validation_result: `pending`
+- validation_result: `pass; studio DocsOnly completed with pre-existing/audit warnings and zero failures`
 - post_merge_validation: `pending`
-- closure_summary: `in progress`
+- closure_summary: `contracts promoted, path tests retargeted, history routed and 64 immutable roots consolidated without product or remote change`
 - global_sync_needed: `no`
 
 ## Objective
@@ -57,3 +57,12 @@ Promote durable technical contracts out of historical tracks, retarget only docu
 - Directly affected Deno/PowerShell documentation-contract tests.
 - `DocsOnly DraxosMobile`, local links, docs health, closure protocol and `git diff --check`.
 - Snapshot Git before/after every validator; any tracked side effect is a failure.
+
+## Validation Result
+
+- Deno foundation contracts: `2 passed | 0 failed`.
+- Track 13 readiness and release safety: `OK`.
+- Project `validate_foundation.ps1 -Profile DocsOnly`: `OK`.
+- Studio `validate_estudio.ps1 -Profile DocsOnly -Project DraxosMobile`: zero failures; warnings are existing BOM/large-file items plus audit-only documentation-lite index approval.
+- Local links, docs health and closure protocol: pass.
+- Every validator preserved the tracked Git snapshot.
