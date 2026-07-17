@@ -4,8 +4,8 @@
 
 - status: `living`
 - authority: `router`
-- last_verified: `2026-07-16`
-- review_when: `the local coordination structure changes`
+- last_verified: `2026-07-17`
+- review_when: `the local coordination structure or mobile QA router changes`
 - supersedes: `none`
 - superseded_by: `none`
 
@@ -14,8 +14,9 @@
 1. `README.md`
 2. `../implementation/current-status.md`
 3. `../qa/QA_INDEX.md`
-4. `TRIAGE.md`
-5. `technical-debt-baseline.md`
+4. `../qa/mobile/README.md`
+5. `TRIAGE.md`
+6. `technical-debt-baseline.md`
 
 ## Queues
 

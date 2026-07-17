@@ -4,8 +4,8 @@
 
 - status: `living`
 - authority: `technical_contract`
-- last_verified: `2026-07-16`
-- review_when: `runner, journey, gate or supported environment changes`
+- last_verified: `2026-07-17`
+- review_when: `runner, journey, mobile intention, gate or supported environment changes`
 - supersedes: `distributed validation matrices as the QA entrypoint`
 - superseded_by: `none`
 
@@ -36,6 +36,29 @@
 - capability_id: `visual_decision`
 - capability_id: `external_validation`
 - capability_id: `release_promotion`
+- capability_id: `mobile_docs_check`
+- capability_id: `mobile_iterate`
+- capability_id: `mobile_visual_check`
+- capability_id: `mobile_android_check`
+- capability_id: `mobile_candidate_prepare`
+- capability_id: `mobile_physical_gate`
+- capability_id: `accessibility_touch`
+- capability_id: `accessibility_contrast`
+- capability_id: `accessibility_reduced_motion`
+- capability_id: `accessibility_locale`
+- capability_id: `accessibility_safe_areas`
+- capability_id: `accessibility_lifecycle`
+- capability_id: `accessibility_haptics`
+
+## Mobile QA intentions
+
+Read `mobile/README.md` before selecting a mobile lane. The local contract distinguishes `DocsCheck`, `Iterate`, `VisualCheck`, `AndroidCheck`, `CandidatePrepare` and `PhysicalGate` without importing device policies from another workspace.
+
+- `DocsCheck` and `Iterate` use existing local runners.
+- `VisualCheck`, emulator execution in `AndroidCheck`, `CandidatePrepare` and `PhysicalGate` remain explicit manual capabilities.
+- `release_dry_run_build` proves preset and plan safety only; it does not create an APK or prove an emulator/device.
+- `tools/mobile_candidate_receipts.py` is a typed, local receipt helper, dry-run by default. It never builds or publishes and is not a manifest runner.
+- The accessibility baseline records touch coverage plus contrast, reduced motion, locale, OS safe area, Android lifecycle and haptics gaps.
 
 ## Profile map
 

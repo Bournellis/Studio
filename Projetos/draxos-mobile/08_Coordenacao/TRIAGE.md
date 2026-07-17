@@ -4,8 +4,8 @@
 
 - status: `living`
 - authority: `runbook`
-- last_verified: `2026-07-16`
-- review_when: `local triage classes or preserved gates change`
+- last_verified: `2026-07-17`
+- review_when: `local triage classes, mobile intentions or preserved gates change`
 - supersedes: `none`
 - superseded_by: `none`
 
@@ -14,6 +14,16 @@
 3. Open a local v3 card with branch, worktree, base, files, validation and gate fields.
 4. Check `technical-debt-baseline.md` before touching a file over 700 lines.
 5. Keep technical integration, human decision, external mutation and portfolio sync as separate closure axes.
+
+## Mobile selection
+
+Read `../qa/mobile/README.md` and declare one primary intention: `DocsCheck`, `Iterate`, `VisualCheck`, `AndroidCheck`, `CandidatePrepare` or `PhysicalGate`.
+
+- No task advances implicitly to the next intention.
+- An emulator result never substitutes a physical gate; neither approves product, release or publication.
+- Candidate, qualification and local promotion records must preserve the same APK SHA256 without rebuild.
+- A local promotion receipt records a resolved human decision only; it never executes a release.
+- Touch has automated contract coverage with manual residual. Other accessibility areas remain registered gaps until separately decomposed or decided.
 
 ## Preserved gates
 

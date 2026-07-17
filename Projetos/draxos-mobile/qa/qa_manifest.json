@@ -131,7 +131,7 @@
       "id": "android_local_readiness",
       "status": "covered",
       "runner_ids": ["release_dry_run_build"],
-      "evidence": "local export preset, keystore mode and artifact-plan safety gates"
+      "evidence": "local export preset, keystore mode and artifact-plan safety gates; not emulator or physical-device proof"
     },
     {
       "id": "web_local_readiness",
@@ -186,6 +186,108 @@
       "status": "manual",
       "runner_ids": [],
       "evidence": "Fabio authorization and execution required"
+    },
+    {
+      "id": "mobile_docs_check",
+      "status": "covered",
+      "runner_ids": ["docs_contracts_fast"],
+      "evidence": "qa/mobile/intent-contract.md; DocsOnly and Git snapshot contract"
+    },
+    {
+      "id": "mobile_iterate",
+      "status": "covered",
+      "runner_ids": ["client_gut_short_fast", "client_quick_runtime", "server_quick_local"],
+      "evidence": "selected local client/server regressions; no visual, artifact or physical conclusion"
+    },
+    {
+      "id": "mobile_visual_check",
+      "status": "manual",
+      "runner_ids": ["client_quick_runtime"],
+      "evidence": "automated technical precondition plus human viewport review; final visual direction remains unapproved"
+    },
+    {
+      "id": "mobile_android_check",
+      "status": "manual",
+      "runner_ids": ["release_dry_run_build"],
+      "evidence": "qa/mobile/emulator-api-matrix.md; dry-run proves preset/plan only and emulator execution remains manual"
+    },
+    {
+      "id": "mobile_candidate_prepare",
+      "status": "manual",
+      "runner_ids": ["release_dry_run_build"],
+      "evidence": "qa/mobile/candidate-promotion-receipts.md; future authorized export must hash once and never publish"
+    },
+    {
+      "id": "mobile_physical_gate",
+      "status": "manual",
+      "runner_ids": [],
+      "evidence": "exact candidate SHA on a physical device by Fabio/tester; outside agent automation"
+    },
+    {
+      "id": "accessibility_touch",
+      "status": "covered",
+      "runner_ids": ["client_quick_runtime"],
+      "evidence": "56px touch targets, 60px CTAs, touch/drag input and responsive client regressions; physical ergonomics remains manual"
+    },
+    {
+      "id": "accessibility_contrast",
+      "status": "gap",
+      "runner_ids": [],
+      "evidence": "color tokens exist but no contrast computation or tracked human audit",
+      "exception": {
+        "reason": "Governance v2.1 records the gap without authorizing visual or runtime implementation while Arena proof is pending.",
+        "review_when": "a candidate enters VisualCheck or color/branding tokens change"
+      }
+    },
+    {
+      "id": "accessibility_reduced_motion",
+      "status": "gap",
+      "runner_ids": [],
+      "evidence": "no reduced-motion preference or runtime contract is present",
+      "exception": {
+        "reason": "Motion accessibility needs a product/runtime decision outside this documentation-only lane.",
+        "review_when": "motion enters scope or before audience expansion"
+      }
+    },
+    {
+      "id": "accessibility_locale",
+      "status": "gap",
+      "runner_ids": [],
+      "evidence": "current UI is predominantly PT-BR with no translation catalog, locale switch or pseudo-localization proof",
+      "exception": {
+        "reason": "The internal alpha has no approved additional locale; this baseline does not create one.",
+        "review_when": "a new locale or audience expansion is proposed"
+      }
+    },
+    {
+      "id": "accessibility_safe_areas",
+      "status": "gap",
+      "runner_ids": ["client_quick_runtime"],
+      "evidence": "responsive safe frame is covered, but OS cutout/safe-area integration is not",
+      "exception": {
+        "reason": "Desktop/headless viewport checks cannot prove Android system insets without an emulator or device gate.",
+        "review_when": "android_tall_cutout_target runs or fullscreen UI changes"
+      }
+    },
+    {
+      "id": "accessibility_lifecycle",
+      "status": "gap",
+      "runner_ids": ["client_quick_runtime", "server_quick_local"],
+      "evidence": "session/cache recovery is covered locally; Android pause/resume and process-death proof is absent",
+      "exception": {
+        "reason": "Android lifecycle proof requires a candidate and emulator/physical execution outside this lane.",
+        "review_when": "a candidate executes android_recovery_target or PhysicalGate"
+      }
+    },
+    {
+      "id": "accessibility_haptics",
+      "status": "gap",
+      "runner_ids": [],
+      "evidence": "no haptics contract, runtime call or fallback is present",
+      "exception": {
+        "reason": "Haptics remains an unapproved optional product capability and is not implemented by governance work.",
+        "review_when": "Fabio adopts haptics or a flow proposes dependence on tactile feedback"
+      }
     }
   ]
 }
