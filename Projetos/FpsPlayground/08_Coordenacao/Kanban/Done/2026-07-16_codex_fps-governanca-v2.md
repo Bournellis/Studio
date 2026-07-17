@@ -4,12 +4,12 @@
 
 - id: `2026-07-16_codex_fps-governanca-v2`
 - owner: `Codex`
-- status: `Doing`
+- status: `Done`
 - projeto: `FpsPlayground`
 - prioridade_portfolio: `P2_IMPLEMENTACAO`
 - coordination_scope: `project_local`
 - closure_protocol: `agent_local_merge_v3`
-- technical_status: `pass`
+- technical_status: `complete`
 - human_gate_required: `no`
 - human_gate_status: `not_required`
 - human_gate_scope: `none`
@@ -20,14 +20,14 @@
 - delegated_scope: `local coordination, documentation, QA contract and debt baseline under Projetos/FpsPlayground`
 - branch: `codex/fpsplayground/governanca-v2`
 - worktree: `D:\Estudio-worktrees\fpsplayground--codex--governanca-v2`
-- base_ref: `main@584733b071dd944876b05b4ebb728e71368a3ee3`
-- merge_status: `pending`
-- worktree_status: `open`
-- branch_cleanup: `pending`
+- base_ref: `main@3e71657a`
+- merge_status: `integrated_ff_only`
+- worktree_status: `cleanup_after_closure_commit`
+- branch_cleanup: `cleanup_after_closure_commit`
 - validation_tier: `Runtime`
-- validation_result: `QA PASS; Fast runners exit 0/no side effects; Runtime 2x PASS 67/67 and 599 asserts; links/diff PASS`
+- validation_result: `QA PASS; Fast runners exit 0/no side effects; Runtime 2x pre-merge and 1x post-merge PASS 67/67 and 599 asserts; links/diff PASS`
 - global_sync_needed: `yes`
-- handoff_status: `ready_for_merge`
+- handoff_status: `integrated`
 
 ## Goal
 
