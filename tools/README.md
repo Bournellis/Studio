@@ -1,6 +1,6 @@
 # Estudio Governance Tooling
 
-The v2 toolchain is dependency-free beyond Python 3.11, PowerShell 5.1 and
+The v2.1 toolchain is dependency-free beyond Python 3.11, PowerShell 5.1 and
 Git/Git LFS. It never publishes, authenticates, contacts a project backend or
 probes a physical device.
 
@@ -22,6 +22,29 @@ the marker forms shown below. Allowed runner
 types are `godot_script`, `gut_scripts`, `powershell`, `python`, `deno` and
 `node`; arbitrary shell commands are not accepted.
 
+Godot-capable runs acquire the `Local\Estudio.GodotQA.v1` mutex; Android lanes
+also acquire `Local\Estudio.AndroidQA.v1`. Python orchestration and PowerShell
+helpers use the same names. Every runner receives temporary `APPDATA`,
+`LOCALAPPDATA` and `GODOT_USER_HOME` roots unless its typed manifest explicitly
+uses `shared_locked`.
+
+Custom validators may declare a required structured result:
+
+```json
+{
+  "result_contract": {
+    "marker": "ESTUDIO_JSON:",
+    "contract": "project_smoke",
+    "schema_version": 1,
+    "required": true
+  }
+}
+```
+
+The last matching line must contain a JSON object with `contract`,
+`schema_version` and boolean `ok`. Coverage, metrics, failures and caveats may
+be added without becoming product approval.
+
 ```text
 - runner_id: `<id>`
 - capability_id: `<id>`
@@ -41,6 +64,8 @@ recalibrate the baseline.
 
 - Every runner is wrapped in an exact Git snapshot. Any tracked or untracked
   change becomes `VALIDATOR_SIDE_EFFECT`; files are never restored implicitly.
+- Runner user data is isolated and deleted after execution; named locks prevent
+  concurrent access to shared local runtimes.
 - UID, health, storage and evidence policies are prospective and preserve
   historical assets and debt through explicit baselines.
 - `close_worktree_powershell.ps1` supports only local fast-forward integration,

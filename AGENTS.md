@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `operational_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `governance, portfolio, Git or validation contract changes`
 - supersedes: `AGENTS.md before Governance v2`
 - superseded_by: `none`
@@ -141,6 +141,9 @@ Route domains:
 - Expected versions live in `.godot-version`; Godot projects use their local AGENTS and validator contracts.
 - Generated resources must be deterministic. Run generator/validator twice when changing generated outputs.
 - Validators must not change tracked state; `VALIDATOR_SIDE_EFFECT` is a failure and is never auto-restored.
+- Global runners acquire the named `GodotQA` or `AndroidQA` execution resource before touching shared local runtimes.
+- Automated runs use an isolated temporary Godot user-data namespace by default; a shared namespace requires a typed manifest declaration and the matching lock.
+- Custom validators may emit one `ESTUDIO_JSON:` result contract. When a runner declares it required, missing, malformed, mismatched or `ok: false` output fails the run.
 - Use `tools/studio_doctor.ps1` for environment/integrity checks.
 - Use `tools/validate_estudio.ps1` with the smallest proportional profile.
 - Docs-only work does not require Godot runtime unless a local contract explicitly requires it.
@@ -154,8 +157,20 @@ Living authoritative documents carry `status`, `authority`, `last_verified`, `re
 - Active local state targets 50 lines and must stay at or below 60.
 - Paused local state targets 40 lines and must stay at or below 50.
 - Routers must stay at or below 100 lines.
+- Classify documentation as `live`, `reference`, `evidence` or `historical_redundant`; only the first two belong in the normal search path.
+- Normal searches ignore Done, Handoffs, archives and redundant history. Search those paths explicitly only when historical evidence is needed.
 - Preserve unique history before deleting duplication; Git history remains the final recovery layer.
+- Historical deletion requires an approved cleanup manifest naming every path and its retained authority; classification alone never authorizes deletion.
 - Claude/OpenClaw are `historico/deprecated` and may appear only in historical records or explicit compatibility wording.
+
+## Assets, Evidence And Candidate Artifacts
+
+- New runtime assets record origin, hash, license, permitted use and independent integration/publication states.
+- Runtime screenshots are the authority for technical integration; visual approval remains a human gate.
+- New evidence bundles use `estudio_evidence_v1`; helpers are dry-run by default and never delete historical evidence.
+- Mobile candidates are identified by immutable hash. Physical validation must use the exact prepared artifact without rebuild.
+- Candidate preparation, qualification, promotion and publication are separate acts; only Fabio may authorize device QA, release or publication.
+- Cross-project code similarity is recorded as a convergence candidate, never extracted into shared code without explicit local adoption and two active consumers.
 
 ## Hard Stops
 
