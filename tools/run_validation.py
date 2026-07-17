@@ -238,6 +238,43 @@ def _gut_output_has_tests(output: str) -> bool:
     return "Run Summary" in output and re.search(r"(?m)^\s*Tests\s+([1-9][0-9]*)\s*$", output) is not None
 
 
+def _needs_godot_import(runners: list[dict[str, Any]]) -> bool:
+    return any(
+        runner.get("runner") == "gut_scripts"
+        or str(runner.get("entrypoint", "")).replace("\\", "/").endswith("tools/run_gut_short.ps1")
+        for runner in runners
+    )
+
+
+def _godot_import_ready(root: Path, project: dict[str, Any]) -> bool:
+    return (root / project["root"] / ".godot" / "global_script_class_cache.cfg").is_file()
+
+
+def _warm_godot_import(
+    root: Path, project: dict[str, Any], godot_exe: str, audit_only: bool
+) -> dict[str, Any]:
+    before = git_snapshot(root)
+    command = [godot_exe, "--headless", "--path", str(root / project["root"]), "--import"]
+    code, duration, stdout, stderr = _run_process(command, root / project["root"], 300)
+    after = git_snapshot(root)
+    side_effects = [
+        key for key in ["head", "status_sha256", "index_diff_sha256", "worktree_diff_sha256", "untracked"]
+        if before.get(key) != after.get(key)
+    ]
+    status = "pass"
+    reason = "Godot class cache prepared outside runner timing"
+    if code != 0:
+        status = "audit_fail" if audit_only else "fail"
+        reason = f"Godot import warm-up exited with code {code}: {(stderr or stdout)[-500:]}"
+    if side_effects:
+        status = "audit_fail" if audit_only else "fail"
+        reason = f"VALIDATOR_SIDE_EFFECT during Godot import changed {', '.join(side_effects)}"
+    return _result(
+        f"{project['id']}:godot_import_warmup", status, duration, reason=reason,
+        exit_code=code, side_effects=side_effects, runner_type="godot_import", lane="godot",
+    )
+
+
 def _existing_script_step(root: Path, name: str, args: list[str], audit_only: bool) -> dict[str, Any]:
     path = root / args[0]
     if not path.is_file():
@@ -323,6 +360,17 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
                 status = "audit_fail" if args.audit_only else "fail" if specific_project else "skip"
                 report["steps"].append(_result(f"{project['id']}:{args.profile}", status, 0, reason="PROFILE_NOT_CONFIGURED"))
                 continue
+            if _needs_godot_import(runners) and not _godot_import_ready(root, project):
+                if not godot_exe:
+                    status = "audit_fail" if args.audit_only else "fail"
+                    report["steps"].append(_result(
+                        f"{project['id']}:godot_import_warmup", status, 0, reason="Godot executable was not found"
+                    ))
+                    continue
+                warmup = _warm_godot_import(root, project, godot_exe, args.audit_only)
+                report["steps"].append(warmup)
+                if warmup["status"] in {"fail", "audit_fail"}:
+                    continue
             for runner in runners:
                 try:
                     command = _runner_command(root, project, runner, config, godot_exe)

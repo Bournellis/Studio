@@ -10,7 +10,15 @@ import subprocess
 from pathlib import Path
 
 from estudio_governance import load_governance, read_json, resolve_projects
-from run_validation import _contract_hash, _godot_executable, _runner_command, _run_checked
+from run_validation import (
+    _contract_hash,
+    _godot_executable,
+    _godot_import_ready,
+    _needs_godot_import,
+    _runner_command,
+    _run_checked,
+    _warm_godot_import,
+)
 
 
 def main() -> int:
@@ -37,6 +45,12 @@ def main() -> int:
         proc = subprocess.run([godot_exe, "--version"], text=True, capture_output=True, check=False)
         godot_version = proc.stdout.strip().splitlines()[0] if proc.stdout.strip() else None
     commands = {runner["id"]: _runner_command(root, project, runner, config, godot_exe) for runner in runners}
+    if _needs_godot_import(runners) and not _godot_import_ready(root, project):
+        if not godot_exe:
+            raise SystemExit("Godot executable is required for import warm-up.")
+        import_result = _warm_godot_import(root, project, godot_exe, False)
+        if import_result["status"] != "pass":
+            raise SystemExit(f"Godot import warm-up failed: {import_result['reason']}")
     warmups = int(config["fast_suite"]["warmup_runs"])
     runs = int(config["fast_suite"]["runs"])
     measured: dict[str, dict[str, float]] = {}

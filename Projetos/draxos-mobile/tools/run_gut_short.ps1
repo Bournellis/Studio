@@ -4,7 +4,8 @@ param(
     [string]$GodotExe = 'D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe',
     [string]$TestPathCsv = 'res://tests/client/test_project_info.gd,res://tests/client/test_session_state_facade.gd,res://tests/client/test_mode_descriptor_registry.gd',
     [int]$ExpectedTests = 13,
-    [int]$ExpectedAsserts = 170
+    [int]$ExpectedAsserts = 170,
+    [switch]$SkipImport
 )
 
 $ErrorActionPreference = 'Continue'
@@ -27,16 +28,20 @@ foreach ($testPath in $testPaths) {
     }
 }
 
-$importSucceeded = $false
-for ($attempt = 1; $attempt -le 2; $attempt++) {
-    $importOutput = @(& $GodotExe --headless --path $projectPath --import 2>&1)
-    $importCode = $LASTEXITCODE
-    if ($importCode -eq 0) {
-        Write-Host "[PASS] Godot import warm-up attempt $attempt"
-        $importSucceeded = $true
-        break
+$importSucceeded = $SkipImport.IsPresent
+if ($SkipImport) {
+    Write-Host '[SKIP] Godot import warm-up is owned by the Estudio orchestrator.'
+} else {
+    for ($attempt = 1; $attempt -le 2; $attempt++) {
+        $importOutput = @(& $GodotExe --headless --path $projectPath --import 2>&1)
+        $importCode = $LASTEXITCODE
+        if ($importCode -eq 0) {
+            Write-Host "[PASS] Godot import warm-up attempt $attempt"
+            $importSucceeded = $true
+            break
+        }
+        Write-Warning "Godot import warm-up attempt $attempt exited $importCode; retrying once."
     }
-    Write-Warning "Godot import warm-up attempt $attempt exited $importCode; retrying once."
 }
 if (-not $importSucceeded) {
     $importOutput | Select-Object -Last 40 | ForEach-Object { Write-Host $_ }

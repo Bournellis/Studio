@@ -22,7 +22,7 @@ from estudio_governance import (  # noqa: E402
     validate_qa_manifest,
 )
 from estudio_repository_checks import check_uids, git_snapshot  # noqa: E402
-from run_validation import _gut_output_has_tests, _runner_command, _terminate_process_tree  # noqa: E402
+from run_validation import _gut_output_has_tests, _needs_godot_import, _runner_command, _terminate_process_tree  # noqa: E402
 
 
 def git(cwd: Path, *args: str) -> None:
@@ -104,6 +104,11 @@ class GovernanceContractTests(unittest.TestCase):
     def test_gut_zero_test_false_positive_is_rejected(self) -> None:
         self.assertFalse(_gut_output_has_tests("Missing class_names.\n"))
         self.assertTrue(_gut_output_has_tests("Run Summary\nTests                12\n"))
+
+    def test_godot_import_warmup_routes_gut_and_typed_wrapper(self) -> None:
+        self.assertTrue(_needs_godot_import([{"runner": "gut_scripts", "entrypoint": "res://gut.gd"}]))
+        self.assertTrue(_needs_godot_import([{"runner": "powershell", "entrypoint": "tools/run_gut_short.ps1"}]))
+        self.assertFalse(_needs_godot_import([{"runner": "powershell", "entrypoint": "tools/docs.ps1"}]))
 
     def test_windows_timeout_terminates_exact_runner_tree(self) -> None:
         process = MagicMock()

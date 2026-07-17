@@ -50,7 +50,8 @@
         "-ExpectedTests",
         "13",
         "-ExpectedAsserts",
-        "170"
+        "170",
+        "-SkipImport"
       ],
       "profiles": ["FastSuite"],
       "timeout_seconds": 60,
