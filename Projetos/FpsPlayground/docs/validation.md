@@ -1,5 +1,14 @@
 # FpsPlayground Validation
 
+## Metadata
+
+- status: `active`
+- authority: `runbook`
+- last_verified: `2026-07-16`
+- review_when: `automated or human validation journeys change`
+- supersedes: `none`
+- superseded_by: `none`
+
 ## Automated
 
 ```powershell

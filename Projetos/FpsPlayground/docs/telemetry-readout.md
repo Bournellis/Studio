@@ -1,5 +1,14 @@
 # FpsPlayground Telemetry Readout
 
+## Metadata
+
+- status: `active`
+- authority: `runbook`
+- last_verified: `2026-07-16`
+- review_when: `readout command or interpretation contract changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: Track 12 approved; Track 13 documentation rebaseline complete.
 - Scope: local report tool for Track 11 telemetry sessions.
 - Runner: `res://tools/telemetry_readout.gd`.

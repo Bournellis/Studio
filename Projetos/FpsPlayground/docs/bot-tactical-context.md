@@ -1,5 +1,14 @@
 # FpsPlayground Bot Tactical Context
 
+## Metadata
+
+- status: `active`
+- authority: `technical_contract`
+- last_verified: `2026-07-16`
+- review_when: `arena tactical-context schema changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 Track 02 moved the Arena Shooter bot from a single-arena reposition list toward an arena-provided tactical context.
 
 Track 03 proves the contract with multiple playable arena layouts.

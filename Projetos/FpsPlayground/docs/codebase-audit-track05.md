@@ -1,5 +1,14 @@
 # FpsPlayground Codebase Audit
 
+## Metadata
+
+- status: `frozen`
+- authority: `historical_record`
+- last_verified: `2026-07-16`
+- review_when: `historical Track 05 interpretation needs correction`
+- supersedes: `none`
+- superseded_by: `../implementation/technical-debt-baseline.md`
+
 The Track 05 hardening work remains useful as historical context, but `FpsPlayground` is now a smaller FPS-only project after the split.
 
 ## Current Risk Areas

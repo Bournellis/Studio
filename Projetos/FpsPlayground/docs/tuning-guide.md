@@ -1,5 +1,14 @@
 # FpsPlayground Tuning Guide
 
+## Metadata
+
+- status: `active`
+- authority: `runbook`
+- last_verified: `2026-07-16`
+- review_when: `tuning evidence or human-gate rules change`
+- supersedes: `none`
+- superseded_by: `none`
+
 Tune from evidence, not from one isolated duel.
 
 ## Current Rule

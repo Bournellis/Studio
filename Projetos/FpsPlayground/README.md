@@ -1,28 +1,23 @@
 # FpsPlayground
 
-`FpsPlayground` is the studio's PC Windows editor-first first-person arena gameplay laboratory.
+## Metadata
 
-It preserves the accepted Arena Shooter baseline from the former `FpsShooter` project. Football/TPS work has been extracted to `../JogoDaCopa`.
+- status: `active`
+- authority: `router`
+- last_verified: `2026-07-16`
+- review_when: `project identity or entry points change`
+- supersedes: `FpsPlayground README before Governance v2`
+- superseded_by: `none`
 
-## Current Content
+`FpsPlayground` is the studio's independent Godot first-person arena gameplay laboratory for PC Windows, editor first. Football/TPS work lives in `../JogoDaCopa`.
 
-- Main menu with `Arena Shooter`.
-- Three selectable 1x1 arena layouts: `Duel Pit V2`, `Relay Foundry V1` and `Crossfire Crucible V1`.
-- Repeatable duel flow: rounds, first-to-3 match score, restart and pause-menu reset.
-- Rifle hitscan, RMB Plasma Bolt, Plasma Blast, overcharge and knockback.
-- Health and overcharge pickups that create route decisions.
-- Jump pads, high routes and route-aware arena layouts.
-- Route-first bot with item priorities, combat overlay shooting and jump pad commitment.
-- Local telemetry, compact summary and telemetry readout for balance review.
-- Runtime primitive visuals/audio and GUT validation.
+## Start Here
 
-## Current Guardrails
-
-- Preserve the approved player movement feel for now.
-- Preserve approved jump pad force, arena flow and bot route-control unless a future track explicitly targets them.
-- Use telemetry/readout evidence before weapon, buff, pickup or map tuning.
-- Do not add football/TPS scope here; `../JogoDaCopa` owns that work.
-- Do not add export, multiplayer/backend, Web/mobile or progression unless explicitly planned.
+1. `AGENTS.md`
+2. `implementation/current-status.md`
+3. `08_Coordenacao/README.md`
+4. `docs/documentation-index.md`
+5. `qa/QA_INDEX.md`
 
 ## Run
 
@@ -31,12 +26,7 @@ Open `project.godot` in Godot `4.6.2-stable` and press Play.
 ## Validate
 
 ```powershell
-D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd
+D:\Estudio\.local-tools\godot\4.6.2\Godot_v4.6.2-stable_win64_console.exe --headless --path . -s res://tools/validate.gd -- --profile=full
 ```
 
-## Read Next
-
-- `implementation/current-status.md`
-- `docs/documentation-index.md`
-- `docs/work-plan.md`
-- `docs/arena-shooter-future-roadmap.md`
+The QA manifest defines the typed workspace runners. No build, publication, remote service or physical-device authority is configured here.

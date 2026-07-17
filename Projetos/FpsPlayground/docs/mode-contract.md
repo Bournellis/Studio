@@ -1,5 +1,14 @@
 # FpsPlayground Mode Contract
 
+## Metadata
+
+- status: `active`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `menu, mode or duel contract changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 `FpsPlayground` currently has one playable mode: `Arena Shooter`.
 
 ## Menu

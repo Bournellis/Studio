@@ -1,5 +1,14 @@
 # Arena Shooter Future Roadmap
 
+## Metadata
+
+- status: `active`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `future feature order or guardrails change`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: Track 13 future planning baseline.
 - Scope: near-term growth plan for `FpsPlayground` Arena Shooter.
 - Rule: this document does not change gameplay; it defines safe expansion order.

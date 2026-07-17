@@ -1,5 +1,14 @@
 # FpsPlayground Bot Contract
 
+## Metadata
+
+- status: `active`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `bot fairness, behavior or information contract changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 The active bot is the `Arena Shooter` duel bot.
 
 - Uses local deterministic behavior suitable for tests.

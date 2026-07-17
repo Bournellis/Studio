@@ -1,5 +1,14 @@
 # FpsPlayground Balance Baseline
 
+## Metadata
+
+- status: `frozen`
+- authority: `historical_record`
+- last_verified: `2026-07-16`
+- review_when: `a new evidence baseline explicitly supersedes this record`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: Track 12 approved baseline; Track 13 future planning rebaseline.
 - Source: Track 11 telemetry plus the approved feel of the current three-arena FPS lab.
 - Rule: this document describes interpretation only; it does not change gameplay.

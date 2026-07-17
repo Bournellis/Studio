@@ -1,5 +1,14 @@
 # FpsPlayground Architecture Overview
 
+## Metadata
+
+- status: `active`
+- authority: `technical_contract`
+- last_verified: `2026-07-16`
+- review_when: `module ownership or dependency direction changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 `FpsPlayground` is the FPS-only project after the split from `FpsShooter`.
 
 ## Ownership

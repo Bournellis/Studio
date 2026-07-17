@@ -3,7 +3,7 @@
 ## Metadata
 
 - status: `active`
-- authority: `local_state`
+- authority: `runbook`
 - last_verified: `2026-07-16`
 - review_when: `a card enters or leaves Kanban/Review`
 - supersedes: `none`
@@ -13,7 +13,9 @@
 
 None. `Kanban/Review/` is empty.
 
-The preserved human-authority surfaces for future work are movement feel, weapon feel, bot fairness, map quality and tuning. They are documented as manual capabilities in `../qa/QA_INDEX.md`; they become triage entries only when a concrete card requests a decision.
+The preserved human-authority surfaces for future work are movement feel, weapon feel, bot fairness, map quality and tuning.
+
+They are documented as manual capabilities in `../qa/QA_INDEX.md`; they become triage entries only when a concrete card requests a decision.
 
 ## Rule
 

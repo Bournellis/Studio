@@ -1,5 +1,14 @@
 # FpsPlayground Telemetry
 
+## Metadata
+
+- status: `active`
+- authority: `technical_contract`
+- last_verified: `2026-07-16`
+- review_when: `telemetry schema, storage or lifecycle changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 - Status: Track 11 approved in human smoke.
 - Storage: local Godot `user://telemetry/`.
 - Scope: Arena Shooter duel instrumentation only.

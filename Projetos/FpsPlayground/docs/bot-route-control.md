@@ -1,5 +1,14 @@
 # Bot Route Control
 
+## Metadata
+
+- status: `active`
+- authority: `technical_contract`
+- last_verified: `2026-07-16`
+- review_when: `route scoring or movement execution contract changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 Track 05 changes the bot from a combat-first state machine into a route-control bot with a combat overlay.
 
 ## Design Reference

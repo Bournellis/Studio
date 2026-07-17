@@ -1,5 +1,14 @@
 # FpsPlayground Arena Tactical Layouts
 
+## Metadata
+
+- status: `active`
+- authority: `product_contract`
+- last_verified: `2026-07-16`
+- review_when: `an arena or layout contract changes`
+- supersedes: `none`
+- superseded_by: `none`
+
 Track 03 introduced a small arena layout catalog so the Arena Shooter can host multiple layouts without teaching the bot about one specific map. Track 06 extends that proof with a third arena that stresses different movement rhythm and route timing.
 
 ## Layout Contract
