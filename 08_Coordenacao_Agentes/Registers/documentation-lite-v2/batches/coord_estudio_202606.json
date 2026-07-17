@@ -1,0 +1,475 @@
+{
+  "schema_version": 2,
+  "batch_id": "coord_estudio_202606",
+  "scope": "estudio",
+  "project": "Estudio",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Docs_Status_Slimming_Plan.md",
+      "kind": "historical_document",
+      "classification": "human_gate",
+      "byte_count": 4762,
+      "line_count": 118,
+      "source_blob": "2fd9dfeaf1d7a97c01b1a35e2faf6433ebc3cc7d",
+      "source_sha256": "55720000cd77464ac5c82ae98ba982132c6eb274fbccf4640bf1d51fccc78d14",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_docs_status_slimming_plan_f829155e5e",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-09_codex_active-games-hardening-program.md",
+      "kind": "handoff",
+      "classification": "publication_release",
+      "byte_count": 3901,
+      "line_count": 57,
+      "source_blob": "4159a28090da7550d8b4ebcdb6b61e07e7a0b1bc",
+      "source_sha256": "8eb7a60f9b5a0ee16d50addb0e679010ff07a79e3d280fed7a0ee4e60dfdba0e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_09_codex_active_games_hardening_progr_c0aabb7e14",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-09_codex_estudio_ops_doc_hardening.md",
+      "kind": "handoff",
+      "classification": "publication_release",
+      "byte_count": 1385,
+      "line_count": 35,
+      "source_blob": "cf635f82e1bb8585b80ad3494fc6b742782886dc",
+      "source_sha256": "9da98b8364880f7f5d376ddc7643231cc55bbf98761d591bff1cbbc363c7cc01",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_09_codex_estudio_ops_doc_hardening_1a0c428a55",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-01_codex_modes-integrated-alpha.md",
+      "kind": "done_card",
+      "classification": "publication_release",
+      "byte_count": 2718,
+      "line_count": 47,
+      "source_blob": "6011536898f0a84d9c579a6e9a9cabe1222de4f3",
+      "source_sha256": "5f14985c4d5de7bd91c9bbdc949d2b3ae6acf7bfba526031f9117c438f8be24c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_01_codex_modes_integrated_alpha_47dbe4ecf1",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-04_codex_estudio_worktree-cleanup.md",
+      "kind": "done_card",
+      "classification": "coordination_duplicate",
+      "byte_count": 3803,
+      "line_count": 55,
+      "source_blob": "e1029a67f04f1268770a28ba96e3fadbae82e7f7",
+      "source_sha256": "8637b9a63ae2efb27bd173870dc714d4b0a57691f9af5fd791144c59cfa1a1a8",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_04_codex_estudio_worktree_cleanup_286fdc249f",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_active-games-hardening-program.md",
+      "kind": "done_card",
+      "classification": "publication_release",
+      "byte_count": 3157,
+      "line_count": 76,
+      "source_blob": "ea8d7aaba34270ee182819954ef8bfb0dec046c3",
+      "source_sha256": "f0b2b8c769e587b4ac1ceb3ab2b449bfbe0f86c6467ab73a846ed23608c8bc11",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_09_codex_active_games_hardening_progr_fb19a49e45",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_estudio_doc-drift-fix-v1.md",
+      "kind": "done_card",
+      "classification": "publication_release",
+      "byte_count": 3682,
+      "line_count": 83,
+      "source_blob": "fbc366ac25a72ffafc3aa7e98afc06a9cec2391f",
+      "source_sha256": "dbb677d0ddbdb380772ffe293dd31337c63c196d1d1845f0309540d47628dc88",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_09_codex_estudio_doc_drift_fix_v1_f4de0560b8",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_claude_estudio_doc-dedup-cleanup.md",
+      "kind": "done_card",
+      "classification": "security",
+      "byte_count": 2958,
+      "line_count": 45,
+      "source_blob": "29ec33c851385c853c3e1d985aeb2654e240349f",
+      "source_sha256": "d597ffab03d2a76d9a3ffdd0a824353df93d07d3975f151d08314cc1190eddb3",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_10_claude_estudio_doc_dedup_cleanup_a84da1d047",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_estudio_git-housekeeping.md",
+      "kind": "done_card",
+      "classification": "coordination_duplicate",
+      "byte_count": 1109,
+      "line_count": 32,
+      "source_blob": "cd8ee52d3f9168b1dfb3cc1bcc6892c15b003267",
+      "source_sha256": "cbfa3c7a582205350ff149416d8d081b04184e54be8f52d53f1e47188fed634b",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_10_codex_estudio_git_housekeeping_8597074419",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_estudio_temporary-jogodacopa-focus.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 1554,
+      "line_count": 30,
+      "source_blob": "0ede20063f854c8e533b49d69386480506182918",
+      "source_sha256": "b9f2158f970d1118997600667263a48b9bbea8f5da9f7d482af164230f57c9fa",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_10_codex_estudio_temporary_jogodacopa_aaf57dcc9a",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_playground_split-fpsplayground-jogodacopa.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 1600,
+      "line_count": 35,
+      "source_blob": "1edae08beee4b0d743cf39946fd0bf150d5e198a",
+      "source_sha256": "a3efe7f625d9bfefdde850a896a6e64a0a638b2367d0e42c178f46ac85c50fad",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_10_codex_playground_split_fpsplaygrou_b8eda13ce2",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_claude_estudio_github-backup-workflow.md",
+      "kind": "done_card",
+      "classification": "security",
+      "byte_count": 1875,
+      "line_count": 34,
+      "source_blob": "a7f31d3a480e1aaa3c60aa6e0ff257ee700a3384",
+      "source_sha256": "2a076cebec133aa7cfb08e23ade2ab2d46a420d12a64283a55c1d9ea55aa6a20",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_11_claude_estudio_github_backup_workf_76923cfdf2",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_estudio_git-push-policy-audit.md",
+      "kind": "done_card",
+      "classification": "decision",
+      "byte_count": 1925,
+      "line_count": 38,
+      "source_blob": "62f510a9fcac6583e9d95434617765525c8f05a4",
+      "source_sha256": "9d8c72a1084bbf1f5fc26db0f8e461c40be2c4dd851297fd0764b4bfc2d5bd3b",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_14_codex_estudio_git_push_policy_audi_0b1c267053",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Lifecycle_Cleanup_Audit_2026-06-29.md",
+      "kind": "historical_document",
+      "classification": "decision",
+      "byte_count": 4083,
+      "line_count": 79,
+      "source_blob": "02ff21b8892a61e8050c32e1dddeff96c5afa3f8",
+      "source_sha256": "b3dda85893dfd879009b3a512bd371475f77a0ab53040f53a702eaeb12e18321",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_lifecycle_cleanup_audit_2026_06_29_61dae7684e",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_docs_status_slimming_plan_f829155e5e",
+      "date": "2026-06-29",
+      "scope": "estudio",
+      "outcome": "Estudio Status Slimming Plan",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Docs_Status_Slimming_Plan.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:55720000cd77464ac5c82ae98ba982132c6eb274fbccf4640bf1d51fccc78d14; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Docs_Status_Slimming_Plan.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_09_codex_active_games_hardening_progr_c0aabb7e14",
+      "date": "2026-06-09",
+      "scope": "estudio",
+      "outcome": "Active Games Hardening Program - Handoff",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Handoffs/2026-06-09_codex_active-games-hardening-program.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:8eb7a60f9b5a0ee16d50addb0e679010ff07a79e3d280fed7a0ee4e60dfdba0e; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Handoffs/2026-06-09_codex_active-games-hardening-program.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_09_codex_estudio_ops_doc_hardening_1a0c428a55",
+      "date": "2026-06-09",
+      "scope": "estudio",
+      "outcome": "Handoff: Estudio Ops Doc Hardening",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Handoffs/2026-06-09_codex_estudio_ops_doc_hardening.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9da98b8364880f7f5d376ddc7643231cc55bbf98761d591bff1cbbc363c7cc01; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Handoffs/2026-06-09_codex_estudio_ops_doc_hardening.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_01_codex_modes_integrated_alpha_47dbe4ecf1",
+      "date": "2026-06-01",
+      "scope": "estudio",
+      "outcome": "Codex - Modes Integrated Alpha",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-01_codex_modes-integrated-alpha.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5f14985c4d5de7bd91c9bbdc949d2b3ae6acf7bfba526031f9117c438f8be24c; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-01_codex_modes-integrated-alpha.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_04_codex_estudio_worktree_cleanup_286fdc249f",
+      "date": "2026-06-04",
+      "scope": "estudio",
+      "outcome": "Estudio - Worktree Cleanup",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-04_codex_estudio_worktree-cleanup.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:8637b9a63ae2efb27bd173870dc714d4b0a57691f9af5fd791144c59cfa1a1a8; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-04_codex_estudio_worktree-cleanup.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_09_codex_active_games_hardening_progr_fb19a49e45",
+      "date": "2026-06-09",
+      "scope": "estudio",
+      "outcome": "Active Games Hardening Program",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_active-games-hardening-program.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:f0b2b8c769e587b4ac1ceb3ab2b449bfbe0f86c6467ab73a846ed23608c8bc11; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_active-games-hardening-program.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_09_codex_estudio_doc_drift_fix_v1_f4de0560b8",
+      "date": "2026-06-09",
+      "scope": "estudio",
+      "outcome": "Doc Drift Fix v1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_estudio_doc-drift-fix-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:dbb677d0ddbdb380772ffe293dd31337c63c196d1d1845f0309540d47628dc88; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_estudio_doc-drift-fix-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_10_claude_estudio_doc_dedup_cleanup_a84da1d047",
+      "date": "2026-06-10",
+      "scope": "estudio",
+      "outcome": "Tarefa: Estudio - Avaliacao Externa + Dedup De Estado Documental",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-10_claude_estudio_doc-dedup-cleanup.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:d597ffab03d2a76d9a3ffdd0a824353df93d07d3975f151d08314cc1190eddb3; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_claude_estudio_doc-dedup-cleanup.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_10_codex_estudio_git_housekeeping_8597074419",
+      "date": "2026-06-10",
+      "scope": "estudio",
+      "outcome": "Estudio Git Housekeeping - Codex",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_estudio_git-housekeeping.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:cbfa3c7a582205350ff149416d8d081b04184e54be8f52d53f1e47188fed634b; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_estudio_git-housekeeping.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_10_codex_estudio_temporary_jogodacopa_aaf57dcc9a",
+      "date": "2026-06-10",
+      "scope": "estudio",
+      "outcome": "Codex - Temporary JogoDaCopa Focus",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_estudio_temporary-jogodacopa-focus.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:b9f2158f970d1118997600667263a48b9bbea8f5da9f7d482af164230f57c9fa; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_estudio_temporary-jogodacopa-focus.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_10_codex_playground_split_fpsplaygrou_b8eda13ce2",
+      "date": "2026-06-10",
+      "scope": "estudio",
+      "outcome": "Codex - Playground Split FpsPlayground / JogoDaCopa",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_playground_split-fpsplayground-jogodacopa.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:a3efe7f625d9bfefdde850a896a6e64a0a638b2367d0e42c178f46ac85c50fad; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-10_codex_playground_split-fpsplayground-jogodacopa.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_11_claude_estudio_github_backup_workf_76923cfdf2",
+      "date": "2026-06-11",
+      "scope": "estudio",
+      "outcome": "Tarefa: Estudio - Backup GitHub + Fluxo GitHub Desktop",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-11_claude_estudio_github-backup-workflow.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:2a076cebec133aa7cfb08e23ade2ab2d46a420d12a64283a55c1d9ea55aa6a20; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-11_claude_estudio_github-backup-workflow.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_14_codex_estudio_git_push_policy_audi_0b1c267053",
+      "date": "2026-06-14",
+      "scope": "estudio",
+      "outcome": "Tarefa: Estudio - Auditoria Do Fluxo De Push Git",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_estudio_git-push-policy-audit.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9d8c72a1084bbf1f5fc26db0f8e461c40be2c4dd851297fd0764b4bfc2d5bd3b; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-14_codex_estudio_git-push-policy-audit.md"
+      ]
+    },
+    {
+      "record_id": "rec_lifecycle_cleanup_audit_2026_06_29_61dae7684e",
+      "date": "2026-06-29",
+      "scope": "estudio",
+      "outcome": "Estudio Lifecycle Cleanup Audit",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Lifecycle_Cleanup_Audit_2026-06-29.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:b3dda85893dfd879009b3a512bd371475f77a0ab53040f53a702eaeb12e18321; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Lifecycle_Cleanup_Audit_2026-06-29.md"
+      ]
+    }
+  ]
+}

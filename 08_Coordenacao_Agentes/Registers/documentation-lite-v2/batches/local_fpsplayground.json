@@ -1,0 +1,1357 @@
+{
+  "schema_version": 2,
+  "batch_id": "local_fpsplayground",
+  "scope": "fpsplayground",
+  "project": "FpsPlayground",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "Projetos/FpsPlayground/08_Coordenacao/Handoffs/2026-07-16_codex_fps-governanca-v2-ready-for-merge.md",
+      "kind": "handoff",
+      "classification": "publication_release",
+      "byte_count": 2296,
+      "line_count": 57,
+      "source_blob": "4c96719dcfccfb7828d3d60c849e306154ec414e",
+      "source_sha256": "20faa40dc776c5111b4ec1662c5bcfc8408d225686427f4f2ea48b4a2dd08bfb",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_16_codex_fps_governanca_v2_ready_for_5dbc0a75c2",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-curation-v2.md",
+      "kind": "historical_document",
+      "classification": "publication_release",
+      "byte_count": 3208,
+      "line_count": 69,
+      "source_blob": "8872249d952bd1ee25ee4ab7a1abf342063d154d",
+      "source_sha256": "fd0684f0c9e1925d8d9ef2effc7c804293259160378a5a46aac9af1ec0e54afb",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_17_codex_documentation_lite_curation_f6cb331043",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/08_Coordenacao/Kanban/Done/2026-07-16_codex_fps-governanca-v2.md",
+      "kind": "done_card",
+      "classification": "publication_release",
+      "byte_count": 2726,
+      "line_count": 67,
+      "source_blob": "03341b4df0557911277af1f4c35883bd63e0fcf2",
+      "source_sha256": "e729ec44c6d54ff309beda1e4cb28df54e1ca31df43bb79f14adb71816246352",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_16_codex_fps_governanca_v2_aebe59c371",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/docs/arena-shooter-future-roadmap.md",
+      "kind": "historical_document",
+      "classification": "publication_release",
+      "byte_count": 5287,
+      "line_count": 156,
+      "source_blob": "9be7f561048635fed922b84039996272bca5d79f",
+      "source_sha256": "b65a2ec1d244ec6423c5523ff67e1cd988935e353c8722cec40c54ac632b4f56",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_arena_shooter_future_roadmap_2dca583df4",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/docs/codebase-audit-track05.md",
+      "kind": "historical_document",
+      "classification": "technical_contract",
+      "byte_count": 805,
+      "line_count": 24,
+      "source_blob": "1d01c45e90b59d08f2ee1443d16029ff0051e6cf",
+      "source_sha256": "78fce04cc4d19e19ef513da65cc27548a7f7b5be30b1fc2a13507a0aedc63181",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_codebase_audit_track05_152a66f204",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/docs/refactor-hardening-roadmap.md",
+      "kind": "historical_document",
+      "classification": "decision",
+      "byte_count": 1253,
+      "line_count": 26,
+      "source_blob": "27bf8eda21f06b0361156cc5ebd0cb5ea39172fa",
+      "source_sha256": "a7ed45540c2ddd401eb33dd51fb44ac749d87bcaa2bab196b643ee64defd2b1e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_refactor_hardening_roadmap_7f05b66032",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-00-project-bootstrap/current-status.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 1255,
+      "line_count": 36,
+      "source_blob": "ee846572de8f90efe966aaa02317089f3c7ac888",
+      "source_sha256": "9e44cbcb70608bff347a31d1c83be178fd257d79998e61a858a4e24b82709c01",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_605ab2d2ff",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-00-project-split-foundation-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 828,
+      "line_count": 23,
+      "source_blob": "110513007b44ed53eb0951fd5f15eacbc9d48121",
+      "source_sha256": "e34aa4d6dd6fb15e393d45c49c709724e7474ef7aa6f9de22b218f9c0e497432",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_b64c38e1d0",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-01-arena-1x1-v1/current-status.md",
+      "kind": "track",
+      "classification": "evidence_summary",
+      "byte_count": 2054,
+      "line_count": 46,
+      "source_blob": "a7e104f64754a0f3ef1239b68b14f33c87e69fef",
+      "source_sha256": "470822f0c89f7904f572e1ce123c1bf54af76451657498b805ed2f17cebd1fbd",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_eac869610c",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-01-combat-readability-polish-v1/current-status.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 2817,
+      "line_count": 88,
+      "source_blob": "1cf059771dc3002968376bcb529721e0750a4930",
+      "source_sha256": "6c56d4084477c8c34117cf5b642b2f92d65bbcaf162d57044e9e9cab5422af9e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_d5d2173ded",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-01a-feel-feedback-v1/current-status.md",
+      "kind": "track",
+      "classification": "evidence_summary",
+      "byte_count": 1432,
+      "line_count": 32,
+      "source_blob": "0e382d7732f4dc6a03da0987816e6e7e7ffad43c",
+      "source_sha256": "4d32896ee8f6fa3c090e7df87a021068b23a08f1908970ddcc312c61f70ca2e2",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_0946a0e6bf",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-01b-bot-duelist-v1/current-status.md",
+      "kind": "track",
+      "classification": "evidence_summary",
+      "byte_count": 1927,
+      "line_count": 35,
+      "source_blob": "e94735708f096e73e958d4cc6442757dbd8eb406",
+      "source_sha256": "02b872b53ba58b3932841dd1846ef17fb5c8165eb289738f71854fef5ef080e8",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_2c5c9730be",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-01c-arena-layout-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 1500,
+      "line_count": 37,
+      "source_blob": "509e1e5b53d904c8b6abf821e0df1889759b5ede",
+      "source_sha256": "0ac23937634bb38272603a2e9b28f7bb0d648d811f28f7d78eee632000e3188d",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_de84c001bf",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-01d-knockback-movement-combat-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 2429,
+      "line_count": 62,
+      "source_blob": "3e7b5b9234bf1d80695b88055f115decda0a4767",
+      "source_sha256": "a6c00705a1e74bb7ef778cbd69a2cf3335a7abb96a7dbaedbd84f3f206cd555e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_c63444f0b5",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 2690,
+      "line_count": 73,
+      "source_blob": "9d1a67190ccfa2d43d6505b20118c66ef99bf7b7",
+      "source_sha256": "3eaa330282a8f8afe5dc0bb3364fc1f5f42dd0cc38f8deb7bdd6370e6fc0b926",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_27d2fa75c1",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-02a-bot-pressure-jump-hotfix-v1/current-status.md",
+      "kind": "track",
+      "classification": "evidence_summary",
+      "byte_count": 1902,
+      "line_count": 45,
+      "source_blob": "0d20155a7e38092c336b5451a037c0b172e94911",
+      "source_sha256": "0ab1d38ce552a59d6ab202906ad263ef814e3916a833b62308d6ea1a50b8088c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_c38ab956a5",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-02a-combat-loop-expansion-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 3720,
+      "line_count": 86,
+      "source_blob": "684c85404dfa57b08ce031e3ed94995889981ccd",
+      "source_sha256": "22f9f4e5ede80b74a8ab3384c71c5c0e32dfe05fc8a2c88ad9405c657e099cd7",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_420c7fb8b6",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-02a-plasma-damage-hotfix-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 1995,
+      "line_count": 48,
+      "source_blob": "b8011a62375fcfd0e205ef8e8e2a01ab2cc731c5",
+      "source_sha256": "effdea1c846f37f3a0730f4c96eeb51a9bc9e01fc2df1145868299038376b3bf",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_5479b9b79b",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 2916,
+      "line_count": 72,
+      "source_blob": "20a5a35f8fd079ff4b50034f2e413010d279d629",
+      "source_sha256": "273f8ea4f287cc925ce1884392cff0317b1687e4863c3dfcef17374be1beca81",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_19261c16e0",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-03a-vertical-arena-fall-pressure-v1/current-status.md",
+      "kind": "track",
+      "classification": "evidence_summary",
+      "byte_count": 3285,
+      "line_count": 68,
+      "source_blob": "37770a7f2b314d141c8197d0f632e18972ae48e6",
+      "source_sha256": "498a477b71e241e080ccdbba1d92c9a892e11a82fb5081eff9f8292945277210",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_d306b6174f",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-03b-arena-flow-route-tuning-v1/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 2699,
+      "line_count": 48,
+      "source_blob": "b4d10842b18b0629724cb2dfa61fdebfe37fdef2",
+      "source_sha256": "481f997171fb9667a2066b0810ab95295259a24becac236774bed739b39cf4f5",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_2408261c79",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-04-arena-movement-flow-bot-navigation-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 4081,
+      "line_count": 94,
+      "source_blob": "0b945c33c6606af131659c86ec8b9c2f1b0b1ad1",
+      "source_sha256": "d0781770e6efdd22b5b120dbeba5a126773ff4fed6f9e4a19aac107d143d6e27",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_abc98ba5b3",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-04b-bot-pickup-commitment-v1/current-status.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 2029,
+      "line_count": 62,
+      "source_blob": "0925ad567942887c1018a5cb1538994a163b9679",
+      "source_sha256": "f4a9852f6177386877928b5036d67bb4b4fe898bc2c45e6da5b5e34c3066c84a",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_95a7b0b4da",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-05-foundation-hardening-refactor-v1/current-status.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 3374,
+      "line_count": 85,
+      "source_blob": "5517db0da76649934b082909f068958cc1bd2f72",
+      "source_sha256": "9ac6c0a354f246ab70bfa265fb7887c3ff6c1754664faa4b8d51bdf908912774",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_3814e7d602",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-05-quake-duel-route-control-bot-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 3015,
+      "line_count": 77,
+      "source_blob": "58fb1c6c73a0af3afb762ff30b66dc477799e53f",
+      "source_sha256": "09b200d2f1f5a92d9162c280eeb3ac6508bed605141298f649bb1b1d5c770125",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_c5239c2542",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-05b-long-jump-pad-first-try-v1/current-status.md",
+      "kind": "track",
+      "classification": "evidence_summary",
+      "byte_count": 3334,
+      "line_count": 79,
+      "source_blob": "18c50173e69801b2d075153489d5dd39b3c44b15",
+      "source_sha256": "d5a75baa2d329c2e954dda397e38954cd1df0703d295213469bf2083e4c73c6f",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_3c5780d18f",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-06-arena-variety-bot-generalization-v1/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 9217,
+      "line_count": 201,
+      "source_blob": "87d69ee6bde58b0653a387d8b1bbfa11fdec6d73",
+      "source_sha256": "6c806a5ce626d4045c6a89b51bd9fbe8582167ac232b3133599aeaf4a333e607",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_aa65af904f",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md",
+      "kind": "track",
+      "classification": "evidence_summary",
+      "byte_count": 2147,
+      "line_count": 55,
+      "source_blob": "9a05a2684dd2b18de4c60dde94bf6461af4d0cd9",
+      "source_sha256": "30834b85b943845812886f672bcc2f42c73958803566f2a16bcbf3071760c01d",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_533b8e7774",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-09-combat-sandbox-expansion-v1/current-status.md",
+      "kind": "track",
+      "classification": "evidence_summary",
+      "byte_count": 2150,
+      "line_count": 47,
+      "source_blob": "65658e358fd8db938167af96ff0dfb84e5ad8738",
+      "source_sha256": "a4ccf16d96d511587df19596e35e45a0b94917172e47028631d0fe8bb276ea07",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_e5edaf4674",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-10-combat-balance-weapon-roles-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 3033,
+      "line_count": 68,
+      "source_blob": "bab36a81f115a4e296d7e1a32fc518c987e7bc47",
+      "source_sha256": "83a6289f59418dfbd6d0ae9053fa03e84b4cf11e619164a7520f29922b8c5eb6",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_0e88430afd",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-11-complete-telemetry-v1/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 3194,
+      "line_count": 72,
+      "source_blob": "a854559964821cfeeaa2c4b21ff0806a178bfc1b",
+      "source_sha256": "aa3f4107d9cd3ad592b98d6efbbdb0ec475ef120e8b1a2394d782268b4c0b1ae",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_407716d35d",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-12-telemetry-readout-balance-baseline-v1/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 2501,
+      "line_count": 61,
+      "source_blob": "4f00c4149046499f3d9aef183c8e50f6e889f21c",
+      "source_sha256": "9f8bbdf3bacbabfa019d9686bde1dccf85fd956fedd982f858cfa141aebc25a8",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_2e2bb9c64f",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-13-documentation-rebaseline-future-roadmap-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 2049,
+      "line_count": 48,
+      "source_blob": "2720dacda5b480c7ec86a02fbda53ea7d7f33484",
+      "source_sha256": "64756a902162fdbad550207ab6b1ffe557b5a57ec88d4b8a9912f4cdd245cca2",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_528b8d211d",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-14a-refactor-safety-net-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_history",
+      "byte_count": 1332,
+      "line_count": 38,
+      "source_blob": "a4a4377a3901f7b9a3e0a47b7ac2eb9f407e2ce2",
+      "source_sha256": "20c5d4c8334df5a28b877e2715ee3f7790316ae23962644c268ca156e1394655",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_f1be5eebed",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-14b-arena-root-boundary-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_history",
+      "byte_count": 972,
+      "line_count": 29,
+      "source_blob": "cb3520c21ec5dba434dad36bb523edb347061319",
+      "source_sha256": "c338604e2d4c616fc7f3b6a1028ef9de923ae32c2c16347cb4b1df2c97805409",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_c228fbe6d3",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-14c-combat-pipeline-extraction-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 1133,
+      "line_count": 31,
+      "source_blob": "07da31769ab4e2a33ecb910c4df584e687ca65bc",
+      "source_sha256": "d592441a6cbf23e077ee5db44437b06ac4976f1d8fa13124c43f2d332649bda1",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_6449890fff",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-14d-pickups-jump-pads-extraction-v1/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 1240,
+      "line_count": 31,
+      "source_blob": "5e9a97ddf9e2d1db861f42f9c29fa7ea433d9034",
+      "source_sha256": "3ec43729d601039bef3b04f6baf01910c5551632b882966809b7807607a9b9da",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_98b84882ee",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-14e-bot-decision-boundary-v1/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 1185,
+      "line_count": 30,
+      "source_blob": "84541fc0db3bfc2c4beb46440d487321c9834752",
+      "source_sha256": "dc0390c5adf7571768a5d0ae9dd72d1052708f88ace7effbd8a205eb8e1aaa9f",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_0d6d9a617d",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-14f-cleanup-documentation-v1/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 1231,
+      "line_count": 33,
+      "source_blob": "ea8bedca9616e6d7e9c49477830ef6c785a21cbf",
+      "source_sha256": "f3f886444db03acf51d6ac7a5df11b6828d03075789ab56fb57d447778b0606d",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_d939ea69dc",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-14g-surgical-expansion-hardening-v1/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 1513,
+      "line_count": 43,
+      "source_blob": "7a822b21d586a312052c14580c125e40c6af448d",
+      "source_sha256": "eadae8b924a262f7d359a333f1d09951a46c0fca1ae474d2891b8729b68f9cf7",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_74aefbab48",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-14h-bot-long-jump-pad-hotfix-v1/current-status.md",
+      "kind": "track",
+      "classification": "human_gate",
+      "byte_count": 1877,
+      "line_count": 35,
+      "source_blob": "fe3f24acf0b71560cae8799b93378d10f92788e8",
+      "source_sha256": "837bd7f93c105305f32721bb8e479e1a229012f2cd0218d36a6decc0c76a8050",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_2e8c7e5d05",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/FpsPlayground/implementation/tracks/track-14i-godot-debugger-cleanup-v1/current-status.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 1771,
+      "line_count": 45,
+      "source_blob": "0a8e6c167ae57e264835418213d138f1c3ffb969",
+      "source_sha256": "54bf9bbdaae062b6a6ceb7b6559ab2b2431b9f15e9b8c8d709a62ad52f7f51d1",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_16adfe6124",
+      "retained_authorities": [
+        "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+        "Projetos/FpsPlayground/implementation/history.md",
+        "Projetos/FpsPlayground/qa/QA_INDEX.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_2026_07_16_codex_fps_governanca_v2_ready_for_5dbc0a75c2",
+      "date": "2026-07-16",
+      "scope": "fpsplayground",
+      "outcome": "Handoff: FpsPlayground Governance v2 Ready For Merge",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/08_Coordenacao/Handoffs/2026-07-16_codex_fps-governanca-v2-ready-for-merge.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:20faa40dc776c5111b4ec1662c5bcfc8408d225686427f4f2ea48b4a2dd08bfb; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-07.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/08_Coordenacao/Handoffs/2026-07-16_codex_fps-governanca-v2-ready-for-merge.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_07_17_codex_documentation_lite_curation_f6cb331043",
+      "date": "2026-07-17",
+      "scope": "fpsplayground",
+      "outcome": "Documentation Lite v2 - FpsPlayground Pre-Cutover Curation",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-curation-v2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:fd0684f0c9e1925d8d9ef2effc7c804293259160378a5a46aac9af1ec0e54afb; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-07.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-curation-v2.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_07_16_codex_fps_governanca_v2_aebe59c371",
+      "date": "2026-07-16",
+      "scope": "fpsplayground",
+      "outcome": "Tarefa: FpsPlayground Governance v2 Migration",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/08_Coordenacao/Kanban/Done/2026-07-16_codex_fps-governanca-v2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:e729ec44c6d54ff309beda1e4cb28df54e1ca31df43bb79f14adb71816246352; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-07.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/08_Coordenacao/Kanban/Done/2026-07-16_codex_fps-governanca-v2.md"
+      ]
+    },
+    {
+      "record_id": "rec_arena_shooter_future_roadmap_2dca583df4",
+      "date": "2026-07-17",
+      "scope": "fpsplayground",
+      "outcome": "Arena Shooter Future Roadmap",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/docs/arena-shooter-future-roadmap.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:b65a2ec1d244ec6423c5523ff67e1cd988935e353c8722cec40c54ac632b4f56; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-07.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/docs/arena-shooter-future-roadmap.md"
+      ]
+    },
+    {
+      "record_id": "rec_codebase_audit_track05_152a66f204",
+      "date": "2026-07-17",
+      "scope": "fpsplayground",
+      "outcome": "FpsPlayground Codebase Audit",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/docs/codebase-audit-track05.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:78fce04cc4d19e19ef513da65cc27548a7f7b5be30b1fc2a13507a0aedc63181; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-07.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/docs/codebase-audit-track05.md"
+      ]
+    },
+    {
+      "record_id": "rec_refactor_hardening_roadmap_7f05b66032",
+      "date": "2026-07-17",
+      "scope": "fpsplayground",
+      "outcome": "Refactor Hardening Roadmap - Historical Summary",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/docs/refactor-hardening-roadmap.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:a7ed45540c2ddd401eb33dd51fb44ac749d87bcaa2bab196b643ee64defd2b1e; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-07.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/docs/refactor-hardening-roadmap.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_605ab2d2ff",
+      "date": "2026-06-09",
+      "scope": "fpsplayground",
+      "outcome": "Track 00 - Project Bootstrap",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-00-project-bootstrap/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9e44cbcb70608bff347a31d1c83be178fd257d79998e61a858a4e24b82709c01; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-00-project-bootstrap/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_b64c38e1d0",
+      "date": "2026-06-10",
+      "scope": "fpsplayground",
+      "outcome": "Track 00 - Project Split Foundation V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-00-project-split-foundation-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:e34aa4d6dd6fb15e393d45c49c709724e7474ef7aa6f9de22b218f9c0e497432; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-00-project-split-foundation-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_eac869610c",
+      "date": "2026-06-09",
+      "scope": "fpsplayground",
+      "outcome": "Track 01 - Arena 1x1 V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-01-arena-1x1-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:470822f0c89f7904f572e1ce123c1bf54af76451657498b805ed2f17cebd1fbd; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-01-arena-1x1-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_d5d2173ded",
+      "date": "2026-06-15",
+      "scope": "fpsplayground",
+      "outcome": "Track 01 - Combat Readability Polish V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-01-combat-readability-polish-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:6c56d4084477c8c34117cf5b642b2f92d65bbcaf162d57044e9e9cab5422af9e; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-01-combat-readability-polish-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_0946a0e6bf",
+      "date": "2026-06-09",
+      "scope": "fpsplayground",
+      "outcome": "Track 01A - Feel/Feedback V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-01a-feel-feedback-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:4d32896ee8f6fa3c090e7df87a021068b23a08f1908970ddcc312c61f70ca2e2; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-01a-feel-feedback-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_2c5c9730be",
+      "date": "2026-06-09",
+      "scope": "fpsplayground",
+      "outcome": "Track 01B - Bot Duelista V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-01b-bot-duelist-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:02b872b53ba58b3932841dd1846ef17fb5c8165eb289738f71854fef5ef080e8; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-01b-bot-duelist-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_de84c001bf",
+      "date": "2026-06-09",
+      "scope": "fpsplayground",
+      "outcome": "Track 01C - Arena Layout V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-01c-arena-layout-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:0ac23937634bb38272603a2e9b28f7bb0d648d811f28f7d78eee632000e3188d; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-01c-arena-layout-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_c63444f0b5",
+      "date": "2026-06-09",
+      "scope": "fpsplayground",
+      "outcome": "Track 01D - Knockback Movement Combat V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-01d-knockback-movement-combat-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:a6c00705a1e74bb7ef778cbd69a2cf3335a7abb96a7dbaedbd84f3f206cd555e; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-01d-knockback-movement-combat-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_27d2fa75c1",
+      "date": "2026-06-15",
+      "scope": "fpsplayground",
+      "outcome": "Track 02 - Bot Tactical Movement V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:3eaa330282a8f8afe5dc0bb3364fc1f5f42dd0cc38f8deb7bdd6370e6fc0b926; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-02-bot-tactical-movement-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_c38ab956a5",
+      "date": "2026-06-09",
+      "scope": "fpsplayground",
+      "outcome": "Track 02A - Bot Pressure Jump Hotfix V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-02a-bot-pressure-jump-hotfix-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:0ab1d38ce552a59d6ab202906ad263ef814e3916a833b62308d6ea1a50b8088c; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-02a-bot-pressure-jump-hotfix-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_420c7fb8b6",
+      "date": "2026-06-09",
+      "scope": "fpsplayground",
+      "outcome": "Track 02A - Combat Loop Expansion V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-02a-combat-loop-expansion-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:22f9f4e5ede80b74a8ab3384c71c5c0e32dfe05fc8a2c88ad9405c657e099cd7; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-02a-combat-loop-expansion-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_5479b9b79b",
+      "date": "2026-06-09",
+      "scope": "fpsplayground",
+      "outcome": "Track 02A - Plasma Damage Hotfix V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-02a-plasma-damage-hotfix-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:effdea1c846f37f3a0730f4c96eeb51a9bc9e01fc2df1145868299038376b3bf; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-02a-plasma-damage-hotfix-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_19261c16e0",
+      "date": "2026-06-15",
+      "scope": "fpsplayground",
+      "outcome": "Track 03 - Arena Tactical Context Proof V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:273f8ea4f287cc925ce1884392cff0317b1687e4863c3dfcef17374be1beca81; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-03-arena-tactical-context-proof-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_d306b6174f",
+      "date": "2026-06-10",
+      "scope": "fpsplayground",
+      "outcome": "Track 03A - Vertical Arena No Void V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-03a-vertical-arena-fall-pressure-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:498a477b71e241e080ccdbba1d92c9a892e11a82fb5081eff9f8292945277210; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-03a-vertical-arena-fall-pressure-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_2408261c79",
+      "date": "2026-06-10",
+      "scope": "fpsplayground",
+      "outcome": "Track 03B - Arena Flow & Route Tuning V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-03b-arena-flow-route-tuning-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:481f997171fb9667a2066b0810ab95295259a24becac236774bed739b39cf4f5; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-03b-arena-flow-route-tuning-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_abc98ba5b3",
+      "date": "2026-06-15",
+      "scope": "fpsplayground",
+      "outcome": "Track 04 - Arena Movement Flow And Bot Navigation V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-04-arena-movement-flow-bot-navigation-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:d0781770e6efdd22b5b120dbeba5a126773ff4fed6f9e4a19aac107d143d6e27; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-04-arena-movement-flow-bot-navigation-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_95a7b0b4da",
+      "date": "2026-06-15",
+      "scope": "fpsplayground",
+      "outcome": "Track 04B - Bot Pickup Commitment V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-04b-bot-pickup-commitment-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:f4a9852f6177386877928b5036d67bb4b4fe898bc2c45e6da5b5e34c3066c84a; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-04b-bot-pickup-commitment-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_3814e7d602",
+      "date": "2026-06-10",
+      "scope": "fpsplayground",
+      "outcome": "Track 05 - Foundation Hardening & Refactor V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-05-foundation-hardening-refactor-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9ac6c0a354f246ab70bfa265fb7887c3ff6c1754664faa4b8d51bdf908912774; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-05-foundation-hardening-refactor-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_c5239c2542",
+      "date": "2026-06-15",
+      "scope": "fpsplayground",
+      "outcome": "Track 05 - Quake Duel Route Control Bot V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-05-quake-duel-route-control-bot-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:09b200d2f1f5a92d9162c280eeb3ac6508bed605141298f649bb1b1d5c770125; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-05-quake-duel-route-control-bot-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_3c5780d18f",
+      "date": "2026-06-15",
+      "scope": "fpsplayground",
+      "outcome": "Track 05B - Long Jump Pad First Try V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-05b-long-jump-pad-first-try-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:d5a75baa2d329c2e954dda397e38954cd1df0703d295213469bf2083e4c73c6f; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-05b-long-jump-pad-first-try-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_aa65af904f",
+      "date": "2026-06-16",
+      "scope": "fpsplayground",
+      "outcome": "Track 06 - Arena Variety And Bot Generalization V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-06-arena-variety-bot-generalization-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:6c806a5ce626d4045c6a89b51bd9fbe8582167ac232b3133599aeaf4a333e607; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-06-arena-variety-bot-generalization-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_533b8e7774",
+      "date": "2026-06-19",
+      "scope": "fpsplayground",
+      "outcome": "Track 07 - Match Flow And Duel UX V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:30834b85b943845812886f672bcc2f42c73958803566f2a16bcbf3071760c01d; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-07-match-flow-duel-ux-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_e5edaf4674",
+      "date": "2026-06-19",
+      "scope": "fpsplayground",
+      "outcome": "Track 09 - Combat Sandbox Expansion V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-09-combat-sandbox-expansion-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:a4ccf16d96d511587df19596e35e45a0b94917172e47028631d0fe8bb276ea07; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-09-combat-sandbox-expansion-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_0e88430afd",
+      "date": "2026-06-19",
+      "scope": "fpsplayground",
+      "outcome": "Track 10 - Combat Balance And Weapon Roles V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-10-combat-balance-weapon-roles-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:83a6289f59418dfbd6d0ae9053fa03e84b4cf11e619164a7520f29922b8c5eb6; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-10-combat-balance-weapon-roles-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_407716d35d",
+      "date": "2026-06-19",
+      "scope": "fpsplayground",
+      "outcome": "Track 11 - Complete Telemetry V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-11-complete-telemetry-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:aa3f4107d9cd3ad592b98d6efbbdb0ec475ef120e8b1a2394d782268b4c0b1ae; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-11-complete-telemetry-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_2e2bb9c64f",
+      "date": "2026-06-19",
+      "scope": "fpsplayground",
+      "outcome": "Track 12 - Telemetry Readout And Balance Baseline V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-12-telemetry-readout-balance-baseline-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9f8bbdf3bacbabfa019d9686bde1dccf85fd956fedd982f858cfa141aebc25a8; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-12-telemetry-readout-balance-baseline-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_528b8d211d",
+      "date": "2026-06-19",
+      "scope": "fpsplayground",
+      "outcome": "Track 13 - Documentation Rebaseline And Future Roadmap V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-13-documentation-rebaseline-future-roadmap-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:64756a902162fdbad550207ab6b1ffe557b5a57ec88d4b8a9912f4cdd245cca2; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-13-documentation-rebaseline-future-roadmap-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_f1be5eebed",
+      "date": "2026-06-20",
+      "scope": "fpsplayground",
+      "outcome": "Track 14A - Refactor Safety Net And Code Health Baseline V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-14a-refactor-safety-net-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:20c5d4c8334df5a28b877e2715ee3f7790316ae23962644c268ca156e1394655; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-14a-refactor-safety-net-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_c228fbe6d3",
+      "date": "2026-06-20",
+      "scope": "fpsplayground",
+      "outcome": "Track 14B - Arena Root Boundary V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-14b-arena-root-boundary-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:c338604e2d4c616fc7f3b6a1028ef9de923ae32c2c16347cb4b1df2c97805409; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-14b-arena-root-boundary-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_6449890fff",
+      "date": "2026-06-20",
+      "scope": "fpsplayground",
+      "outcome": "Track 14C - Combat Pipeline Extraction V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-14c-combat-pipeline-extraction-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:d592441a6cbf23e077ee5db44437b06ac4976f1d8fa13124c43f2d332649bda1; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-14c-combat-pipeline-extraction-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_98b84882ee",
+      "date": "2026-06-20",
+      "scope": "fpsplayground",
+      "outcome": "Track 14D - Pickups And Jump Pads Extraction V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-14d-pickups-jump-pads-extraction-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:3ec43729d601039bef3b04f6baf01910c5551632b882966809b7807607a9b9da; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-14d-pickups-jump-pads-extraction-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_0d6d9a617d",
+      "date": "2026-06-20",
+      "scope": "fpsplayground",
+      "outcome": "Track 14E - Bot Decision Boundary V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-14e-bot-decision-boundary-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:dc0390c5adf7571768a5d0ae9dd72d1052708f88ace7effbd8a205eb8e1aaa9f; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-14e-bot-decision-boundary-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_d939ea69dc",
+      "date": "2026-06-20",
+      "scope": "fpsplayground",
+      "outcome": "Track 14F - Cleanup And Documentation V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-14f-cleanup-documentation-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:f3f886444db03acf51d6ac7a5df11b6828d03075789ab56fb57d447778b0606d; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-14f-cleanup-documentation-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_74aefbab48",
+      "date": "2026-06-20",
+      "scope": "fpsplayground",
+      "outcome": "Track 14G - Surgical Expansion Hardening V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-14g-surgical-expansion-hardening-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:eadae8b924a262f7d359a333f1d09951a46c0fca1ae474d2891b8729b68f9cf7; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-14g-surgical-expansion-hardening-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_2e8c7e5d05",
+      "date": "2026-06-20",
+      "scope": "fpsplayground",
+      "outcome": "Track 14H - Bot Long Jump Pad Hotfix V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-14h-bot-long-jump-pad-hotfix-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:837bd7f93c105305f32721bb8e479e1a229012f2cd0218d36a6decc0c76a8050; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-14h-bot-long-jump-pad-hotfix-v1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_16adfe6124",
+      "date": "2026-06-20",
+      "scope": "fpsplayground",
+      "outcome": "Track 14I - Godot Debugger Cleanup V1",
+      "human_gate": "historical human approval preserved; no new approval inferred",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/FpsPlayground/implementation/tracks/track-14i-godot-debugger-cleanup-v1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:54bf9bbdaae062b6a6ceb7b6559ab2b2431b9f15e9b8c8d709a62ad52f7f51d1; retained:Projetos/FpsPlayground/implementation/history-ledger/2026-06.md;Projetos/FpsPlayground/implementation/history.md;Projetos/FpsPlayground/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/FpsPlayground/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "Projetos/FpsPlayground/implementation/tracks/track-14i-godot-debugger-cleanup-v1/current-status.md"
+      ]
+    }
+  ]
+}

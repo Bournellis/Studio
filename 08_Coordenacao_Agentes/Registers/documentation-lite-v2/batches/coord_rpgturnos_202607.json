@@ -1,0 +1,45 @@
+{
+  "schema_version": 2,
+  "batch_id": "coord_rpgturnos_202607",
+  "scope": "rpgturnos",
+  "project": "RPG Turnos",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-07-16_codex_estudio-governanca-v2-migracao-completa.md",
+      "kind": "done_card",
+      "classification": "publication_release",
+      "byte_count": 4617,
+      "line_count": 75,
+      "source_blob": "6d976e8367608efa29640a7423794c6de0cacefc",
+      "source_sha256": "45dcc59a2e50d40980a28e26f84a3b102cfc2555b095e757e762e460334d5b4d",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_16_codex_estudio_governanca_v2_migrac_de8aba841d",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_2026_07_16_codex_estudio_governanca_v2_migrac_de8aba841d",
+      "date": "2026-07-16",
+      "scope": "rpgturnos",
+      "outcome": "Multi-Agent Done: Governanca Estudio v2 - migracao completa",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-07-16_codex_estudio-governanca-v2-migracao-completa.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:45dcc59a2e50d40980a28e26f84a3b102cfc2555b095e757e762e460334d5b4d; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-07.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-07-16_codex_estudio-governanca-v2-migracao-completa.md"
+      ]
+    }
+  ]
+}

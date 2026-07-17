@@ -1,0 +1,2445 @@
+{
+  "schema_version": 2,
+  "batch_id": "local_rpgisometrico",
+  "scope": "rpgisometrico",
+  "project": "RPG Isometrico",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "Projetos/rpg-isometrico/08_Coordenacao/Handoffs/2026-07-16_codex_rpg-isometrico-governanca-v2-ready-for-merge.md",
+      "kind": "handoff",
+      "classification": "human_gate",
+      "byte_count": 1805,
+      "line_count": 40,
+      "source_blob": "063efda090e03a8de8fe15b36aa7d961c9914a6a",
+      "source_sha256": "5aee3f8241f2817ae19673175d213bbcc97416c9140b5be2c85c913ecd86ec00",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_16_codex_rpg_isometrico_governanca_v2_191b97bcdb",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-v2.md",
+      "kind": "historical_document",
+      "classification": "security",
+      "byte_count": 2613,
+      "line_count": 56,
+      "source_blob": "1a79febfb467d7650bf736c50edac7de60b04a2d",
+      "source_sha256": "fecc29d0908e0230b8927c2da9f17e7e9b883ea5e989cd295a09a21e511cc040",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_17_codex_documentation_lite_v2_4071593ba7",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/08_Coordenacao/Kanban/Done/2026-07-16_codex_governanca-v2-local.md",
+      "kind": "done_card",
+      "classification": "publication_release",
+      "byte_count": 1024,
+      "line_count": 28,
+      "source_blob": "8080cd0fcdf9604836e640b9d165822e72a94908",
+      "source_sha256": "56fa85a65be42ec9fc23d6ee7cb7f369855f5b3060adf0eaa2aa3150cfadafa5",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_16_codex_governanca_v2_local_46786587e0",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/docs/campaign-framework-smoke.md",
+      "kind": "historical_document",
+      "classification": "publication_release",
+      "byte_count": 4722,
+      "line_count": 69,
+      "source_blob": "a638c8aa8b7d81f487424714155635a01506899d",
+      "source_sha256": "80379f4fee9e6f6d8c6af103eb73ef0639c898eabe400f536657c59d2a4cd977",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_campaign_framework_smoke_94285139a7",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/docs/canonical-product-foundation-smoke.md",
+      "kind": "historical_document",
+      "classification": "publication_release",
+      "byte_count": 3508,
+      "line_count": 61,
+      "source_blob": "a67dfe11bf5ff07ca8823b41ef61fddcbb0f3891",
+      "source_sha256": "ae9658345898aa25d45752080bbd33c479cf9383c1f9d6cb8f8cc8e7851094e0",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_canonical_product_foundation_smoke_8bc9ebfe39",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/docs/first-slice-smoke.md",
+      "kind": "historical_document",
+      "classification": "technical_contract",
+      "byte_count": 5021,
+      "line_count": 73,
+      "source_blob": "269926d45c9362acf95492c54ea9d1674bfa12b8",
+      "source_sha256": "95cee2126cda6af7d17452f8f21a9eaecb36672934f51eac132023d82b0f3e24",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_first_slice_smoke_18cd8ae919",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/docs/g4-shared-mode-foundation-smoke.md",
+      "kind": "historical_document",
+      "classification": "technical_contract",
+      "byte_count": 4213,
+      "line_count": 63,
+      "source_blob": "e411b9a31fe4a0619dd785e9efa69a0c8a90fce0",
+      "source_sha256": "3f31d793610607134e1103c565beb6522eb897f8b94fc9ba051cd2095fc1c26e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_g4_shared_mode_foundation_smoke_c357e904bf",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/checkpoints/README.md",
+      "kind": "checkpoint",
+      "classification": "technical_history",
+      "byte_count": 638,
+      "line_count": 12,
+      "source_blob": "2532ae3318a41504c7a6fa774195b98db0dc871a",
+      "source_sha256": "5845aaa6cccd1d80e241e6ff22d689b50d5a4149c893e092312584d0d85b542f",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_3cf73ce443",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/checkpoints/checkpoint-g1-balanced-evaluation.md",
+      "kind": "checkpoint",
+      "classification": "decision",
+      "byte_count": 2293,
+      "line_count": 57,
+      "source_blob": "ea499fef43c21199a7ecfa9bdc50aab7c8f69225",
+      "source_sha256": "e0dc2423cf227f537909bd9e191d8b3b5c6e5e5dbb6ad4112253c668311c8d63",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_checkpoint_g1_balanced_evaluation_b8c1075011",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/checkpoints/checkpoint-g3-first-slice-viability-acceptance.md",
+      "kind": "checkpoint",
+      "classification": "decision",
+      "byte_count": 3489,
+      "line_count": 78,
+      "source_blob": "8431bb3c8ce257affa64ef418c8463dd41f0be5f",
+      "source_sha256": "00640814a9088184e4a3636a66d15ff65563c44ea4756d908d429ffd5e539420",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_checkpoint_g3_first_slice_viability_acceptanc_37c666cd7b",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/checkpoints/checkpoint-g4-local-multi-mode-base-acceptance.md",
+      "kind": "checkpoint",
+      "classification": "publication_release",
+      "byte_count": 3569,
+      "line_count": 66,
+      "source_blob": "9712e34ca5c40d5e07aa276d47a9e3668fb8e8bd",
+      "source_sha256": "2762035addbb58519cf7e8575d1db403e0a5c8cb575d77d6a806422c5ed61c04",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_checkpoint_g4_local_multi_mode_base_acceptanc_d518a4dbdf",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/execution-log.md",
+      "kind": "historical_document",
+      "classification": "decision",
+      "byte_count": 11373,
+      "line_count": 155,
+      "source_blob": "98e7dda905f8b54f024744e1164d766709238e96",
+      "source_sha256": "035a9af9d1dec89017e42015e0b0194d556872c9a8564643624f1bb942ef6b7c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_execution_log_07f0bf4a14",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g1/README.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 614,
+      "line_count": 27,
+      "source_blob": "3ab10d74e3bcb4ebc01be7b699f784f17d3dddc7",
+      "source_sha256": "289cfe9539cda0e5f22018a2b4407f8d1eb85cc5ca951e5b2e3020632637331c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_77502ea42b",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g1/current-status.md",
+      "kind": "phase",
+      "classification": "evidence_summary",
+      "byte_count": 565,
+      "line_count": 12,
+      "source_blob": "a439d0e30fb7a85ca21fa8c7c3f87c2e13fc8363",
+      "source_sha256": "456045c41cf81f79a97eab30836fcc2f9cf49e045bf46f4b9f7a7f8965ca25fb",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_62c61e2382",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g1/execution-scripts/README.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 213,
+      "line_count": 5,
+      "source_blob": "9bf5696b9c1f2b318600218d29a4d13ea93bf33d",
+      "source_sha256": "e07a18616460e14a10ddaa05b8e84af7ae1db15b7cc3630dd4fc24d47f27e998",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_5fc26fc762",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g1/implementation-map.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 993,
+      "line_count": 25,
+      "source_blob": "cefd77c9fe18c10051b64b1d5d421be031ddeae3",
+      "source_sha256": "b2696eaee4268bde39611d9baf81f231e41d09e1a8eceda17005a151daf8b39c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_implementation_map_3727dfd29e",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g1/progress-log.md",
+      "kind": "phase",
+      "classification": "technical_contract",
+      "byte_count": 1231,
+      "line_count": 23,
+      "source_blob": "c3f6add92031cdd259478b2ee1e2d4f6174ab2b9",
+      "source_sha256": "4a547bdebbd2c5717c3d1411201d1ddad1156508f8beb89a6bf545e146a8cf2e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_progress_log_80f8fd57fc",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g1/stage-specs/README.md",
+      "kind": "phase",
+      "classification": "decision",
+      "byte_count": 109,
+      "line_count": 3,
+      "source_blob": "7524b978bfe32a596e321c1fc511567755e4c5e4",
+      "source_sha256": "af42c3899109b64d080558d1faebd33085aa6b3c17e79198422bc27964215063",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_5b0e646a93",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g1/stage-specs/stage-g1-01-transition-foundation-and-first-slice.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 567,
+      "line_count": 24,
+      "source_blob": "b22e5662ab1f98540b4e72b68e2f84d295ba4958",
+      "source_sha256": "9857dbdab6b6597c0088f59f73077a9b470054af5f7cd54be640c864febada18",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g1_01_transition_foundation_and_first_s_321ee1ce38",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g2/README.md",
+      "kind": "phase",
+      "classification": "evidence_summary",
+      "byte_count": 536,
+      "line_count": 23,
+      "source_blob": "6415e40612fb0b816830529665d517839c02f73f",
+      "source_sha256": "f2c10c7f226a3aac5423659e41bfd10b5843dfac5078b985e6f4148231b39b19",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_06e688948f",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g2/current-status.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 1024,
+      "line_count": 15,
+      "source_blob": "6b0bd7eb49d6e97a3ca2ad671243a1a715526cb3",
+      "source_sha256": "95501ee3a6869b6d617e879ccd932b7200f1d2d213402c060d667b26b15b33da",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_41772e0193",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g2/implementation-map.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 503,
+      "line_count": 12,
+      "source_blob": "19cff478ac772c6fc26ec96c8a138ec410f31890",
+      "source_sha256": "31b50287af1a7ed53de3a8aec121121f1ba65f0191325862da0fba967e90f7e1",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_implementation_map_89c604c29e",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g2/progress-log.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 1502,
+      "line_count": 23,
+      "source_blob": "6c156aef9beac54b48a7a2b5fcdf2d906943fb59",
+      "source_sha256": "145ac8564a11a12a71a519ac094da542f704795614c1d207285f923c3c7c7427",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_progress_log_cb619d3881",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g2/stage-specs/README.md",
+      "kind": "phase",
+      "classification": "decision",
+      "byte_count": 102,
+      "line_count": 3,
+      "source_blob": "81cbbd4af6b48e2f1d0299103b0a089f2f525e1b",
+      "source_sha256": "3c4947140cec966e39e2aef922d3e0e3a373d262b08e143dac292245dedf8d37",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_d25770e0b4",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g2/stage-specs/stage-g2-01-slice-stabilization.md",
+      "kind": "phase",
+      "classification": "evidence_summary",
+      "byte_count": 744,
+      "line_count": 28,
+      "source_blob": "99f3cbb306200fa6461844b249aecfbd0ee2adad",
+      "source_sha256": "5457975ad805dd55aba525ae484279948ae51176c3867cb575edf4de18238a12",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g2_01_slice_stabilization_89d957aeca",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g2/stage-specs/stage-g2-02-scene-ownership-and-runtime-anchors.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 905,
+      "line_count": 29,
+      "source_blob": "74dac1ad62e25fc833e1e416e4660859bb3f2e88",
+      "source_sha256": "b6a99dc180bf9967e567cc53dac690cccd16c34e93634de3ddf2d4a9ecf8e2ae",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g2_02_scene_ownership_and_runtime_ancho_d4269de14a",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/README.md",
+      "kind": "phase",
+      "classification": "evidence_summary",
+      "byte_count": 558,
+      "line_count": 22,
+      "source_blob": "2a4d9e0aad0d41112f101c0fc1b05d418403dce4",
+      "source_sha256": "11a47aabed56d73320754aa02612da76ecf3f480f694c07a0178cf573a111491",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_890b90c0fd",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/current-status.md",
+      "kind": "phase",
+      "classification": "publication_release",
+      "byte_count": 2563,
+      "line_count": 26,
+      "source_blob": "b6245ee6b21c63459550056df3f4a6abcb0d3bf1",
+      "source_sha256": "bfa1feabfabefd7e48ea6938f165ea589723b582c70f9bca2408ddf75fd56c11",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_81ef8c7233",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/progress-log.md",
+      "kind": "phase",
+      "classification": "publication_release",
+      "byte_count": 3936,
+      "line_count": 61,
+      "source_blob": "649d1ed6e0a3bf9764024a82e27bddfa6352c2b7",
+      "source_sha256": "bfada1c9d36844eaf24ca039cc08a16566cc13cc6d124885e0a3907d0eb1aa90",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_progress_log_94d6d8f260",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/README.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 205,
+      "line_count": 4,
+      "source_blob": "8c14ac069489a00348cdaba97ab8b50f4dfd2dba",
+      "source_sha256": "87957b671c87ec4378d035b2cd2064855b719ff0721bc6d23def733b8ef92855",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_a28d23f84c",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-01-combat-feedback-and-telemetry.md",
+      "kind": "phase",
+      "classification": "technical_contract",
+      "byte_count": 716,
+      "line_count": 28,
+      "source_blob": "877a063f79d60f92818b917c6acc6fcf353be4b9",
+      "source_sha256": "606df7630bfc436b3b0ce753ca2ce9a64fc5a4328444de790c220d63df1d97b0",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g3_01_combat_feedback_and_telemetry_9a526eddc0",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-02-round-flow-and-floating-feedback.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 727,
+      "line_count": 26,
+      "source_blob": "ef2d97e6751ddceb21fc4b0e7d96a4f17fa0ab1c",
+      "source_sha256": "455bd80fd7756700f5ff27cd877c645b2a88f6616d678e39ff03ac5f725de178",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g3_02_round_flow_and_floating_feedback_6e3228238a",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-03-hit-feel-and-bot-pacing.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 738,
+      "line_count": 26,
+      "source_blob": "61fe828507e0bdc8d5b5bf25d362b817227e2bb9",
+      "source_sha256": "e282ab8439a065e0c7bfddb4a90fcbb23d661560bd989a574c9a2a0a1ba1e827",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g3_03_hit_feel_and_bot_pacing_6b358bd6b8",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-05-skill-readability-and-impact-staging.md",
+      "kind": "phase",
+      "classification": "evidence_summary",
+      "byte_count": 858,
+      "line_count": 27,
+      "source_blob": "ca56fabab990e35fd3119425c57e94bb59a0ffd0",
+      "source_sha256": "fd338e7890204726744ac22a5eff0b2258033dc63b2b66a2dae5b309eb0677f1",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g3_05_skill_readability_and_impact_stag_e24a02106f",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-06-hit-feel-and-final-blow-beat.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 754,
+      "line_count": 26,
+      "source_blob": "75e618d16eb43d45dac79825a5fb0f7ba3422b44",
+      "source_sha256": "2827332830d9de0710b817186800c6395e888d7b0c89524b534f30c506e122eb",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g3_06_hit_feel_and_final_blow_beat_9f466b2472",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-07-arena-visual-cleanup.md",
+      "kind": "phase",
+      "classification": "evidence_summary",
+      "byte_count": 644,
+      "line_count": 25,
+      "source_blob": "48c42c77e373bd4e0c3ed853fc105027c1c55881",
+      "source_sha256": "9873a8f1bcfcf417e42c661f35b03bd3be4ed3fa467fc8caa524c0ea2f0bd9e2",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g3_07_arena_visual_cleanup_1962bf5ed0",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-08-arena-expansion-and-enclosure.md",
+      "kind": "phase",
+      "classification": "evidence_summary",
+      "byte_count": 896,
+      "line_count": 28,
+      "source_blob": "397eee74d056894e20c4acfc52e4f1050fbf48d9",
+      "source_sha256": "da2e1e11f766307660ff9467cea7402c19a58a27fd5c81a4a1ef7f22b136b1be",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g3_08_arena_expansion_and_enclosure_1d8d178736",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/README.md",
+      "kind": "phase",
+      "classification": "decision",
+      "byte_count": 1119,
+      "line_count": 42,
+      "source_blob": "764ad0116bbca7386802f55e453e6109738cd877",
+      "source_sha256": "205ea5f90a50b8e4cb36a469a7974d664e93d095f658dafeb0ac83a6f5561593",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_7d5bbd5961",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/current-status.md",
+      "kind": "phase",
+      "classification": "decision",
+      "byte_count": 1788,
+      "line_count": 21,
+      "source_blob": "0b5795777494bd5f3339ca5bbb50f1f23754aab3",
+      "source_sha256": "2bceec12c40a1c8e42aee20b84622006aee64c8aad610289fd71a96b6f4c0c3e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_1a369ec754",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/implementation-map.md",
+      "kind": "phase",
+      "classification": "decision",
+      "byte_count": 3178,
+      "line_count": 49,
+      "source_blob": "98baa32869b3e7e1b948ef77ab92dd84847378b5",
+      "source_sha256": "60b350e9c61b4db90745cefcd4c13c1f6b6a483f4128c8fbc2f7bc1fd33c7741",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_implementation_map_ea1290dfb4",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/progress-log.md",
+      "kind": "phase",
+      "classification": "technical_contract",
+      "byte_count": 5494,
+      "line_count": 57,
+      "source_blob": "88b58216e42e5edd30edba9eec23614dceee5a56",
+      "source_sha256": "d2122c85aaaed790d3099a7c8a7113c6743388fe68deeb602fe22a280218700a",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_progress_log_6a791a8f93",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/README.md",
+      "kind": "phase",
+      "classification": "evidence_summary",
+      "byte_count": 264,
+      "line_count": 4,
+      "source_blob": "b3930dba415dd2df9566b2d54947d29ef9d83101",
+      "source_sha256": "278290e91a082182e61149d7a675feb94a69318bcfe50f266154bde3fa546b19",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_94e4e8e536",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-01-shared-mode-foundation-and-frontend-routing.md",
+      "kind": "phase",
+      "classification": "technical_contract",
+      "byte_count": 956,
+      "line_count": 28,
+      "source_blob": "6191e96844b817fc40831cee692dec936907ef19",
+      "source_sha256": "102fed453d77c2a00588f8f4094da355836c3c37654cbe5d822072cdb475f24f",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g4_01_shared_mode_foundation_and_fronte_3fa149bf02",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-02-survival-playable-baseline.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 960,
+      "line_count": 28,
+      "source_blob": "3d251bbbc6e29105fbe8ffaa219b3d9c53fcf546",
+      "source_sha256": "61bba6a2607fceb32bc1a49db81cc41c83d26917e4a7ac13de5b1dbb6bc153d4",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g4_02_survival_playable_baseline_ce46df7550",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-03-boss-playable-baseline.md",
+      "kind": "phase",
+      "classification": "technical_contract",
+      "byte_count": 845,
+      "line_count": 27,
+      "source_blob": "57329be05962830ba6f08805446937d3c4c8dc69",
+      "source_sha256": "15ebc0ec428d5aff9e22ac7bae7c2226df494ebb410477752db830110bf45e49",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g4_03_boss_playable_baseline_fef0dab866",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-04-shared-combat-shell-and-results-parity.md",
+      "kind": "phase",
+      "classification": "technical_history",
+      "byte_count": 991,
+      "line_count": 28,
+      "source_blob": "0ba27cfd49d77e359c75b2bb3f0b7046c17c41f6",
+      "source_sha256": "0056f231337d82e8b1f61ffd2cf1d3613908d2bd5b501ee6acd6649f9c9b22fa",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g4_04_shared_combat_shell_and_results_p_0aadfaf7a0",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-05-multi-mode-validation-and-local-playtest-gate.md",
+      "kind": "phase",
+      "classification": "publication_release",
+      "byte_count": 952,
+      "line_count": 27,
+      "source_blob": "507df679f366b083ebc11cb1acfbd5d694920b2a",
+      "source_sha256": "bf3e4bd05900af36f1a2fa6b9c2f3303e7380fa7e35b2f20bf90b04d0789579b",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_stage_g4_05_multi_mode_validation_and_local_p_bb52a7c00f",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/README.md",
+      "kind": "track",
+      "classification": "technical_history",
+      "byte_count": 583,
+      "line_count": 17,
+      "source_blob": "4f865a4d917e0dde4684de8e66e9edf8d559d892",
+      "source_sha256": "74d3aeb813b7c0c1110d750285d151f6c04cfbcbec70e07f428a9a9d55710918",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_3e9b77c518",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/README.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 940,
+      "line_count": 29,
+      "source_blob": "733b110ab3d2cc86c314667d4fca224ac5210759",
+      "source_sha256": "f271907ca1b8599193c05ef29cd291149c96064b3bdbde7b4a646339507a98b6",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_0f7ca59913",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/backlog.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 5934,
+      "line_count": 106,
+      "source_blob": "4b65c34dd25d056c7e5737bd48dd12cc0fc5b303",
+      "source_sha256": "b2fb072767ac1e597053e008c031137f0f630581d140a4958fd452172babd6f4",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_backlog_77a959a141",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/README.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 1128,
+      "line_count": 38,
+      "source_blob": "79804f7b46fd14cdd689bc0f218041adb229431c",
+      "source_sha256": "4fbd41030355d50560eff43579e1f6161cfc177ab7f1cdb0794715e179a55c8a",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_1ce057d788",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/candidate-lanes.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 3122,
+      "line_count": 84,
+      "source_blob": "a6dba9e441fb0860f303e90ed4fd1feb38aa3bdb",
+      "source_sha256": "ca34972e2000a095ea44de7ab0c3af589d009945f819bd43216c683e379e5b43",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_candidate_lanes_2baff8ada2",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/content-decision-rules.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 2562,
+      "line_count": 88,
+      "source_blob": "862b7ef1551b65492ee1cef876bf205151efa63c",
+      "source_sha256": "3b1a617281432e9e121dfc72804d2c0e9a97d165ee5090a8dc00c3880e65df0b",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_content_decision_rules_9edb4ec7a8",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/current-godot-content-baseline.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 2035,
+      "line_count": 91,
+      "source_blob": "2f685e705d8e19dffa8401d7bd9f0588623d2bb7",
+      "source_sha256": "dcd0270bd5ac99c5fed7e7bb15780ac3069f6bf022e188ad11aad147b5cd611c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_godot_content_baseline_b961cc5f2f",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/godot-content-candidate-c1.md",
+      "kind": "track",
+      "classification": "evidence_summary",
+      "byte_count": 1781,
+      "line_count": 67,
+      "source_blob": "1eeeb3500dfa0e512d315d13bc6ccbf6ecd36383",
+      "source_sha256": "356a8f1fbd61d3c290f8c0aa76ca4634daf9b612e90e711d5c5ebbb9b8d5f1ce",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_godot_content_candidate_c1_2a2811b8fb",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 1936,
+      "line_count": 32,
+      "source_blob": "c8e7a91953e08d205f49def8cc4c9db48787c6d2",
+      "source_sha256": "222ca4e841e3a30edab98f988619a1a939583a62bf8b51c8e9304051c6069966",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_247486d5bc",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/implementation-map.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 1787,
+      "line_count": 35,
+      "source_blob": "14acd8a6fe7564a71d33fa39bc7a719907d70bc2",
+      "source_sha256": "ae12d33e230d6671f97d9eb1175dfb1b9cd1737ea9ba11e82dfde6c63d8a8dd2",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_implementation_map_731ef24847",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/progress-log.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 4422,
+      "line_count": 53,
+      "source_blob": "c72f59a9ce0dbfd244d45d942bcd307ad6e30fbf",
+      "source_sha256": "56d6551320a392ebe9b0706dc0a2ab5fb9bc42f9d61845a7eb4237fbb065ae1c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_progress_log_9182ad4426",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/thread-candidates/README.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 461,
+      "line_count": 17,
+      "source_blob": "4cce12dba367694f2e6b510335800072ed682dcf",
+      "source_sha256": "d3b0031ab6fb6e45bea330852d652c87d1c7451a1ad6e9bb6d0b067863303bfe",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_023c1d01c9",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/thread-candidates/t01-b01-frontend-and-loadout-ux-tightening.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 3195,
+      "line_count": 81,
+      "source_blob": "b2cc8c5ed0a2e67557e6bebc03da9f12b40dd92f",
+      "source_sha256": "98d5eae5abd58737c72c98a55e5579ad8a652b3fbff2678abeeb58b79016bb0b",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_t01_b01_frontend_and_loadout_ux_tightening_c716a5028a",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/thread-candidates/t01-b05-godot-first-content-decisions.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 1997,
+      "line_count": 59,
+      "source_blob": "de78c033cbcc52694b0b2fe544347c0610b39f96",
+      "source_sha256": "0def81586e36012a25037975ea1b307154fd7d3c384fde0032bb00665898dbe5",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_t01_b05_godot_first_content_decisions_6fd1d966cb",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/README.md",
+      "kind": "track",
+      "classification": "technical_history",
+      "byte_count": 657,
+      "line_count": 17,
+      "source_blob": "f6a84413dab0604267686e58f4b30214048b191e",
+      "source_sha256": "336281ab51f1a215a93b5fdca042d4847ce7ce3db299698a3a5b739b6dbcab89",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_026d144ba9",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/art-track/README.md",
+      "kind": "track",
+      "classification": "technical_history",
+      "byte_count": 413,
+      "line_count": 15,
+      "source_blob": "bea4dfd1006946fe96261823f11dafbda4a4aa18",
+      "source_sha256": "6745a316f75a73d3a8f0b85a45c80116b91391d1a5dd7129e79239d5b337e44c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_ffad7df4d6",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/art-track/foundation-style-and-proxy-kit.md",
+      "kind": "track",
+      "classification": "technical_history",
+      "byte_count": 1090,
+      "line_count": 32,
+      "source_blob": "040ba5dc6ab892aef2f2c7a39d2c1b80ccfc3fed",
+      "source_sha256": "b17eb1c9c8efc6dc8a2234e87ab0305d7fe06acad9437f9571824c3603b6b8f7",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_foundation_style_and_proxy_kit_c4792675be",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/README.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 721,
+      "line_count": 20,
+      "source_blob": "51671ba0635e307779412ee62586554ad994fdb5",
+      "source_sha256": "53e4b2ab969ee10ca26022d1aca96051cdeb914777a6c9d977fb0539f4a46de4",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_b607ff6d7a",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f01-meta-foundation-and-tutorial.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 2037,
+      "line_count": 44,
+      "source_blob": "de1203cc1e3a0214f7fc9c495857fec51aceb4a6",
+      "source_sha256": "39d2ba414b4fccb07dc0b1ead6bf89e7f64062fa4b2d1e4d256d56f67a42d605",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_gate_f01_meta_foundation_and_tutorial_ecff616df4",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f03-campaign-framework.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 2996,
+      "line_count": 46,
+      "source_blob": "e182a607989f1774371c217fed64b5c3f7e8b1a5",
+      "source_sha256": "5f9065336502d47956c64435e2cd454390d6b08859ce82f9fda6d16db1096462",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_gate_f03_campaign_framework_74b123e6f5",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f05-reward-and-expansion.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 4147,
+      "line_count": 51,
+      "source_blob": "43bd46a3ba0da7948a78fbbef74211257cad2bcf",
+      "source_sha256": "d8d33a5381c03a7bfe311293f545ef35ea188824daeffe415baa3d8315a367b4",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_gate_f05_reward_and_expansion_6be593f817",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f07-campaign-content-expansion.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 4654,
+      "line_count": 53,
+      "source_blob": "d0f6adbcde78d51df8752f0be16620e82d844234",
+      "source_sha256": "9621eb7fe8b5f873c5af60df56fff10d59962c41a910c71a77b53663230103d4",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_gate_f07_campaign_content_expansion_7f983f3ff4",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f09-second-authored-campaign-route.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 5775,
+      "line_count": 67,
+      "source_blob": "e4c6cd291c7e30746f101f15cacdc37dc5984886",
+      "source_sha256": "a8d3a19d71ac493a6c178165cc99ead146d3690c8acbe1b354b6f4d1c41af521",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_gate_f09_second_authored_campaign_route_459f181c45",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f10-campaign-first-product-realignment.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 3508,
+      "line_count": 65,
+      "source_blob": "e83eee1a4e856b20e5adb86449ee0908dec18f4e",
+      "source_sha256": "327cfdeb481f310e616bc45a6667803ff3d281cdf24570dcb5135bcf4336dc45",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_gate_f10_campaign_first_product_realignment_803eb7857d",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f11-campaign-first-runtime-alignment.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 7958,
+      "line_count": 178,
+      "source_blob": "3030f016624361d11ca916eb3be907c439915d59",
+      "source_sha256": "c196207bbd13630670b4c2eba0e6b604df0a057d9f71ab80ce25e5549ca2cd57",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_gate_f11_campaign_first_runtime_alignment_c7a7ea4f4b",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-template.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 193,
+      "line_count": 13,
+      "source_blob": "708b868ce187c7c2773a00695de64727a9315ea9",
+      "source_sha256": "babf518391ae8f9e2284ad1b7d731a7b3052e44cc752fddb9de3293d687f135e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_gate_template_e90962271c",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/history/2026-04-26_track-baseline.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 5670,
+      "line_count": 72,
+      "source_blob": "a3cadea2d93126771695d1bbdadec4644956619e",
+      "source_sha256": "f2b47ec356be325767b2dfcd88b301f9e2d85f9c870f089908ff2afa9c044dfd",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_04_26_track_baseline_2f448fc314",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/implementation-map.md",
+      "kind": "track",
+      "classification": "publication_release",
+      "byte_count": 2876,
+      "line_count": 39,
+      "source_blob": "bde087027cc093fff7ec1f43fcf11881c703abdd",
+      "source_sha256": "014dc571a2f8881348d04e9f4ee8223ba6058c0f4e192cb61d998451f6f24717",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_implementation_map_0cd3f281db",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/progress-log.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 9281,
+      "line_count": 89,
+      "source_blob": "ee52bffca56933b901ae4206f02e00549503e282",
+      "source_sha256": "e1e173eed9801b089e87542e23ed84c747db24e331f61028286fbe98a7061024",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_progress_log_534f9d536d",
+      "retained_authorities": [
+        "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+        "Projetos/rpg-isometrico/implementation/history.md",
+        "Projetos/rpg-isometrico/qa/QA_INDEX.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_2026_07_16_codex_rpg_isometrico_governanca_v2_191b97bcdb",
+      "date": "2026-07-16",
+      "scope": "rpgisometrico",
+      "outcome": "Handoff — Governança v2 do RPG Isométrico",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/08_Coordenacao/Handoffs/2026-07-16_codex_rpg-isometrico-governanca-v2-ready-for-merge.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5aee3f8241f2817ae19673175d213bbcc97416c9140b5be2c85c913ecd86ec00; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/08_Coordenacao/Handoffs/2026-07-16_codex_rpg-isometrico-governanca-v2-ready-for-merge.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_07_17_codex_documentation_lite_v2_4071593ba7",
+      "date": "2026-07-17",
+      "scope": "rpgisometrico",
+      "outcome": "Documentation Lite v2 — curadoria histórica do RPG Isométrico",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-v2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:fecc29d0908e0230b8927c2da9f17e7e9b883ea5e989cd295a09a21e511cc040; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-v2.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_07_16_codex_governanca_v2_local_46786587e0",
+      "date": "2026-07-16",
+      "scope": "rpgisometrico",
+      "outcome": "Governança v2 local — RPG Isométrico",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/08_Coordenacao/Kanban/Done/2026-07-16_codex_governanca-v2-local.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:56fa85a65be42ec9fc23d6ee7cb7f369855f5b3060adf0eaa2aa3150cfadafa5; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/08_Coordenacao/Kanban/Done/2026-07-16_codex_governanca-v2-local.md"
+      ]
+    },
+    {
+      "record_id": "rec_campaign_framework_smoke_94285139a7",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Campaign Framework Smoke",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/docs/campaign-framework-smoke.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:80379f4fee9e6f6d8c6af103eb73ef0639c898eabe400f536657c59d2a4cd977; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/docs/campaign-framework-smoke.md"
+      ]
+    },
+    {
+      "record_id": "rec_canonical_product_foundation_smoke_8bc9ebfe39",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Canonical Product Foundation Smoke",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/docs/canonical-product-foundation-smoke.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:ae9658345898aa25d45752080bbd33c479cf9383c1f9d6cb8f8cc8e7851094e0; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/docs/canonical-product-foundation-smoke.md"
+      ]
+    },
+    {
+      "record_id": "rec_first_slice_smoke_18cd8ae919",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "First Slice Smoke (Historical)",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/docs/first-slice-smoke.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:95cee2126cda6af7d17452f8f21a9eaecb36672934f51eac132023d82b0f3e24; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/docs/first-slice-smoke.md"
+      ]
+    },
+    {
+      "record_id": "rec_g4_shared_mode_foundation_smoke_c357e904bf",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "G4 Shared Mode Foundation Smoke",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/docs/g4-shared-mode-foundation-smoke.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:3f31d793610607134e1103c565beb6522eb897f8b94fc9ba051cd2095fc1c26e; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/docs/g4-shared-mode-foundation-smoke.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_3cf73ce443",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Checkpoints",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/checkpoints/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5845aaa6cccd1d80e241e6ff22d689b50d5a4149c893e092312584d0d85b542f; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/checkpoints/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_checkpoint_g1_balanced_evaluation_b8c1075011",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Checkpoint G1 - Balanced Evaluation",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/checkpoints/checkpoint-g1-balanced-evaluation.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:e0dc2423cf227f537909bd9e191d8b3b5c6e5e5dbb6ad4112253c668311c8d63; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/checkpoints/checkpoint-g1-balanced-evaluation.md"
+      ]
+    },
+    {
+      "record_id": "rec_checkpoint_g3_first_slice_viability_acceptanc_37c666cd7b",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Checkpoint G3 - First Slice Viability Acceptance",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/checkpoints/checkpoint-g3-first-slice-viability-acceptance.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:00640814a9088184e4a3636a66d15ff65563c44ea4756d908d429ffd5e539420; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/checkpoints/checkpoint-g3-first-slice-viability-acceptance.md"
+      ]
+    },
+    {
+      "record_id": "rec_checkpoint_g4_local_multi_mode_base_acceptanc_d518a4dbdf",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Checkpoint G4 - Local Multi-Mode Base Acceptance",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/checkpoints/checkpoint-g4-local-multi-mode-base-acceptance.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:2762035addbb58519cf7e8575d1db403e0a5c8cb575d77d6a806422c5ed61c04; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/checkpoints/checkpoint-g4-local-multi-mode-base-acceptance.md"
+      ]
+    },
+    {
+      "record_id": "rec_execution_log_07f0bf4a14",
+      "date": "2026-04-20",
+      "scope": "rpgisometrico",
+      "outcome": "Execution Log",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/execution-log.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:035a9af9d1dec89017e42015e0b0194d556872c9a8564643624f1bb942ef6b7c; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/execution-log.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_77502ea42b",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Historical Validation Phase G1 - Combat Foundation",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g1/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:289cfe9539cda0e5f22018a2b4407f8d1eb85cc5ca951e5b2e3020632637331c; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g1/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_62c61e2382",
+      "date": "2026-04-19",
+      "scope": "rpgisometrico",
+      "outcome": "Historical Phase G1 Current Status",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g1/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:456045c41cf81f79a97eab30836fcc2f9cf49e045bf46f4b9f7a7f8965ca25fb; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g1/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_5fc26fc762",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G1 Execution Scripts",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g1/execution-scripts/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:e07a18616460e14a10ddaa05b8e84af7ae1db15b7cc3630dd4fc24d47f27e998; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g1/execution-scripts/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_implementation_map_3727dfd29e",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G1 Implementation Map",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g1/implementation-map.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:b2696eaee4268bde39611d9baf81f231e41d09e1a8eceda17005a151daf8b39c; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g1/implementation-map.md"
+      ]
+    },
+    {
+      "record_id": "rec_progress_log_80f8fd57fc",
+      "date": "2026-04-19",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G1 Progress Log",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g1/progress-log.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:4a547bdebbd2c5717c3d1411201d1ddad1156508f8beb89a6bf545e146a8cf2e; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g1/progress-log.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_5b0e646a93",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G1 Stage Specs",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g1/stage-specs/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:af42c3899109b64d080558d1faebd33085aa6b3c17e79198422bc27964215063; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g1/stage-specs/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g1_01_transition_foundation_and_first_s_321ee1ce38",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G1-01 - Transition Foundation And First Slice",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g1/stage-specs/stage-g1-01-transition-foundation-and-first-slice.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9857dbdab6b6597c0088f59f73077a9b470054af5f7cd54be640c864febada18; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g1/stage-specs/stage-g1-01-transition-foundation-and-first-slice.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_06e688948f",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Historical Validation Phase G2 - Slice Stabilization",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g2/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:f2c10c7f226a3aac5423659e41bfd10b5843dfac5078b985e6f4148231b39b19; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g2/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_41772e0193",
+      "date": "2026-04-19",
+      "scope": "rpgisometrico",
+      "outcome": "Historical Phase G2 Current Status",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g2/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:95501ee3a6869b6d617e879ccd932b7200f1d2d213402c060d667b26b15b33da; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g2/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_implementation_map_89c604c29e",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G2 Implementation Map",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g2/implementation-map.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:31b50287af1a7ed53de3a8aec121121f1ba65f0191325862da0fba967e90f7e1; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g2/implementation-map.md"
+      ]
+    },
+    {
+      "record_id": "rec_progress_log_cb619d3881",
+      "date": "2026-04-19",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G2 Progress Log",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g2/progress-log.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:145ac8564a11a12a71a519ac094da542f704795614c1d207285f923c3c7c7427; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g2/progress-log.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_d25770e0b4",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G2 Stage Specs",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g2/stage-specs/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:3c4947140cec966e39e2aef922d3e0e3a373d262b08e143dac292245dedf8d37; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g2/stage-specs/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g2_01_slice_stabilization_89d957aeca",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G2-01 - Slice Stabilization",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g2/stage-specs/stage-g2-01-slice-stabilization.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5457975ad805dd55aba525ae484279948ae51176c3867cb575edf4de18238a12; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g2/stage-specs/stage-g2-01-slice-stabilization.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g2_02_scene_ownership_and_runtime_ancho_d4269de14a",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G2-02 - Scene Ownership And Runtime Anchors",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g2/stage-specs/stage-g2-02-scene-ownership-and-runtime-anchors.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:b6a99dc180bf9967e567cc53dac690cccd16c34e93634de3ddf2d4a9ecf8e2ae; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g2/stage-specs/stage-g2-02-scene-ownership-and-runtime-anchors.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_890b90c0fd",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Historical Validation Phase G3 - Combat Productionization",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:11a47aabed56d73320754aa02612da76ecf3f480f694c07a0178cf573a111491; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_81ef8c7233",
+      "date": "2026-04-19",
+      "scope": "rpgisometrico",
+      "outcome": "Historical Phase G3 Current Status",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:bfa1feabfabefd7e48ea6938f165ea589723b582c70f9bca2408ddf75fd56c11; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_progress_log_94d6d8f260",
+      "date": "2026-04-19",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G3 Progress Log",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/progress-log.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:bfada1c9d36844eaf24ca039cc08a16566cc13cc6d124885e0a3907d0eb1aa90; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/progress-log.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_a28d23f84c",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G3 Stage Specs",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:87957b671c87ec4378d035b2cd2064855b719ff0721bc6d23def733b8ef92855; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g3_01_combat_feedback_and_telemetry_9a526eddc0",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G3-01 - Combat Feedback And Telemetry",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-01-combat-feedback-and-telemetry.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:606df7630bfc436b3b0ce753ca2ce9a64fc5a4328444de790c220d63df1d97b0; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-01-combat-feedback-and-telemetry.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g3_02_round_flow_and_floating_feedback_6e3228238a",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G3-02 - Round Flow And Floating Feedback",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-02-round-flow-and-floating-feedback.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:455bd80fd7756700f5ff27cd877c645b2a88f6616d678e39ff03ac5f725de178; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-02-round-flow-and-floating-feedback.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g3_03_hit_feel_and_bot_pacing_6b358bd6b8",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G3-03 - Hit Feel And Bot Pacing",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-03-hit-feel-and-bot-pacing.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:e282ab8439a065e0c7bfddb4a90fcbb23d661560bd989a574c9a2a0a1ba1e827; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-03-hit-feel-and-bot-pacing.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g3_05_skill_readability_and_impact_stag_e24a02106f",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G3-05 - Skill Readability And Impact Staging",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-05-skill-readability-and-impact-staging.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:fd338e7890204726744ac22a5eff0b2258033dc63b2b66a2dae5b309eb0677f1; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-05-skill-readability-and-impact-staging.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g3_06_hit_feel_and_final_blow_beat_9f466b2472",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G3-06 - Hit Feel And Final Blow Beat",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-06-hit-feel-and-final-blow-beat.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:2827332830d9de0710b817186800c6395e888d7b0c89524b534f30c506e122eb; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-06-hit-feel-and-final-blow-beat.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g3_07_arena_visual_cleanup_1962bf5ed0",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G3-07 - Arena Visual Cleanup",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-07-arena-visual-cleanup.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9873a8f1bcfcf417e42c661f35b03bd3be4ed3fa467fc8caa524c0ea2f0bd9e2; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-07-arena-visual-cleanup.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g3_08_arena_expansion_and_enclosure_1d8d178736",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G3-08 - Arena Expansion And Enclosure",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-08-arena-expansion-and-enclosure.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:da2e1e11f766307660ff9467cea7402c19a58a27fd5c81a4a1ef7f22b136b1be; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g3/stage-specs/stage-g3-08-arena-expansion-and-enclosure.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_7d5bbd5961",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Historical Validation Phase G4 - Shared Solo Base Expansion",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:205ea5f90a50b8e4cb36a469a7974d664e93d095f658dafeb0ac83a6f5561593; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_1a369ec754",
+      "date": "2026-04-20",
+      "scope": "rpgisometrico",
+      "outcome": "Historical Phase G4 Current Status",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:2bceec12c40a1c8e42aee20b84622006aee64c8aad610289fd71a96b6f4c0c3e; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_implementation_map_ea1290dfb4",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G4 Implementation Map",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/implementation-map.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:60b350e9c61b4db90745cefcd4c13c1f6b6a483f4128c8fbc2f7bc1fd33c7741; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/implementation-map.md"
+      ]
+    },
+    {
+      "record_id": "rec_progress_log_6a791a8f93",
+      "date": "2026-04-20",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G4 Progress Log",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/progress-log.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:d2122c85aaaed790d3099a7c8a7113c6743388fe68deeb602fe22a280218700a; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/progress-log.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_94e4e8e536",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Phase G4 Stage Specs",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:278290e91a082182e61149d7a675feb94a69318bcfe50f266154bde3fa546b19; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g4_01_shared_mode_foundation_and_fronte_3fa149bf02",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G4-01 - Shared Mode Foundation And Frontend Routing",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-01-shared-mode-foundation-and-frontend-routing.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:102fed453d77c2a00588f8f4094da355836c3c37654cbe5d822072cdb475f24f; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-01-shared-mode-foundation-and-frontend-routing.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g4_02_survival_playable_baseline_ce46df7550",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G4-02 - Survival Playable Baseline",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-02-survival-playable-baseline.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:61bba6a2607fceb32bc1a49db81cc41c83d26917e4a7ac13de5b1dbb6bc153d4; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-02-survival-playable-baseline.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g4_03_boss_playable_baseline_fef0dab866",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G4-03 - Boss Playable Baseline",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-03-boss-playable-baseline.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:15ebc0ec428d5aff9e22ac7bae7c2226df494ebb410477752db830110bf45e49; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-03-boss-playable-baseline.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g4_04_shared_combat_shell_and_results_p_0aadfaf7a0",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G4-04 - Shared Combat Shell And Results Parity",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-04-shared-combat-shell-and-results-parity.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:0056f231337d82e8b1f61ffd2cf1d3613908d2bd5b501ee6acd6649f9c9b22fa; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-04-shared-combat-shell-and-results-parity.md"
+      ]
+    },
+    {
+      "record_id": "rec_stage_g4_05_multi_mode_validation_and_local_p_bb52a7c00f",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Stage G4-05 - Multi-Mode Validation And Local Playtest Gate",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-05-multi-mode-validation-and-local-playtest-gate.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:bf3e4bd05900af36f1a2fa6b9c2f3303e7380fa7e35b2f20bf90b04d0789579b; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/phase-g4/stage-specs/stage-g4-05-multi-mode-validation-and-local-playtest-gate.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_3e9b77c518",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Active Tracks",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:74d3aeb813b7c0c1110d750285d151f6c04cfbcbec70e07f428a9a9d55710918; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_0f7ca59913",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Track 01 - Playable Base And Real Backlog",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:f271907ca1b8599193c05ef29cd291149c96064b3bdbde7b4a646339507a98b6; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_backlog_77a959a141",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Track 01 Backlog",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/backlog.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:b2fb072767ac1e597053e008c031137f0f630581d140a4958fd452172babd6f4; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/backlog.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_1ce057d788",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Content Surface",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:4fbd41030355d50560eff43579e1f6161cfc177ab7f1cdb0794715e179a55c8a; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_candidate_lanes_2baff8ada2",
+      "date": "2026-04-23",
+      "scope": "rpgisometrico",
+      "outcome": "Candidate Lanes",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/candidate-lanes.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:ca34972e2000a095ea44de7ab0c3af589d009945f819bd43216c683e379e5b43; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/candidate-lanes.md"
+      ]
+    },
+    {
+      "record_id": "rec_content_decision_rules_9edb4ec7a8",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Content Decision Rules",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/content-decision-rules.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:3b1a617281432e9e121dfc72804d2c0e9a97d165ee5090a8dc00c3880e65df0b; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/content-decision-rules.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_godot_content_baseline_b961cc5f2f",
+      "date": "2026-04-21",
+      "scope": "rpgisometrico",
+      "outcome": "Current Godot Content Baseline",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/current-godot-content-baseline.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:dcd0270bd5ac99c5fed7e7bb15780ac3069f6bf022e188ad11aad147b5cd611c; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/current-godot-content-baseline.md"
+      ]
+    },
+    {
+      "record_id": "rec_godot_content_candidate_c1_2a2811b8fb",
+      "date": "2026-04-23",
+      "scope": "rpgisometrico",
+      "outcome": "Godot Content Candidate C1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/godot-content-candidate-c1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:356a8f1fbd61d3c290f8c0aa76ca4634daf9b612e90e711d5c5ebbb9b8d5f1ce; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/content-surface/godot-content-candidate-c1.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_247486d5bc",
+      "date": "2026-04-26",
+      "scope": "rpgisometrico",
+      "outcome": "Track 01 Current Status",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:222ca4e841e3a30edab98f988619a1a939583a62bf8b51c8e9304051c6069966; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_implementation_map_731ef24847",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Track 01 Implementation Map",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/implementation-map.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:ae12d33e230d6671f97d9eb1175dfb1b9cd1737ea9ba11e82dfde6c63d8a8dd2; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/implementation-map.md"
+      ]
+    },
+    {
+      "record_id": "rec_progress_log_9182ad4426",
+      "date": "2026-04-21",
+      "scope": "rpgisometrico",
+      "outcome": "Track 01 Progress Log",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/progress-log.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:56d6551320a392ebe9b0706dc0a2ab5fb9bc42f9d61845a7eb4237fbb065ae1c; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/progress-log.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_023c1d01c9",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Thread Candidates",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/thread-candidates/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:d3b0031ab6fb6e45bea330852d652c87d1c7451a1ad6e9bb6d0b067863303bfe; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/thread-candidates/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_t01_b01_frontend_and_loadout_ux_tightening_c716a5028a",
+      "date": "2026-04-21",
+      "scope": "rpgisometrico",
+      "outcome": "T01-B01 - Frontend And Loadout UX Tightening",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/thread-candidates/t01-b01-frontend-and-loadout-ux-tightening.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:98d5eae5abd58737c72c98a55e5579ad8a652b3fbff2678abeeb58b79016bb0b; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/thread-candidates/t01-b01-frontend-and-loadout-ux-tightening.md"
+      ]
+    },
+    {
+      "record_id": "rec_t01_b05_godot_first_content_decisions_6fd1d966cb",
+      "date": "2026-04-21",
+      "scope": "rpgisometrico",
+      "outcome": "T01-B05 - Godot-First Content Decisions",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/thread-candidates/t01-b05-godot-first-content-decisions.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:0def81586e36012a25037975ea1b307154fd7d3c384fde0032bb00665898dbe5; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-01-playable-base-and-real-backlog/thread-candidates/t01-b05-godot-first-content-decisions.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_026d144ba9",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Track 02 - Canonical Product Foundation",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:336281ab51f1a215a93b5fdca042d4847ce7ce3db299698a3a5b739b6dbcab89; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_ffad7df4d6",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Art Track",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/art-track/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:6745a316f75a73d3a8f0b85a45c80116b91391d1a5dd7129e79239d5b337e44c; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/art-track/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_foundation_style_and_proxy_kit_c4792675be",
+      "date": "2026-04-21",
+      "scope": "rpgisometrico",
+      "outcome": "Foundation Style And Proxy Kit",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/art-track/foundation-style-and-proxy-kit.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:b17eb1c9c8efc6dc8a2234e87ab0305d7fe06acad9437f9571824c3603b6b8f7; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/art-track/foundation-style-and-proxy-kit.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_b607ff6d7a",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Gates",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:53e4b2ab969ee10ca26022d1aca96051cdeb914777a6c9d977fb0539f4a46de4; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_gate_f01_meta_foundation_and_tutorial_ecff616df4",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Gate F01 - Meta Foundation And Mandatory Tutorial",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f01-meta-foundation-and-tutorial.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:39d2ba414b4fccb07dc0b1ead6bf89e7f64062fa4b2d1e4d256d56f67a42d605; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f01-meta-foundation-and-tutorial.md"
+      ]
+    },
+    {
+      "record_id": "rec_gate_f03_campaign_framework_74b123e6f5",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Gate F03 - Campaign Framework",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f03-campaign-framework.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5f9065336502d47956c64435e2cd454390d6b08859ce82f9fda6d16db1096462; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f03-campaign-framework.md"
+      ]
+    },
+    {
+      "record_id": "rec_gate_f05_reward_and_expansion_6be593f817",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Gate F05 - Reward And Expansion",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f05-reward-and-expansion.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:d8d33a5381c03a7bfe311293f545ef35ea188824daeffe415baa3d8315a367b4; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f05-reward-and-expansion.md"
+      ]
+    },
+    {
+      "record_id": "rec_gate_f07_campaign_content_expansion_7f983f3ff4",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Gate F07 - Campaign Content Expansion",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f07-campaign-content-expansion.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9621eb7fe8b5f873c5af60df56fff10d59962c41a910c71a77b53663230103d4; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f07-campaign-content-expansion.md"
+      ]
+    },
+    {
+      "record_id": "rec_gate_f09_second_authored_campaign_route_459f181c45",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Gate F09 - Second Authored Campaign Route",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f09-second-authored-campaign-route.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:a8d3a19d71ac493a6c178165cc99ead146d3690c8acbe1b354b6f4d1c41af521; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f09-second-authored-campaign-route.md"
+      ]
+    },
+    {
+      "record_id": "rec_gate_f10_campaign_first_product_realignment_803eb7857d",
+      "date": "2026-07-16",
+      "scope": "rpgisometrico",
+      "outcome": "Gate F10 - Campaign-First Product Realignment",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f10-campaign-first-product-realignment.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:327cfdeb481f310e616bc45a6667803ff3d281cdf24570dcb5135bcf4336dc45; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f10-campaign-first-product-realignment.md"
+      ]
+    },
+    {
+      "record_id": "rec_gate_f11_campaign_first_runtime_alignment_c7a7ea4f4b",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Gate F11 - Campaign-First Runtime Alignment",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f11-campaign-first-runtime-alignment.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:c196207bbd13630670b4c2eba0e6b604df0a057d9f71ab80ce25e5549ca2cd57; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-f11-campaign-first-runtime-alignment.md"
+      ]
+    },
+    {
+      "record_id": "rec_gate_template_e90962271c",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Phase Gate Template",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-template.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:babf518391ae8f9e2284ad1b7d731a7b3052e44cc752fddb9de3293d687f135e; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/gates/gate-template.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_04_26_track_baseline_2f448fc314",
+      "date": "2026-04-26",
+      "scope": "rpgisometrico",
+      "outcome": "Track 02 Current Status",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/history/2026-04-26_track-baseline.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:f2b47ec356be325767b2dfcd88b301f9e2d85f9c870f089908ff2afa9c044dfd; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/history/2026-04-26_track-baseline.md"
+      ]
+    },
+    {
+      "record_id": "rec_implementation_map_0cd3f281db",
+      "date": "2026-05-02",
+      "scope": "rpgisometrico",
+      "outcome": "Track 02 Implementation Map",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/implementation-map.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:014dc571a2f8881348d04e9f4ee8223ba6058c0f4e192cb61d998451f6f24717; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/implementation-map.md"
+      ]
+    },
+    {
+      "record_id": "rec_progress_log_534f9d536d",
+      "date": "2026-04-25",
+      "scope": "rpgisometrico",
+      "outcome": "Track 02 Progress Log",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/progress-log.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:e1e173eed9801b089e87542e23ed84c747db24e331f61028286fbe98a7061024; retained:Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md;Projetos/rpg-isometrico/implementation/history.md;Projetos/rpg-isometrico/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-isometrico/implementation/history-ledger/2026-04.md",
+      "source_paths": [
+        "Projetos/rpg-isometrico/implementation/tracks/track-02-canonical-product-foundation/progress-log.md"
+      ]
+    }
+  ]
+}

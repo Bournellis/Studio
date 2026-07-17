@@ -1,6 +1,121 @@
 {
   "schema_version": 2,
-  "enforcement_mode": "audit",
+  "enforcement_mode": "strict",
   "authorization_path": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
-  "batches": []
+  "batches": [
+    {
+      "batch_id": "coord_draxosmobile_202605",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_draxosmobile_202605.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_draxosmobile_202605.json",
+      "manifest_sha256": "eca6f0fda69b08f3d0cf670832f6e05334454b566dcbd524f2b5b393392290c1"
+    },
+    {
+      "batch_id": "coord_draxosmobile_202606",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_draxosmobile_202606.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_draxosmobile_202606.json",
+      "manifest_sha256": "5d7e3b4dd1932ff0581bb9fa40faa8fd69d976204f6679a1a71c36b222d88488"
+    },
+    {
+      "batch_id": "coord_draxosmobile_202607",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_draxosmobile_202607.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_draxosmobile_202607.json",
+      "manifest_sha256": "abe91d5575bf9df69fe448008f877645d150a98f1284ff0ea5b969a618b0e489"
+    },
+    {
+      "batch_id": "coord_estudio_202606",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_estudio_202606.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_estudio_202606.json",
+      "manifest_sha256": "4e12a673e077d22c48894021762db28228506db27fb8a9b3a18eb868856e89e4"
+    },
+    {
+      "batch_id": "coord_estudio_202607",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_estudio_202607.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_estudio_202607.json",
+      "manifest_sha256": "9b3cc33fe89b2c35155e50afb46399dda770c038b6db6d4895510039355d2f42"
+    },
+    {
+      "batch_id": "coord_fpsplayground_202606",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_fpsplayground_202606.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_fpsplayground_202606.json",
+      "manifest_sha256": "be0c043afb0818feb2ab4538bfe012150c6561b0ac7cf773748746f1c9188aa0"
+    },
+    {
+      "batch_id": "coord_jogodacopa_202606",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_jogodacopa_202606.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_jogodacopa_202606.json",
+      "manifest_sha256": "001306788ee17a105df134ea993ca578ff4f63e9d8d325f06511975dabf94f2e"
+    },
+    {
+      "batch_id": "coord_roguelike_202605",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_roguelike_202605.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_roguelike_202605.json",
+      "manifest_sha256": "89d6336f2c17d76eaaedef2ac973059c782a17da686b2f29d2a970aeb3398cdc"
+    },
+    {
+      "batch_id": "coord_roguelike_202606",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_roguelike_202606.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_roguelike_202606.json",
+      "manifest_sha256": "d22d565498e800cf39c1689b85b4145ce4d8d87fe2e5bd0e9c62b6c99de4c06b"
+    },
+    {
+      "batch_id": "coord_rpgturnos_202605",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_rpgturnos_202605.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_rpgturnos_202605.json",
+      "manifest_sha256": "9f2bd7634e39c3425a8fd83a00bc8077dc1e79ba6915d74386cb7d576ae8cf22"
+    },
+    {
+      "batch_id": "coord_rpgturnos_202607",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/coord_rpgturnos_202607.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/coord_rpgturnos_202607.json",
+      "manifest_sha256": "53a4b44ae45d8e0c255c74cde709b50bad3ce6a9c85a3ddd24b626834d60c17a"
+    },
+    {
+      "batch_id": "local_draxosmobile",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/local_draxosmobile.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/local_draxosmobile.json",
+      "manifest_sha256": "4301cd004d76e60dfe2beed8a30ab78e22115ed224423959a89df256509c5431"
+    },
+    {
+      "batch_id": "local_fpsplayground",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/local_fpsplayground.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/local_fpsplayground.json",
+      "manifest_sha256": "ca4ed5da7f29f81515b4d7389c87b3169c8d27939573eba481b12d74e2c98d2a"
+    },
+    {
+      "batch_id": "local_jogodacopa",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/local_jogodacopa.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/local_jogodacopa.json",
+      "manifest_sha256": "57447d028290be5e2c20eac94271b2b99830d7bea1c15981f792fd8d054bfe8c"
+    },
+    {
+      "batch_id": "local_roguelike",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/local_roguelike.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/local_roguelike.json",
+      "manifest_sha256": "3098480900a2560f0efa2b8c7339bbaafb8c0e3dd3630a600b9cb987bebed24d"
+    },
+    {
+      "batch_id": "local_rpgisometrico",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/local_rpgisometrico.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/local_rpgisometrico.json",
+      "manifest_sha256": "f917bdaa68c61dddf08c51a02debce9be89a03bd8db0c4409a286b4ea6e68572"
+    },
+    {
+      "batch_id": "local_rpgturnos",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/local_rpgturnos.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/local_rpgturnos.json",
+      "manifest_sha256": "4375520734edca6ac4dfa0271e64a23bb2c65c61a7700b6db0c485c1bf808e10"
+    },
+    {
+      "batch_id": "support_202605",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/support_202605.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/support_202605.json",
+      "manifest_sha256": "86a3b80ba13b69723f0983adad01766707c4f8fe4eed5fadc9e3a4fb9b3834f6"
+    },
+    {
+      "batch_id": "support_202606",
+      "manifest": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/batches/support_202606.json",
+      "receipt": "08_Coordenacao_Agentes/Receipts/DocumentationLite/support_202606.json",
+      "manifest_sha256": "7e5e31ec3ad50d16ab0b3bd9b6aa3e1a2de78bab943d6fdaae09dac451385972"
+    }
+  ]
 }

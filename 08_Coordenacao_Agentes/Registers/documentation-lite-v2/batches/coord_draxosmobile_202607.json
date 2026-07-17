@@ -1,0 +1,77 @@
+{
+  "schema_version": 2,
+  "batch_id": "coord_draxosmobile_202607",
+  "scope": "draxosmobile",
+  "project": "DraxosMobile",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-07-17_codex_estudio-governanca-v21.md",
+      "kind": "handoff",
+      "classification": "security",
+      "byte_count": 1672,
+      "line_count": 39,
+      "source_blob": "786118fc00a240def0de643dc2ba34926ad4fef1",
+      "source_sha256": "53ee92e1c90764560fbec3deab8b3463ee2ac38ec17a99e063e5d3c446570fa4",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_17_codex_estudio_governanca_v21_c2998cbb6e",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-07.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-07-17_codex_estudio-governanca-v21.md",
+      "kind": "done_card",
+      "classification": "security",
+      "byte_count": 3934,
+      "line_count": 73,
+      "source_blob": "3c7ed5f954696918f3b10eb6fae6568ad7dbf6aa",
+      "source_sha256": "5114a9caf3e1ecc2581603fd15c3b9ef98b994defb5e7c90514f3f09de9f67e3",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_17_codex_estudio_governanca_v21_b03637bd9a",
+      "retained_authorities": [
+        "Projetos/draxos-mobile/implementation/history-ledger/2026-07.md",
+        "Projetos/draxos-mobile/implementation/history.md",
+        "Projetos/draxos-mobile/qa/QA_INDEX.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_2026_07_17_codex_estudio_governanca_v21_c2998cbb6e",
+      "date": "2026-07-17",
+      "scope": "draxosmobile",
+      "outcome": "Handoff: Governanca Estudio v2.1",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Handoffs/2026-07-17_codex_estudio-governanca-v21.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:53ee92e1c90764560fbec3deab8b3463ee2ac38ec17a99e063e5d3c446570fa4; retained:Projetos/draxos-mobile/implementation/history-ledger/2026-07.md;Projetos/draxos-mobile/implementation/history.md;Projetos/draxos-mobile/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Handoffs/2026-07-17_codex_estudio-governanca-v21.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_07_17_codex_estudio_governanca_v21_b03637bd9a",
+      "date": "2026-07-17",
+      "scope": "draxosmobile",
+      "outcome": "Multi-Agent Done: Governanca Estudio v2.1",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-07-17_codex_estudio-governanca-v21.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5114a9caf3e1ecc2581603fd15c3b9ef98b994defb5e7c90514f3f09de9f67e3; retained:Projetos/draxos-mobile/implementation/history-ledger/2026-07.md;Projetos/draxos-mobile/implementation/history.md;Projetos/draxos-mobile/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-mobile/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-07-17_codex_estudio-governanca-v21.md"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "schema_version": 2,
+  "batch_id": "support_202606",
+  "scope": "estudio",
+  "project": "Estudio",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "07_Aprendizados/2026-06-09_agent-doc-drift.md",
+      "kind": "historical_document",
+      "classification": "coordination_duplicate",
+      "byte_count": 1038,
+      "line_count": 31,
+      "source_blob": "712398f94f234b395fb187654158af7957e6840f",
+      "source_sha256": "2a3ba7a6fe02da73f5521e51efabd3de4e3a63265ef1042ad4ce7df5bb51e51f",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_09_agent_doc_drift_ee1f70ab7c",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "07_Aprendizados/2026-06-09_multiagent-worktree-hygiene.md",
+      "kind": "historical_document",
+      "classification": "coordination_duplicate",
+      "byte_count": 739,
+      "line_count": 23,
+      "source_blob": "f4c22666a8a5fb9b7ac7f1ffe1592a815c226393",
+      "source_sha256": "fa697a95960ff33824507c3f6e8471358ec7a5143d7770a73ef51d0a6daa0ee8",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_09_multiagent_worktree_hygiene_9ff5aac639",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "07_Aprendizados/2026-06-09_snapshot-compaction.md",
+      "kind": "historical_document",
+      "classification": "coordination_duplicate",
+      "byte_count": 742,
+      "line_count": 30,
+      "source_blob": "95cb8c4113faa6b8e5bcb758620094671b6182ff",
+      "source_sha256": "dd883d90c9e3742315f516e406a0e1b7a363a6f574348c15c9fa7aca6a1509bf",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_09_snapshot_compaction_4f23d1c560",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "07_Aprendizados/2026-06-11_git-escritor-unico.md",
+      "kind": "historical_document",
+      "classification": "security",
+      "byte_count": 3515,
+      "line_count": 37,
+      "source_blob": "9952602f74715ddfe02f34f431382d97052f8da2",
+      "source_sha256": "a6ad86f385b2d2561d04d4810263fbcf9d969597ba39725d44a4c5e5983a726d",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_11_git_escritor_unico_512a99219a",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    },
+    {
+      "path": "07_Aprendizados/README.md",
+      "kind": "historical_document",
+      "classification": "coordination_duplicate",
+      "byte_count": 543,
+      "line_count": 11,
+      "source_blob": "9fcb6a050761484f2b180336de0b5d9f130a3ebd",
+      "source_sha256": "62a5c22dce476cbf8487d880e058f11f236ee5a94e39bdcced1d55525b966e9b",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_ca19f97b9d",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-06.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_2026_06_09_agent_doc_drift_ee1f70ab7c",
+      "date": "2026-06-09",
+      "scope": "estudio",
+      "outcome": "Aprendizado: Drift Em Documentos De Agente",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:07_Aprendizados/2026-06-09_agent-doc-drift.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:2a3ba7a6fe02da73f5521e51efabd3de4e3a63265ef1042ad4ce7df5bb51e51f; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "07_Aprendizados/2026-06-09_agent-doc-drift.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_09_multiagent_worktree_hygiene_9ff5aac639",
+      "date": "2026-06-09",
+      "scope": "estudio",
+      "outcome": "Aprendizado: Higiene De Worktrees Multiagente",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:07_Aprendizados/2026-06-09_multiagent-worktree-hygiene.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:fa697a95960ff33824507c3f6e8471358ec7a5143d7770a73ef51d0a6daa0ee8; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "07_Aprendizados/2026-06-09_multiagent-worktree-hygiene.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_09_snapshot_compaction_4f23d1c560",
+      "date": "2026-06-09",
+      "scope": "estudio",
+      "outcome": "Aprendizado: Compactacao De Snapshots",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:07_Aprendizados/2026-06-09_snapshot-compaction.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:dd883d90c9e3742315f516e406a0e1b7a363a6f574348c15c9fa7aca6a1509bf; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "07_Aprendizados/2026-06-09_snapshot-compaction.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_11_git_escritor_unico_512a99219a",
+      "date": "2026-06-11",
+      "scope": "estudio",
+      "outcome": "Aprendizado: Escritor Unico No .git",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:07_Aprendizados/2026-06-11_git-escritor-unico.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:a6ad86f385b2d2561d04d4810263fbcf9d969597ba39725d44a4c5e5983a726d; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "07_Aprendizados/2026-06-11_git-escritor-unico.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_ca19f97b9d",
+      "date": "2026-06-09",
+      "scope": "estudio",
+      "outcome": "Aprendizados Do Estudio",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:07_Aprendizados/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:62a5c22dce476cbf8487d880e058f11f236ee5a94e39bdcced1d55525b966e9b; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-06.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-06.md",
+      "source_paths": [
+        "07_Aprendizados/README.md"
+      ]
+    }
+  ]
+}

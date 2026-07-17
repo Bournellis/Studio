@@ -1,0 +1,1005 @@
+{
+  "schema_version": 2,
+  "batch_id": "coord_roguelike_202606",
+  "scope": "roguelike",
+  "project": "Draxos Roguelike",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Handoffs/2026-06-06_codex_draxos_card-flow-expectations-v4-2.md",
+      "kind": "handoff",
+      "classification": "evidence_summary",
+      "byte_count": 4378,
+      "line_count": 70,
+      "source_blob": "381a737e5a8b54396528ed16c2945a35af7103d6",
+      "source_sha256": "2852f1720d41a57af2fc1e4a5239432edba2bc776ca3cc0f00256c9b12dfab15",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_card_flow_expectation_e884fbf6fd",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-03_codex_draxos-roguelike-foundation-hardening-7.md",
+      "kind": "done_card",
+      "classification": "human_gate",
+      "byte_count": 4117,
+      "line_count": 72,
+      "source_blob": "3cc43dec88defbe141dcdb52baf52b79b381934a",
+      "source_sha256": "9f4662ab870f750343df18815d3f9cf721f586db4955136eb58217b710a11c25",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_03_codex_draxos_roguelike_foundation_ea70fff651",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-03_codex_draxos-roguelike-foundation-hardening-8.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 3195,
+      "line_count": 60,
+      "source_blob": "786109ddd8830a8d3fc4bc385f8545dbd1969022",
+      "source_sha256": "6818fab2965d0faf410189d1dd152a8d81afc4ee71b5ff5b7108f84d2a4430b1",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_03_codex_draxos_roguelike_foundation_6d0fd079da",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-04_codex_draxos-roguelike-foundation-hardening-9.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 2912,
+      "line_count": 58,
+      "source_blob": "ba082a3139b9a60e72ee2c5a191558a4b0a952e4",
+      "source_sha256": "4b85461f73d45a215ad7f189054ec1549848f9c230d5ddbe89c02a36cf223a4e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_04_codex_draxos_roguelike_foundation_c46ed12cf6",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-card-impact-v2-non-damage-coverage.md",
+      "kind": "done_card",
+      "classification": "technical_contract",
+      "byte_count": 5943,
+      "line_count": 100,
+      "source_blob": "cdd3017deaf1783aebd8343e97d140865d020d6c",
+      "source_sha256": "e8863357d3be268e47056ab30c5e67e7c88db7c20ab49c2ef099abaa43eba5fd",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_card_impact_v2_non_da_843730d29c",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-card-impact-v3-isolated-target-capture.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 2203,
+      "line_count": 22,
+      "source_blob": "fb372b4b8daab374f01cb9126d24545cee55b185",
+      "source_sha256": "0b2b3c0b03db50d9279df396dfa883ca8ad8103595d6a7d41f63d03243552461",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_card_impact_v3_isolat_0308083f94",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-card-redesign-batch-01.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 2717,
+      "line_count": 52,
+      "source_blob": "7335e334551f3bad9c8ad53aa0014031f406ad34",
+      "source_sha256": "844681ccfbf57b2c424bb49b8b6e23e3179d5f15b7b855e8041ddb403fbb471d",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_card_redesign_batch_0_4c52253d54",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-player-card-redesign-batch-02.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 4555,
+      "line_count": 79,
+      "source_blob": "1756e8c67c05c50b86bb0be8e3f5c8f4d279c70f",
+      "source_sha256": "b3a816760d22dd011a7673e37b734361b6f879bee124a20b53b4242e16b8676a",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_player_card_redesign_426bff3b40",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-autorun-gate-pack-v1.md",
+      "kind": "done_card",
+      "classification": "technical_contract",
+      "byte_count": 3427,
+      "line_count": 69,
+      "source_blob": "79cc6a7cde3dc71e5dced78bc6a04b600f9b6222",
+      "source_sha256": "80940dd8b55228d587fd715bbf38d71b9ab0608ee37058f800edfa49e38c5784",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_autorun_gat_2822064d7b",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-autorun-lab-v1.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 3221,
+      "line_count": 63,
+      "source_blob": "7ab298ffc5d6e12720149df29d78f7f829edb203",
+      "source_sha256": "fdd2d3edbb6595ab75dc26a5970109b1930a21026dc3e03dfee74276a7213691",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_autorun_lab_7b34b853db",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-card-impact-effect-signature-v2.md",
+      "kind": "done_card",
+      "classification": "technical_contract",
+      "byte_count": 2844,
+      "line_count": 43,
+      "source_blob": "b7a4650549682b486d42fc091c2ae9685be69a17",
+      "source_sha256": "435134b6c147f283f88d606b441d586417d47a897d675fcff2d771aad691d527",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_card_impact_90d36804eb",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-card-impact-pack-v1.md",
+      "kind": "done_card",
+      "classification": "decision",
+      "byte_count": 2307,
+      "line_count": 38,
+      "source_blob": "866e32c4d2d8a7c13656ed66ab876b97e12d13f3",
+      "source_sha256": "4b3a1211bb0c3ce93d5860931f700496be5b945afce989f8d8087bd6ee2288c1",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_card_impact_dadfbb9a81",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-card-impact-smoke-tuning-v1.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 2762,
+      "line_count": 49,
+      "source_blob": "1bd8590872bc0fe21cf53789638abee30a32d5e0",
+      "source_sha256": "5996749a806fe96f301717e50ffb52a3d7a10ba5c54261a7c1b205c6bf94855c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_card_impact_23d4b77128",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_card-tuning-lab-probe-v1.md",
+      "kind": "done_card",
+      "classification": "decision",
+      "byte_count": 1242,
+      "line_count": 37,
+      "source_blob": "28b582f87026dc1c42b72d5dd1b6bf82f8fb5194",
+      "source_sha256": "25a4f78e0217b412b763adb08e36ba0aadfd9d5d198d6a88fc8fedfc03f3d9f7",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_cardgame_ca_d87364d90e",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_gameplay-lab-v1.md",
+      "kind": "done_card",
+      "classification": "technical_contract",
+      "byte_count": 1624,
+      "line_count": 33,
+      "source_blob": "d4c5c36a766c9c9d2458436a333b0ade5a343803",
+      "source_sha256": "60bffd5d7fa6bfe1c858c637c90c78b605d913150f6ee34cd6851b872165cda6",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_cardgame_ga_722a8edcc6",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_lab-diff-reporter-v1.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 1661,
+      "line_count": 33,
+      "source_blob": "d04d549a4a58c3c5cad5e57610ad64be3da76572",
+      "source_sha256": "0bf2c1ab50532ff7cc460d34a4c489d47b5697cf6a0279e1a4758ea7a634cfa6",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_cardgame_la_14e3ee874e",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_scenario-fixtures-v1.md",
+      "kind": "done_card",
+      "classification": "technical_contract",
+      "byte_count": 2221,
+      "line_count": 40,
+      "source_blob": "b96976f6f4d031e8b0eadbdc16e9e3fe65898d62",
+      "source_sha256": "1d6820f1f809e5bc515a79f61d59ed8123fcc521be2d5da866d4901b27278d7a",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_cardgame_sc_078c10e3ee",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-merge-stack.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 1723,
+      "line_count": 14,
+      "source_blob": "fb8a8cdf345bf8504a8afa486b68a073bb8e38d9",
+      "source_sha256": "818e4fd7cf20a5272198fdf892059308828a5d320bdee0f26da16d7444b7c916",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_merge_stack_00bf42892a",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-card-flow-redesign-batch-01-v4-1.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 4750,
+      "line_count": 82,
+      "source_blob": "66cf518723e764f4f30bc792c5206aacbd295875",
+      "source_sha256": "cc523a76713fd9b8d095f2874563c89baf6c6051623901c3a76dc02c320c1e7a",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_card_flow_redesign_ba_028ed96505",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-card-impact-v4-1-card-flow-harness.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 4920,
+      "line_count": 74,
+      "source_blob": "e58978a3eeb732a2992bc6697baccaf75efbe28a",
+      "source_sha256": "ad38c8a86240cc49587a39d6c0245cec0df1dfa1d2ecd6ef13dd427bbf6b8136",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_card_impact_v4_1_card_7863de3bd2",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-card-impact-v4-full-player-matrix.md",
+      "kind": "done_card",
+      "classification": "technical_contract",
+      "byte_count": 3299,
+      "line_count": 43,
+      "source_blob": "4b88e4b4d63a00127c2a3314d690c55754ffb70c",
+      "source_sha256": "e9b5fd7b3fbb0fc17ddc6b33183dce32f54463fcae0f729f7af1c3c0ef04a32d",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_card_impact_v4_full_p_39e1b51430",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-reward-card-redesign-batch-01-v4.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 4026,
+      "line_count": 75,
+      "source_blob": "d326df4c6acf703afc002c24d8373c444f7bb00f",
+      "source_sha256": "ca3ea9d9bbd6040fd65d23db135eda0b3b722dc1fe6a3bb7e46d14ec2bc42925",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_reward_card_redesign_360482d41b",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-reward-card-redesign-batch-02-utility-v4.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 2819,
+      "line_count": 51,
+      "source_blob": "89884723a433f746ac8ce21c13867e80cadf0c62",
+      "source_sha256": "88da7fda9abbdf88fa59f6452091357fd6030de5403b9bdea657602cb5fce619",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_reward_card_redesign_2e11ded45b",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-roguelike-design-lab-v1.md",
+      "kind": "done_card",
+      "classification": "technical_contract",
+      "byte_count": 1921,
+      "line_count": 40,
+      "source_blob": "32190a1027fecc42799d10ab7a2045339e6eee68",
+      "source_sha256": "f112ebd3edc9ae2f0473b488d5b18692ae007b7fee546fed32ac301fff3172b2",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_roguelike_design_lab_fe739c7039",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_card-impact-v5-enemy-causal-signatures.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 4194,
+      "line_count": 71,
+      "source_blob": "daba3361ea1cfd65dbfe6b49c168266f2aa1c360",
+      "source_sha256": "7a26f524dac631ae5e2642445c8bdfe68c6a119983de781d789742bc4078a132",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_card_impact_v5_enemy_f0980aecdb",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_enemy-card-redesign-batch-01-v5.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 4030,
+      "line_count": 70,
+      "source_blob": "27bc9412477ced9fa1d77798e051b2eaf31a65d0",
+      "source_sha256": "dfd75d52ce3abfc87ad482855e020e86013e9dfd68bf5327dbf38d8b6515c893",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_enemy_card_redesign_b_f123121a99",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_enemy-card-redesign-batch-02-v5-terra.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 4107,
+      "line_count": 71,
+      "source_blob": "cdf10218c57f6c7d88c16078211c3e9a636acf9c",
+      "source_sha256": "9277b173c3b1178be810cd1fecc8eeb301d50e392c929ba48d3b659553b2172e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_enemy_card_redesign_b_3d92a7c545",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_reward-card-redesign-batch-03-v4-2.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 3293,
+      "line_count": 63,
+      "source_blob": "a498be6caf71de3debbe98ba0411240e719137f4",
+      "source_sha256": "181b1c6ef3651b20aa55e16acbb5797e75755601958062015d01ee5d6e0c34a8",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_06_codex_draxos_reward_card_redesign_55754d766a",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_draxos-roguelike-content-wave01-design-lab.md",
+      "kind": "done_card",
+      "classification": "human_gate",
+      "byte_count": 3126,
+      "line_count": 49,
+      "source_blob": "59398500f88432b4432583bc6e207181a2ee8677",
+      "source_sha256": "dea3e3830f40621167dff47d2edc18ca1e06cb85a629fb97496656036f3dd417",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_25_codex_draxos_roguelike_content_wav_ea26629727",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_draxos-roguelike-design-lab-calibration-v1.md",
+      "kind": "done_card",
+      "classification": "coordination_duplicate",
+      "byte_count": 1963,
+      "line_count": 35,
+      "source_blob": "6bbf7cdb857a00444c23303380be02549ff96002",
+      "source_sha256": "a643de7d23487070010e8a4b9ba09710f7a4d53f101635674d0efe8cc037ad84",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_25_codex_draxos_roguelike_design_lab_414debdf63",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_draxos-roguelike-design-lab-pilot-content-v1.md",
+      "kind": "done_card",
+      "classification": "human_gate",
+      "byte_count": 2834,
+      "line_count": 61,
+      "source_blob": "175a1135a80975d0b94c6438a9acd2a0978e41ef",
+      "source_sha256": "c35805f435b7ef2c72845def8d6185537009b6052c6aabae3ddb75fc88ae704e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_06_25_codex_draxos_roguelike_design_lab_e72878ff2b",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_card_flow_expectation_e884fbf6fd",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Card Flow Expectations V4.2",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Handoffs/2026-06-06_codex_draxos_card-flow-expectations-v4-2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:2852f1720d41a57af2fc1e4a5239432edba2bc776ca3cc0f00256c9b12dfab15; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Handoffs/2026-06-06_codex_draxos_card-flow-expectations-v4-2.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_03_codex_draxos_roguelike_foundation_ea70fff651",
+      "date": "2026-06-03",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike Cardgame - Foundation Hardening 7",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-03_codex_draxos-roguelike-foundation-hardening-7.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9f4662ab870f750343df18815d3f9cf721f586db4955136eb58217b710a11c25; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-03_codex_draxos-roguelike-foundation-hardening-7.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_03_codex_draxos_roguelike_foundation_6d0fd079da",
+      "date": "2026-06-03",
+      "scope": "roguelike",
+      "outcome": "2026-06-03 - Codex - Draxos Roguelike Foundation Hardening 8",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-03_codex_draxos-roguelike-foundation-hardening-8.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:6818fab2965d0faf410189d1dd152a8d81afc4ee71b5ff5b7108f84d2a4430b1; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-03_codex_draxos-roguelike-foundation-hardening-8.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_04_codex_draxos_roguelike_foundation_c46ed12cf6",
+      "date": "2026-06-04",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike - Foundation Hardening 9",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-04_codex_draxos-roguelike-foundation-hardening-9.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:4b85461f73d45a215ad7f189054ec1549848f9c230d5ddbe89c02a36cf223a4e; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-04_codex_draxos-roguelike-foundation-hardening-9.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_card_impact_v2_non_da_843730d29c",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Card Impact V2 Non-Damage Coverage",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-card-impact-v2-non-damage-coverage.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:e8863357d3be268e47056ab30c5e67e7c88db7c20ab49c2ef099abaa43eba5fd; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-card-impact-v2-non-damage-coverage.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_card_impact_v3_isolat_0308083f94",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Card Impact V3 Isolated Target Capture",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-card-impact-v3-isolated-target-capture.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:0b2b3c0b03db50d9279df396dfa883ca8ad8103595d6a7d41f63d03243552461; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-card-impact-v3-isolated-target-capture.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_card_redesign_batch_0_4c52253d54",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Card Redesign Batch 01 Using Card Impact V2",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-card-redesign-batch-01.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:844681ccfbf57b2c424bb49b8b6e23e3179d5f15b7b855e8041ddb403fbb471d; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-card-redesign-batch-01.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_player_card_redesign_426bff3b40",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Player Card Redesign Batch 02",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-player-card-redesign-batch-02.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:b3a816760d22dd011a7673e37b734361b6f879bee124a20b53b4242e16b8676a; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-player-card-redesign-batch-02.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_autorun_gat_2822064d7b",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike Cardgame - AutoRun Gate Pack V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-autorun-gate-pack-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:80940dd8b55228d587fd715bbf38d71b9ab0608ee37058f800edfa49e38c5784; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-autorun-gate-pack-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_autorun_lab_7b34b853db",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike Cardgame - AutoRun Lab V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-autorun-lab-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:fdd2d3edbb6595ab75dc26a5970109b1930a21026dc3e03dfee74276a7213691; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-autorun-lab-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_card_impact_90d36804eb",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Card Impact Effect Signature V2",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-card-impact-effect-signature-v2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:435134b6c147f283f88d606b441d586417d47a897d675fcff2d771aad691d527; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-card-impact-effect-signature-v2.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_card_impact_dadfbb9a81",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Card Impact Pack V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-card-impact-pack-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:4b3a1211bb0c3ce93d5860931f700496be5b945afce989f8d8087bd6ee2288c1; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-card-impact-pack-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_card_impact_23d4b77128",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Card Impact Smoke Tuning V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-card-impact-smoke-tuning-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5996749a806fe96f301717e50ffb52a3d7a10ba5c54261a7c1b205c6bf94855c; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-card-impact-smoke-tuning-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_cardgame_ca_d87364d90e",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Card Tuning Lab Probe V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_card-tuning-lab-probe-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:25a4f78e0217b412b763adb08e36ba0aadfd9d5d198d6a88fc8fedfc03f3d9f7; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_card-tuning-lab-probe-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_cardgame_ga_722a8edcc6",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Gameplay Lab V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_gameplay-lab-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:60bffd5d7fa6bfe1c858c637c90c78b605d913150f6ee34cd6851b872165cda6; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_gameplay-lab-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_cardgame_la_14e3ee874e",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Lab Diff Reporter V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_lab-diff-reporter-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:0bf2c1ab50532ff7cc460d34a4c489d47b5697cf6a0279e1a4758ea7a634cfa6; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_lab-diff-reporter-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_cardgame_sc_078c10e3ee",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Scenario Fixtures V1 - Codex",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_scenario-fixtures-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:1d6820f1f809e5bc515a79f61d59ed8123fcc521be2d5da866d4901b27278d7a; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-cardgame_scenario-fixtures-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_05_codex_draxos_roguelike_merge_stack_00bf42892a",
+      "date": "2026-06-05",
+      "scope": "roguelike",
+      "outcome": "Merge Draxos Roguelike Lab Stack",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-merge-stack.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:818e4fd7cf20a5272198fdf892059308828a5d320bdee0f26da16d7444b7c916; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-05_codex_draxos-roguelike-merge-stack.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_card_flow_redesign_ba_028ed96505",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Card Flow Redesign Batch 01 Using V4.1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-card-flow-redesign-batch-01-v4-1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:cc523a76713fd9b8d095f2874563c89baf6c6051623901c3a76dc02c320c1e7a; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-card-flow-redesign-batch-01-v4-1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_card_impact_v4_1_card_7863de3bd2",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Card Impact V4.1 Card-Flow Harness Pass",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-card-impact-v4-1-card-flow-harness.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:ad38c8a86240cc49587a39d6c0245cec0df1dfa1d2ecd6ef13dd427bbf6b8136; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-card-impact-v4-1-card-flow-harness.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_card_impact_v4_full_p_39e1b51430",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Card Impact V4 Full Player Matrix",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-card-impact-v4-full-player-matrix.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:e9b5fd7b3fbb0fc17ddc6b33183dce32f54463fcae0f729f7af1c3c0ef04a32d; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-card-impact-v4-full-player-matrix.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_reward_card_redesign_360482d41b",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Reward Card Redesign Batch 01 Using V4",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-reward-card-redesign-batch-01-v4.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:ca3ea9d9bbd6040fd65d23db135eda0b3b722dc1fe6a3bb7e46d14ec2bc42925; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-reward-card-redesign-batch-01-v4.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_reward_card_redesign_2e11ded45b",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Reward Card Redesign Batch 02 Utility Using V4",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-reward-card-redesign-batch-02-utility-v4.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:88da7fda9abbdf88fa59f6452091357fd6030de5403b9bdea657602cb5fce619; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-reward-card-redesign-batch-02-utility-v4.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_roguelike_design_lab_fe739c7039",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "2026-06-06 - Codex - Draxos Roguelike Design Lab V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-roguelike-design-lab-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:f112ebd3edc9ae2f0473b488d5b18692ae007b7fee546fed32ac301fff3172b2; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos-roguelike-design-lab-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_card_impact_v5_enemy_f0980aecdb",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Card Impact V5 Enemy Causal Signatures",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_card-impact-v5-enemy-causal-signatures.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:7a26f524dac631ae5e2642445c8bdfe68c6a119983de781d789742bc4078a132; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_card-impact-v5-enemy-causal-signatures.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_enemy_card_redesign_b_f123121a99",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Enemy Card Redesign Batch 01 Using V5",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_enemy-card-redesign-batch-01-v5.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:dfd75d52ce3abfc87ad482855e020e86013e9dfd68bf5327dbf38d8b6515c893; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_enemy-card-redesign-batch-01-v5.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_enemy_card_redesign_b_3d92a7c545",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Enemy Card Redesign Batch 02 Using V5 - Terra",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_enemy-card-redesign-batch-02-v5-terra.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9277b173c3b1178be810cd1fecc8eeb301d50e392c929ba48d3b659553b2172e; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_enemy-card-redesign-batch-02-v5-terra.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_06_codex_draxos_reward_card_redesign_55754d766a",
+      "date": "2026-06-06",
+      "scope": "roguelike",
+      "outcome": "Reward Card Redesign Batch 03 V4.2",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_reward-card-redesign-batch-03-v4-2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:181b1c6ef3651b20aa55e16acbb5797e75755601958062015d01ee5d6e0c34a8; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-06_codex_draxos_reward-card-redesign-batch-03-v4-2.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_25_codex_draxos_roguelike_content_wav_ea26629727",
+      "date": "2026-06-25",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike Content Wave 01 Design Lab",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_draxos-roguelike-content-wave01-design-lab.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:dea3e3830f40621167dff47d2edc18ca1e06cb85a629fb97496656036f3dd417; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_draxos-roguelike-content-wave01-design-lab.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_25_codex_draxos_roguelike_design_lab_414debdf63",
+      "date": "2026-06-25",
+      "scope": "roguelike",
+      "outcome": "Design Lab Calibration V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_draxos-roguelike-design-lab-calibration-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:a643de7d23487070010e8a4b9ba09710f7a4d53f101635674d0efe8cc037ad84; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_draxos-roguelike-design-lab-calibration-v1.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_06_25_codex_draxos_roguelike_design_lab_e72878ff2b",
+      "date": "2026-06-25",
+      "scope": "roguelike",
+      "outcome": "Design Lab Pilot Content V1",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_draxos-roguelike-design-lab-pilot-content-v1.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:c35805f435b7ef2c72845def8d6185537009b6052c6aabae3ddb75fc88ae704e; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-06.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-06-25_codex_draxos-roguelike-design-lab-pilot-content-v1.md"
+      ]
+    }
+  ]
+}

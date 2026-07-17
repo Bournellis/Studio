@@ -1,0 +1,301 @@
+{
+  "schema_version": 2,
+  "batch_id": "coord_roguelike_202605",
+  "scope": "roguelike",
+  "project": "Draxos Roguelike",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-07_codex_draxos-roguelike-cardgame_bootstrap.md",
+      "kind": "done_card",
+      "classification": "coordination_duplicate",
+      "byte_count": 1603,
+      "line_count": 56,
+      "source_blob": "4edce9381529e062c6a5ef78de640a6fcdfa5f87",
+      "source_sha256": "2eed91c5d327fd3b292d9f0776ee9d0f7a7404003d19f78a237ef9244c0be6e1",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_05_07_codex_draxos_roguelike_cardgame_bo_08aaf04f70",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-07_codex_draxos-roguelike-cardgame_track-01.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 3472,
+      "line_count": 56,
+      "source_blob": "6756af10a3756ce8c8c350632313887f03e989ec",
+      "source_sha256": "3c9d3387fff91e046d3ccc42dabc6960f1458b361ebf98a052115b2645b0b1a5",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_05_07_codex_draxos_roguelike_cardgame_tr_0f95b6f5c6",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-18_codex_draxos-roguelike-cardgame_track-02.md",
+      "kind": "done_card",
+      "classification": "human_gate",
+      "byte_count": 2026,
+      "line_count": 63,
+      "source_blob": "91208839a9caef90742210b8f3f135563f8df20e",
+      "source_sha256": "060ac1fa4d37800ebc2c997025d0e4946b80ca5a188f87a247afdff7d4b17fd4",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_05_18_codex_draxos_roguelike_cardgame_tr_7b88e98219",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-2.md",
+      "kind": "done_card",
+      "classification": "technical_contract",
+      "byte_count": 2767,
+      "line_count": 61,
+      "source_blob": "de09435b93123cccd0a69e80e7a066ea48ef7732",
+      "source_sha256": "6544fc3f6d0b42fec2c30da85eff2f2ac99a89b578c6847911a12ba7255a5ec5",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_0f12bd5ee3",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-3.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 3961,
+      "line_count": 73,
+      "source_blob": "bc76c0fb1ca16dd9f18f4937d207d68d9772cc8a",
+      "source_sha256": "5262b14659d077c366bfb80b0620c51ce464989515b653459f5bac4216e111ae",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_89408f024a",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-4.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 3246,
+      "line_count": 66,
+      "source_blob": "2ec64dfab2af37c2025bb627834eacceb12dac4f",
+      "source_sha256": "d781b7ce51c9243e8b003ecca99c052bddcdcc21701e02e02addab9586ba9ebe",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_7fa1c732b5",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-5.md",
+      "kind": "done_card",
+      "classification": "human_gate",
+      "byte_count": 3028,
+      "line_count": 62,
+      "source_blob": "224eef71d6151220e9ab3c57f673dfc183ef7374",
+      "source_sha256": "b1e65cd6ae92e5b950b66dcb488a851e8fe25065f7f1b4d9f6d98f86563c931d",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_33063c95bd",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening.md",
+      "kind": "done_card",
+      "classification": "evidence_summary",
+      "byte_count": 1990,
+      "line_count": 45,
+      "source_blob": "43e7cf0bb22b9ab3a0e95cbe024dd53329d5a0a7",
+      "source_sha256": "9b51743fd5d6cd29822e97e3bdfb62b3f4c3a7d03103aca376fce5fde87e0e77",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_ae4d31e6dc",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-roguelike-foundation-hardening-6.md",
+      "kind": "done_card",
+      "classification": "human_gate",
+      "byte_count": 3483,
+      "line_count": 68,
+      "source_blob": "9ef3775467890a535b75dbaf616c7ce6624eac3b",
+      "source_sha256": "6ffad1fa8eb2cb259813caf3f2c1f735f1609a611dd89f3d0098fa85f56adbd7",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_05_28_codex_draxos_roguelike_foundation_a522bfd3d7",
+      "retained_authorities": [
+        "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+        "Projetos/draxos-roguelike-cardgame/implementation/history.md",
+        "Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_2026_05_07_codex_draxos_roguelike_cardgame_bo_08aaf04f70",
+      "date": "2026-05-07",
+      "scope": "roguelike",
+      "outcome": "Tarefa: Draxos Roguelike Cardgame Bootstrap",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-05-07_codex_draxos-roguelike-cardgame_bootstrap.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:2eed91c5d327fd3b292d9f0776ee9d0f7a7404003d19f78a237ef9244c0be6e1; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-05-07_codex_draxos-roguelike-cardgame_bootstrap.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_05_07_codex_draxos_roguelike_cardgame_tr_0f95b6f5c6",
+      "date": "2026-05-07",
+      "scope": "roguelike",
+      "outcome": "Tarefa: Draxos Roguelike Cardgame Track 01",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-05-07_codex_draxos-roguelike-cardgame_track-01.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:3c9d3387fff91e046d3ccc42dabc6960f1458b361ebf98a052115b2645b0b1a5; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-05-07_codex_draxos-roguelike-cardgame_track-01.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_05_18_codex_draxos_roguelike_cardgame_tr_7b88e98219",
+      "date": "2026-05-18",
+      "scope": "roguelike",
+      "outcome": "Tarefa: Draxos Roguelike Cardgame Track 02",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-05-18_codex_draxos-roguelike-cardgame_track-02.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:060ac1fa4d37800ebc2c997025d0e4946b80ca5a188f87a247afdff7d4b17fd4; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-05-18_codex_draxos-roguelike-cardgame_track-02.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_0f12bd5ee3",
+      "date": "2026-05-27",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike Cardgame - Foundation Hardening 2",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:6544fc3f6d0b42fec2c30da85eff2f2ac99a89b578c6847911a12ba7255a5ec5; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-2.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_89408f024a",
+      "date": "2026-05-27",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike Cardgame - Foundation Hardening 3",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-3.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5262b14659d077c366bfb80b0620c51ce464989515b653459f5bac4216e111ae; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-3.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_7fa1c732b5",
+      "date": "2026-05-27",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike Cardgame - Foundation Hardening 4",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-4.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:d781b7ce51c9243e8b003ecca99c052bddcdcc21701e02e02addab9586ba9ebe; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-4.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_33063c95bd",
+      "date": "2026-05-27",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike Cardgame - Foundation Hardening 5",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-5.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:b1e65cd6ae92e5b950b66dcb488a851e8fe25065f7f1b4d9f6d98f86563c931d; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening-5.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_05_27_codex_draxos_roguelike_foundation_ae4d31e6dc",
+      "date": "2026-05-27",
+      "scope": "roguelike",
+      "outcome": "Codex - Draxos Roguelike Foundation Hardening",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9b51743fd5d6cd29822e97e3bdfb62b3f4c3a7d03103aca376fce5fde87e0e77; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-05-27_codex_draxos-roguelike-foundation-hardening.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_05_28_codex_draxos_roguelike_foundation_a522bfd3d7",
+      "date": "2026-05-28",
+      "scope": "roguelike",
+      "outcome": "Draxos Roguelike Cardgame - Foundation Hardening 6",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-roguelike-foundation-hardening-6.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:6ffad1fa8eb2cb259813caf3f2c1f735f1609a611dd89f3d0098fa85f56adbd7; retained:Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md;Projetos/draxos-roguelike-cardgame/implementation/history.md;Projetos/draxos-roguelike-cardgame/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/draxos-roguelike-cardgame/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Done/2026-05-28_codex_draxos-roguelike-foundation-hardening-6.md"
+      ]
+    }
+  ]
+}

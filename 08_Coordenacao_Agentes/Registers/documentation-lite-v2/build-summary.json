@@ -1,0 +1,39 @@
+{
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "candidate_count": 915,
+  "candidate_bytes": 3279038,
+  "batch_count": 19,
+  "ledger_count": 18,
+  "index_sha256": "d678bcfdb80174d5cdc80772241823861405d5893db593eee3cd73a123c597a9",
+  "batches": {
+    "coord_draxosmobile_202605": 329972,
+    "coord_draxosmobile_202606": 435606,
+    "coord_draxosmobile_202607": 5606,
+    "coord_estudio_202606": 38512,
+    "coord_estudio_202607": 3497,
+    "coord_fpsplayground_202606": 112081,
+    "coord_jogodacopa_202606": 324808,
+    "coord_roguelike_202605": 25576,
+    "coord_roguelike_202606": 98334,
+    "coord_rpgturnos_202605": 32293,
+    "coord_rpgturnos_202607": 4617,
+    "local_draxosmobile": 666633,
+    "local_fpsplayground": 101402,
+    "local_jogodacopa": 483379,
+    "local_roguelike": 277423,
+    "local_rpgisometrico": 166877,
+    "local_rpgturnos": 157254,
+    "support_202605": 8591,
+    "support_202606": 6577
+  },
+  "projects": {
+    "draxosmobile": 361,
+    "estudio": 26,
+    "fpsplayground": 99,
+    "jogodacopa": 254,
+    "roguelike": 70,
+    "rpgisometrico": 76,
+    "rpgturnos": 29
+  }
+}

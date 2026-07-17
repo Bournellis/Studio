@@ -1,0 +1,493 @@
+{
+  "schema_version": 2,
+  "batch_id": "local_rpgturnos",
+  "scope": "rpgturnos",
+  "project": "RPG Turnos",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "Projetos/rpg-turnos/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-curation-v2.md",
+      "kind": "historical_document",
+      "classification": "publication_release",
+      "byte_count": 2416,
+      "line_count": 60,
+      "source_blob": "146ed17acd83a18575f758e66ab7aa77c78cf377",
+      "source_sha256": "9d6e801a40e78af55b1362e3b9a5f256fe96f4edc04b40c832eafb0bc00c90a5",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_17_codex_documentation_lite_curation_6acb0acdb5",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/08_Coordenacao/Kanban/Done/2026-07-16_codex_p20-integrity-governance-v2.md",
+      "kind": "done_card",
+      "classification": "publication_release",
+      "byte_count": 2242,
+      "line_count": 47,
+      "source_blob": "4b4b1edb394326f76d52ae3e529f5ca7ca9e289c",
+      "source_sha256": "3b2307a130a822a5bcc6769dae80fcc92a7b09297b3a7769a668bdad1eab3242",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_16_codex_p20_integrity_governance_v2_07d3df0127",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/cardgame-core-experiments.md",
+      "kind": "historical_document",
+      "classification": "decision",
+      "byte_count": 1244,
+      "line_count": 48,
+      "source_blob": "2f05a1755c5708c48b817d0439c5d95a3d8f8e16",
+      "source_sha256": "a980c22d445dc75134aa5208cc77eebd1f01d2f317d63720e700543dbea41984",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_cardgame_core_experiments_a95bdcef2c",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/first-playable-slice-smoke.md",
+      "kind": "historical_document",
+      "classification": "technical_contract",
+      "byte_count": 1877,
+      "line_count": 50,
+      "source_blob": "a13cb60c21c0ba188f673db4bd8d38d9510168f3",
+      "source_sha256": "5cf7d3335515f99e13fbffed40e6c03405ceed22b553389714ce221d96aed70e",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_first_playable_slice_smoke_ce24f72fca",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/lore-content-migration.md",
+      "kind": "historical_document",
+      "classification": "decision",
+      "byte_count": 3551,
+      "line_count": 69,
+      "source_blob": "cd9e3fe21ef0df8fba4e067fa21ea26948daa67d",
+      "source_sha256": "7881bd9d20d53a25cc71ab2b7945e09f67a6067bf1ef014ce49bfc6268eb2a6f",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_lore_content_migration_1fc77a90d3",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/open-gaps.md",
+      "kind": "historical_document",
+      "classification": "decision",
+      "byte_count": 8763,
+      "line_count": 156,
+      "source_blob": "6bba9c3dfd264d3a75b35e232d0679dd1386163b",
+      "source_sha256": "625ffc830717c5fba4df9f6e25115c5ce9ec64983f428f1fbab531535a21b41c",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_open_gaps_1ae52436ad",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/docs/project-brief.md",
+      "kind": "historical_document",
+      "classification": "decision",
+      "byte_count": 3451,
+      "line_count": 65,
+      "source_blob": "61b2a5858540aa7cfc29df26c9c8b55b0febfce9",
+      "source_sha256": "5b870e1fd2fb4c00eae6119ae7329a01f966a666785b0e01158754a884629987",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_project_brief_e57f205476",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/roadmap.md",
+      "kind": "historical_document",
+      "classification": "decision",
+      "byte_count": 8251,
+      "line_count": 240,
+      "source_blob": "9923d961fb98879bf6d76ea9322fcfee7970fca1",
+      "source_sha256": "e984732f2e392ed718d0b7cf71d3b4b7d5e66afe03f8a60c743fb84141895f19",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_roadmap_63b41dca42",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/README.md",
+      "kind": "track",
+      "classification": "technical_history",
+      "byte_count": 435,
+      "line_count": 11,
+      "source_blob": "924fe81dbdfcbd812173311816769cfd6b8746a5",
+      "source_sha256": "d029388933307a90891978aeaf05a269caa6eb91dc239553fc7165c06ee49795",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_readme_ac91be40cf",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 5173,
+      "line_count": 164,
+      "source_blob": "600a07a20d8b57aa27d8eaa485e3d4295170ef4b",
+      "source_sha256": "f41cc45d1c941ddb12a0b5042014265cb4b526ecce32accfc34d7c1327a79bec",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_cardgame_core_implementation_plan_1bf6f13171",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/current-status.md",
+      "kind": "track",
+      "classification": "technical_history",
+      "byte_count": 4488,
+      "line_count": 71,
+      "source_blob": "72588af6f57d80fda237e0fa2dcb242b998bf6ae",
+      "source_sha256": "8367aa2c8d1ecf49d6d21dc943199962d9fbfdb5dca2bf7d180725a7db9f8c40",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_67b6414358",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/foundation-runtime-record.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 65405,
+      "line_count": 1182,
+      "source_blob": "b36d1bdb4844e01c695fc8e1232223957515139c",
+      "source_sha256": "01813e498cc24025c355789480be8c50d34844b34dc9ad58984fd10d54b4821f",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_foundation_runtime_record_172056d249",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 19479,
+      "line_count": 247,
+      "source_blob": "f8ce62a6212f6dcf8fdd5f8cb9dfb1add887c5e7",
+      "source_sha256": "9f575c625f7972ce37a649d346f143df3605d9ca7ba39a736459aeec200f7eab",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_current_status_2e9fdc71ac",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/implementation-plan.md",
+      "kind": "track",
+      "classification": "technical_contract",
+      "byte_count": 12300,
+      "line_count": 263,
+      "source_blob": "b8bae5561da6a8762f9333c0978e8de405622c4a",
+      "source_sha256": "615f89a7f9f326cd1df21f1c8d2f35c704e01bafd365f5fb9183ac50ac55551f",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_implementation_plan_4f31e8b9c7",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    },
+    {
+      "path": "Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/linear-execution-plan.md",
+      "kind": "track",
+      "classification": "decision",
+      "byte_count": 18179,
+      "line_count": 423,
+      "source_blob": "e0c1a3499b74b173a0877d879705aa6c4766c8f5",
+      "source_sha256": "179486e01464451dfd71e87a635604974c0db551cbb28ec658d7ab5a094b845a",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_linear_execution_plan_dd86ed72d0",
+      "retained_authorities": [
+        "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+        "Projetos/rpg-turnos/implementation/history.md",
+        "Projetos/rpg-turnos/qa/QA_INDEX.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_2026_07_17_codex_documentation_lite_curation_6acb0acdb5",
+      "date": "2026-07-17",
+      "scope": "rpgturnos",
+      "outcome": "RPG Turnos — Documentation Lite v2 curation",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-curation-v2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9d6e801a40e78af55b1362e3b9a5f256fe96f4edc04b40c832eafb0bc00c90a5; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-07.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/08_Coordenacao/Kanban/Doing/2026-07-17_codex_documentation-lite-curation-v2.md"
+      ]
+    },
+    {
+      "record_id": "rec_2026_07_16_codex_p20_integrity_governance_v2_07d3df0127",
+      "date": "2026-07-16",
+      "scope": "rpgturnos",
+      "outcome": "Done: RPG Turnos P20 integrity and Governance v2 migration",
+      "human_gate": "not required by the historical record",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/08_Coordenacao/Kanban/Done/2026-07-16_codex_p20-integrity-governance-v2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:3b2307a130a822a5bcc6769dae80fcc92a7b09297b3a7769a668bdad1eab3242; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-07.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/08_Coordenacao/Kanban/Done/2026-07-16_codex_p20-integrity-governance-v2.md"
+      ]
+    },
+    {
+      "record_id": "rec_cardgame_core_experiments_a95bdcef2c",
+      "date": "2026-05-04",
+      "scope": "rpgturnos",
+      "outcome": "Cardgame Core Experiments",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/docs/cardgame-core-experiments.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:a980c22d445dc75134aa5208cc77eebd1f01d2f317d63720e700543dbea41984; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/docs/cardgame-core-experiments.md"
+      ]
+    },
+    {
+      "record_id": "rec_first_playable_slice_smoke_ce24f72fca",
+      "date": "2026-05-04",
+      "scope": "rpgturnos",
+      "outcome": "First Playable Slice Smoke",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/docs/first-playable-slice-smoke.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5cf7d3335515f99e13fbffed40e6c03405ceed22b553389714ce221d96aed70e; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/docs/first-playable-slice-smoke.md"
+      ]
+    },
+    {
+      "record_id": "rec_lore_content_migration_1fc77a90d3",
+      "date": "2026-05-12",
+      "scope": "rpgturnos",
+      "outcome": "Lore Content Migration",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/docs/lore-content-migration.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:7881bd9d20d53a25cc71ab2b7945e09f67a6067bf1ef014ce49bfc6268eb2a6f; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/docs/lore-content-migration.md"
+      ]
+    },
+    {
+      "record_id": "rec_open_gaps_1ae52436ad",
+      "date": "2026-05-12",
+      "scope": "rpgturnos",
+      "outcome": "Open Gaps",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/docs/open-gaps.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:625ffc830717c5fba4df9f6e25115c5ce9ec64983f428f1fbab531535a21b41c; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/docs/open-gaps.md"
+      ]
+    },
+    {
+      "record_id": "rec_project_brief_e57f205476",
+      "date": "2026-05-05",
+      "scope": "rpgturnos",
+      "outcome": "RPG Turnos Project Brief",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/docs/project-brief.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:5b870e1fd2fb4c00eae6119ae7329a01f966a666785b0e01158754a884629987; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/docs/project-brief.md"
+      ]
+    },
+    {
+      "record_id": "rec_roadmap_63b41dca42",
+      "date": "2026-05-06",
+      "scope": "rpgturnos",
+      "outcome": "RPG Turnos Roadmap",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/implementation/roadmap.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:e984732f2e392ed718d0b7cf71d3b4b7d5e66afe03f8a60c743fb84141895f19; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/implementation/roadmap.md"
+      ]
+    },
+    {
+      "record_id": "rec_readme_ac91be40cf",
+      "date": "2026-05-06",
+      "scope": "rpgturnos",
+      "outcome": "RPG Turnos Tracks",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/implementation/tracks/README.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:d029388933307a90891978aeaf05a269caa6eb91dc239553fc7165c06ee49795; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/implementation/tracks/README.md"
+      ]
+    },
+    {
+      "record_id": "rec_cardgame_core_implementation_plan_1bf6f13171",
+      "date": "2026-05-06",
+      "scope": "rpgturnos",
+      "outcome": "Cardgame Core Implementation Plan",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:f41cc45d1c941ddb12a0b5042014265cb4b526ecce32accfc34d7c1327a79bec; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/cardgame-core-implementation-plan.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_67b6414358",
+      "date": "2026-05-06",
+      "scope": "rpgturnos",
+      "outcome": "Track 01 Current Status",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:8367aa2c8d1ecf49d6d21dc943199962d9fbfdb5dca2bf7d180725a7db9f8c40; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_foundation_runtime_record_172056d249",
+      "date": "2026-05-06",
+      "scope": "rpgturnos",
+      "outcome": "Foundation Runtime Record",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/foundation-runtime-record.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:01813e498cc24025c355789480be8c50d34844b34dc9ad58984fd10d54b4821f; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/implementation/tracks/track-01-foundation-first-prototype/foundation-runtime-record.md"
+      ]
+    },
+    {
+      "record_id": "rec_current_status_2e9fdc71ac",
+      "date": "2026-05-13",
+      "scope": "rpgturnos",
+      "outcome": "Track 02 Current Status",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:9f575c625f7972ce37a649d346f143df3605d9ca7ba39a736459aeec200f7eab; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/current-status.md"
+      ]
+    },
+    {
+      "record_id": "rec_implementation_plan_4f31e8b9c7",
+      "date": "2026-05-12",
+      "scope": "rpgturnos",
+      "outcome": "Track 02 Implementation Plan - Draxos Lore And Progression Alignment",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/implementation-plan.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:615f89a7f9f326cd1df21f1c8d2f35c704e01bafd365f5fb9183ac50ac55551f; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-05.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-05.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/implementation-plan.md"
+      ]
+    },
+    {
+      "record_id": "rec_linear_execution_plan_dd86ed72d0",
+      "date": "2026-07-16",
+      "scope": "rpgturnos",
+      "outcome": "Track 02 Linear Execution Plan",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/linear-execution-plan.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:179486e01464451dfd71e87a635604974c0db551cbb28ec658d7ab5a094b845a; retained:Projetos/rpg-turnos/implementation/history-ledger/2026-07.md;Projetos/rpg-turnos/implementation/history.md;Projetos/rpg-turnos/qa/QA_INDEX.md",
+      "source_count": 1,
+      "ledger_path": "Projetos/rpg-turnos/implementation/history-ledger/2026-07.md",
+      "source_paths": [
+        "Projetos/rpg-turnos/implementation/tracks/track-02-draxos-lore-progression/linear-execution-plan.md"
+      ]
+    }
+  ]
+}

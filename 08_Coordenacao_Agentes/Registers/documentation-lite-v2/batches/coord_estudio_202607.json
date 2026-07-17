@@ -1,0 +1,46 @@
+{
+  "schema_version": 2,
+  "batch_id": "coord_estudio_202607",
+  "scope": "estudio",
+  "project": "Estudio",
+  "baseline_commit": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4",
+  "recovery_tag": "recovery/estudio-documentation-lite/v2/2026-07-17-pre-cutover",
+  "authorization_ref": "08_Coordenacao_Agentes/Registers/documentation-lite-v2/authorization.json",
+  "entries": [
+    {
+      "path": "08_Coordenacao_Agentes/Kanban/Doing/2026-07-17_codex_estudio-documentation-lite-v2.md",
+      "kind": "historical_document",
+      "classification": "security",
+      "byte_count": 3497,
+      "line_count": 75,
+      "source_blob": "d667bcbae5242e1f433b351d6e113bd4f1598de3",
+      "source_sha256": "ba5c0d046a67c98601d0072b2e5eb8416bc3af7094e79f44aef85a0d43efcce0",
+      "disposition": "remove_with_ledger",
+      "unique_content_status": "absorbed",
+      "record_id": "rec_2026_07_17_codex_estudio_documentation_lite_v_ef71e3805e",
+      "retained_authorities": [
+        "08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md",
+        "08_Coordenacao_Agentes/History/2026-07.md",
+        "08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md",
+        "AGENTS.md"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "record_id": "rec_2026_07_17_codex_estudio_documentation_lite_v_ef71e3805e",
+      "date": "2026-07-17",
+      "scope": "estudio",
+      "outcome": "Multi-Agent Doing: Documentation Lite v2",
+      "human_gate": "not inferred from historical narrative",
+      "technical_result_ref": "52f52f7cd33d1711579f9cccbe4c848ab45a02e4:08_Coordenacao_Agentes/Kanban/Doing/2026-07-17_codex_estudio-documentation-lite-v2.md",
+      "validation": "Git blob, SHA-256, byte count and line count verified at the cutover baseline",
+      "evidence": "sha256:ba5c0d046a67c98601d0072b2e5eb8416bc3af7094e79f44aef85a0d43efcce0; retained:08_Coordenacao_Agentes/Decisoes/2026-07-17_estudio_documentation-lite-v2-cutover-recuperavel.md;08_Coordenacao_Agentes/History/2026-07.md;08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md;AGENTS.md",
+      "source_count": 1,
+      "ledger_path": "08_Coordenacao_Agentes/History/2026-07.md",
+      "source_paths": [
+        "08_Coordenacao_Agentes/Kanban/Doing/2026-07-17_codex_estudio-documentation-lite-v2.md"
+      ]
+    }
+  ]
+}
