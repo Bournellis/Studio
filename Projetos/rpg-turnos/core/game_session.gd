@@ -8,6 +8,16 @@ const ACTIVE_ENCOUNTER_ID: String = "operacao_pouso"
 const SAVE_VERSION: int = 2
 const DEFAULT_SAVE_PATH: String = "user://rpg_turnos_save.json"
 const DeckRulesScript = preload("res://systems/deck/deck_rules.gd")
+const LEGACY_ENCOUNTER_ID_MAP: Dictionary = {
+	"emboscada_na_ponte": "operacao_pouso",
+	"duelista_bandido": "confronto_guardiao",
+	"emboscada_no_cruzamento": "tomada_conduto",
+	"fortaleza_do_desfiladeiro": "avanco_bastiao",
+	"invasao_em_ondas": "ondas_resistencia",
+	"defesa_do_portao": "defesa_base_ether",
+	"colosso_fragmentado": "nucleo_fragmentado",
+	"enigma_da_ponte": "ruptura_selos"
+}
 
 var unlocked_card_ids: Array = []
 var selected_deck_ids: Array = []
@@ -279,6 +289,29 @@ func _valid_encounter_id(encounter_id: String) -> String:
 		return encounter_id
 	return ACTIVE_ENCOUNTER_ID
 
+func _migrate_save_v1_to_v2(save_data: Dictionary) -> Dictionary:
+	var migrated: Dictionary = save_data.duplicate(true)
+	migrated["version"] = SAVE_VERSION
+	migrated["active_encounter_id"] = _migrate_encounter_id(
+		str(migrated.get("active_encounter_id", ACTIVE_ENCOUNTER_ID))
+	)
+	migrated["completed_encounter_ids"] = _migrate_encounter_id_array(
+		migrated.get("completed_encounter_ids", [])
+	)
+	migrated["claimed_encounter_reward_ids"] = _migrate_encounter_id_array(
+		migrated.get("claimed_encounter_reward_ids", [])
+	)
+	return migrated
+
+func _migrate_encounter_id(encounter_id: String) -> String:
+	return str(LEGACY_ENCOUNTER_ID_MAP.get(encounter_id, encounter_id))
+
+func _migrate_encounter_id_array(values: Variant) -> Array:
+	var migrated: Array = []
+	for encounter_id: String in _string_array(values):
+		migrated.append(_migrate_encounter_id(encounter_id))
+	return migrated
+
 # --- Operacao rank ---
 
 func _check_rank_advancement() -> void:
@@ -323,4 +356,10 @@ func get_class_deck_ids() -> Array:
 	return ContentLibrary.get_starter_deck_ids()
 
 func initialize_deck_for_class() -> void:
-	if not has_selected
+	if not has_selected_class():
+		return
+	var deck: Array = ContentLibrary.get_class_starter_deck_ids(selected_class)
+	if deck.is_empty():
+		return
+	unlocked_card_ids = deck.duplicate()
+	selected_deck_ids = deck.duplicate()

@@ -272,4 +272,10 @@ func _build_art_nodes() -> void:
 		marker_node.name = str(marker.get("id", "marker"))
 		marker_node.texture = AssetIds.texture("marker_encounter_active")
 		marker_node.position = Vector2(marker.get("position", Vector2.ZERO))
-		marker_nodes.add
+		marker_nodes.add_child(marker_node)
+
+	player_sprite = Sprite2D.new()
+	player_sprite.name = "player_sprite"
+	player_sprite.texture = AssetIds.texture("player_token")
+	player_sprite.position = player_position
+	add_child(player_sprite)
