@@ -1,13 +1,24 @@
 # RPG Turnos Docs
 
-Local RPG Turnos design and technical documentation lives here.
+## Metadata
 
-Start with:
+- status: `active`
+- authority: `router`
+- last_verified: `2026-07-17`
+- review_when: `a local product, technical or resume authority changes`
+- supersedes: `docs router before Documentation Lite v2`
+- superseded_by: `none`
 
-- `lore-campaign.md`
-- `lore-content-migration.md`
-- `project-brief.md`
-- `game-design-document.md`
-- `architecture.md`
+This router carries no portfolio status, next track or active gate.
 
-Shared studio context lives in `../../canon/`.
+## Read order
+
+- `../implementation/current-status.md` — sole local technical state.
+- `resume-brief.md` — frozen reentry contract; it does not resume the project.
+- `game-design-document.md` — active gameplay/product contract.
+- `architecture.md` and `class-catalog-schema.md` — technical contracts.
+- `lore-campaign.md` and `classes/README.md` — adopted local lore/class contracts.
+- `../qa/QA_INDEX.md` — journeys, validation and human gates.
+- `../implementation/history.md` — compact resolved lineage, never current state.
+
+Shared lore lives in `../../../canon/shared-lore/`; mechanics require explicit local adoption.

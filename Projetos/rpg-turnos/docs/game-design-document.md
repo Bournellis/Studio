@@ -374,72 +374,16 @@ The current UI must support:
 
 ## 7. Card Catalog
 
-> ⚠️ **CATÁLOGO DESATUALIZADO.** As 5 classes antigas (Assaltante, Arquiteto, Dominador, Vinculador, Tecelão) foram removidas em 2026-05-12. O `slice_catalog.json` atual ainda contém essas classes e precisa ser regenerado por Codex para refletir as 3 novas classes (Arcano, Invocador, Necromante). O starter deck genérico abaixo também é placeholder medieval e será substituído. Tudo nesta seção deve ser tratado como histórico até a regeneração.
+The authored source of truth is `data/definitions/slice_catalog.json`; `data/generated/slice_catalog.tres` is generated and must never be edited as the origin.
 
-The active player-facing plan has:
+- The catalog exposes exactly three playable classes: Invocador, Arcano and Necromante.
+- Each class owns a fixed 20-card starter deck. The generic deck exists only for saves without a selected class.
+- Class definitions contain `id`, display text, passive, hero, structured hero power and `starter_deck`.
+- NPC and encounter rewards expand the unlocked pool. `claimed_encounter_reward_ids` prevents duplicate claims.
+- Enemy-only cards remain separate from player rewards. No player card or hero power may require an enemy hero outside `duelo`.
+- `manter_linha` and the five discarded classes are not active catalog entries.
 
-- `starter deck copies`: 20 cards in the fixed starter deck
-- `starter deck unique designs`: 10 unique starter cards
-- `unlockable reward unique cards`: 11 unique cards
-- `reward entries`: 13 reward entries, because `campeao_guilda` and `chuva_brasas` can come from more than one source
-- `enemy-only cards`: authored separately for encounters and not counted as player rewards
-
-Implementation note: `manter_linha` was deleted from the active data catalog on 2026-05-05. It is not part of the active starter deck, reward plan, enemy-only plan, or future card plan.
-
-### Starter Deck (20 cards)
-
-The player begins every run with this fixed 20-card deck:
-
-| Card | Type | Cost | Stats | Keywords |
-|---|---|---|---|---|
-| Escudeiro ×3 | criatura | 1 | 2/2 | — |
-| Guarda da Vila ×3 | criatura | 1 | 1/4 | defensor |
-| Lobo Faminto ×3 | criatura | 1 | 3/1 | rapido |
-| Raio Curto ×2 | magia | 1 | — | instantaneo, 1 dano |
-| Barricada ×2 | estrutura | 1 | 0/5 | defensor |
-| Soldado de Linha ×2 | criatura | 2 | 2/3 | — |
-| Arqueira de Penhasco ×2 | criatura | 2 | 2/2 | alcance |
-| Bruto Mercenario ×1 | criatura | 3 | 4/4 | — |
-| Javali de Guerra ×1 | criatura | 3 | 4/2 | atropelar |
-| Balista ×1 | estrutura | 3 | 2/3 | alcance |
-
-### Unlockable Reward Cards (11 unique cards)
-
-Unlocked through the NPC and encounter progression. All rewards are additive — each new card expands the pool available for deckbuilding.
-
-**Introductory NPC reward:**
-
-| Trigger | Card | Type | Cost | Notes |
-|---|---|---|---|---|
-| First NPC visit | Golpe Preciso | magia | 2 | 3 dano a qualquer alvo |
-
-This is the first NPC reward and should be stored as `first_npc_reward_card`. The legacy `reward_card` field may remain only as a temporary compatibility alias during migration.
-
-**NPC progressive rewards:**
-
-| Visit | Card | Type | Cost | Notes |
-|---|---|---|---|---|
-| Após enc. 1 | Corvo Batedor | criatura | 2 | 1/2, voadora+rapido |
-| Após enc. 2 | Chuva de Brasas | magia_de_tabuleiro | 4 | queimando em todos os slots inimigos |
-| Apos enc. 3 | Executor Veterano | criatura | 5 | 5/5 |
-
-**Encounter rewards (on first victory):**
-
-| Encounter | Reward(s) | Type | Cost | Notes |
-|---|---|---|---|---|
-| Operacao de Pouso | Fera Alfa Subjugada | criatura | 3 | 4/2, atropelar |
-| Confronto com Guardiao | Descarga Astral | magia | 3 | 4 dano magico, instantaneo |
-| Confronto com Guardiao | Flagelo Astral | magia | 6 | 6 dano magico |
-| Tomada do Conduto | Sentinela Alada | criatura | 4 | 2/4, voadora+alcance |
-| Tomada do Conduto | Torre de Cristal | estrutura | 5 | 3/7, alcance+cobertura |
-| Avanco ao Bastiao | Manifestacao Vulcanica | criatura | 6 | 5/6, voadora+atropelar |
-| Avanco ao Bastiao | Comando de Dominio | magia_de_tabuleiro | 5 | remove enjoo de todas as criaturas amigas |
-| Guardiao do Conduto | Executor Veterano | criatura | 5 | 5/5 (duplicado: NPC ou enc.) |
-| Invasão em Ondas (opc.) | Chuva de Brasas | magia_de_tabuleiro | 4 | (duplicado: NPC ou enc.) |
-
-Executor Veterano and Chuva de Fragmentos appear in both the NPC list and an encounter reward. The player receives each from whichever source comes first; the second source gives nothing (already unlocked).
-
-Completed encounters may be re-entered for practice, but `claimed_encounter_reward_ids` prevents a second reward claim.
+Exact card, encounter and reward entries live in JSON to avoid a second catalog in this GDD. Class behavior lives in `classes/` and its data shape in `class-catalog-schema.md`.
 
 ## 8. Historical Notes
 

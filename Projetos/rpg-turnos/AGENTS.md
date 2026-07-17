@@ -4,7 +4,7 @@
 
 - status: living
 - authority: operational_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: governança, arquitetura ou gates locais mudarem
 - supersedes: AGENTS.md anterior ao cutover de governança v2
 - superseded_by: none
@@ -43,12 +43,13 @@ Before substantial work:
 2. `../../canon/shared-lore/shared-lore.md`
 3. `../../canon/shared-lore/draxos-invasion.md`
 4. `docs/lore-campaign.md`
-5. `docs/project-brief.md`
-6. `docs/game-design-document.md`
-7. `docs/architecture.md`
-8. `implementation/current-status.md`
-9. this file
-10. touched files
+5. `implementation/current-status.md`
+6. `docs/resume-brief.md`
+7. `docs/game-design-document.md`
+8. `docs/architecture.md`
+9. `docs/class-catalog-schema.md`
+10. this file
+11. touched files
 
 For bounded work:
 
@@ -89,10 +90,10 @@ Initial boundaries:
 - `ui/`: player-facing menus, dialogue UI, battle commands, inventory, and character sheets
 - `data/`: authored definitions and generated resources
 - `docs/`: local design and technical references
-- `implementation/`: active status, tracks, handoffs, and execution notes
+- `implementation/`: active status, compact history, debt baseline and execution records
 
 ## Reuse Rule
 
 `Projetos/rpg-isometrico/` may be used as a reference for Godot organization, validation patterns, input conventions, and isolated helpers.
 
-Do not copy broad runtime systems before checking that they fit a turn-based RPG. Reuse should be explicit, narrow, and documented in `implementation/current-status.md` or the active track.
+Do not copy broad runtime systems before checking that they fit a turn-based RPG. Reuse should be explicit, narrow, and documented in an active local card and technical contract.

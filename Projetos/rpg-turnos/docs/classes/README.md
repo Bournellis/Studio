@@ -1,9 +1,9 @@
 # Classes — Índice
 
-- Last Updated: `2026-05-12`
-- Status: `design completo — decks iniciais pendentes de sessão dedicada`
+- Last Updated: `2026-07-17`
+- Status: `implemented baseline; human playability not revalidated after P20 repair`
 - Referência: `../lore-campaign.md`, `../game-design-document.md`
-- Autoridade de Lore: `Projetos/draxos-roguelike-cardgame/docs/classes/README.md`
+- Autoridade de Lore: `../../../canon/shared-lore/` com adoção local em `../lore-campaign.md`
 
 ## Decisão de Design
 
@@ -32,9 +32,9 @@ O jogador é sempre um **Comandante Draxos**. A classe define o estilo de combat
 - O jogador é sempre um **Comandante Draxos** — a classe define o estilo de combate.
 - Toda passiva inicial é permanente desde o início e molda como o deck inicial deve ser jogado.
 - Nenhuma carta ou hero power depende da existência de herói inimigo — apenas o modo `duelo` tem um. Todas as cartas devem funcionar nos 6 modos de batalha.
-- Os decks iniciais precisam de uma **sessão de design dedicada** com nomes e stats definitivos antes da implementação de cada classe.
+- Os três decks iniciais implementados possuem 20 cartas. Alterar nomes, stats ou composição exige uma nova decisão e regressão local.
 
-## Ordem de Implementação
+## Ordem histórica de implementação
 
 Da menos complexa para a mais complexa em termos de novos sistemas de engine:
 
@@ -42,8 +42,8 @@ Da menos complexa para a mais complexa em termos de novos sistemas de engine:
 2. **Arcano** — contador de Fluxo volátil e amplificação de dano mágico.
 3. **Necromante** — Cinzas, Memorial de Batalha, hero power condicional em 3 degraus, token spawn, `enjoo_estendido`, trigger "ao morrer".
 
-## Nota sobre o Catálogo
+## Catálogo implementado
 
-`data/definitions/slice_catalog.json` contém as 5 classes antigas (Assaltante, Arquiteto, Dominador, Vinculador, Tecelão) removidas em 2026-05-12.
+`../../data/definitions/slice_catalog.json` é a origem autoral e contém somente Invocador, Arcano e Necromante. O recurso `../../data/generated/slice_catalog.tres` foi regenerado e validado após o reparo P20; não é origem de edição.
 
-**O catálogo precisa ser regenerado por Codex** para refletir as 3 novas classes antes de qualquer trabalho de implementação de classe. O starter deck genérico atual no runtime também é placeholder e será substituído nessa regeneração.
+O starter deck genérico permanece apenas como fallback de saves sem classe. As cinco classes descartadas são história recuperável, não conteúdo canônico ou backlog.

@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `technical_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-07-17`
 - review_when: `a validator, critical journey or supported runtime changes`
 - supersedes: `implicit test routing through tools/validate.gd only`
 - superseded_by: `none`
@@ -47,7 +47,7 @@
   - Status: `covered`; runners: fast + runtime.
 
 - capability_id: `human_playability`
-  - Status: `manual`; evidence: `../docs/first-playable-slice-smoke.md`.
+  - Status: `manual`; evidence: `../docs/resume-brief.md` and `../implementation/current-status.md`.
   - The P20 integrity repair has not received a new human playability verdict.
 
 ## Execution Guardrails

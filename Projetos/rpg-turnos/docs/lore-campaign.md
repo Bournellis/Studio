@@ -1,18 +1,21 @@
 # RPG Turnos Lore Campaign
 
-- Last Updated: `2026-05-13`
-- Status: `pointer — lore authority delegated`
-- Shared Canon: `../../../canon/shared-lore/shared-lore.md`, `../../../canon/shared-lore/draxos-invasion.md`
+## Metadata
+
+- status: `frozen`
+- authority: `product_contract`
+- last_verified: `2026-07-17`
+- review_when: `shared lore changes or RPG Turnos explicitly adopts new local narrative`
+- supersedes: `lore pointer delegated to the Roguelike project`
+- superseded_by: `none`
+
+Shared canon: `../../../canon/shared-lore/shared-lore.md` and `../../../canon/shared-lore/draxos-invasion.md`.
 
 ## Lore Authority
 
-RPG Turnos shares all Draxos lore with `Projetos/draxos-roguelike-cardgame`.
+Shared lore is the studio authority for reusable Draxos facts. This file is the local authority for the campaign framing explicitly adopted by RPG Turnos.
 
-The authoritative lore document is:
-
-`Projetos/draxos-roguelike-cardgame/docs/lore-campaign.md`
-
-Do not maintain a parallel Draxos narrative here. Any story direction for RPG Turnos must be consistent with that document and with `canon/shared-lore/draxos-invasion.md`.
+The Roguelike is a separate product and is not a lore or mechanics authority for this project. Any cross-project idea must first be promoted to shared lore and then adopted here.
 
 ## What RPG Turnos Owns
 
@@ -24,7 +27,7 @@ It does not own a separate Draxos story. Setting, characters, world, and narrati
 
 The three active classes are Invocador, Arcano, and Necromante. Each represents a Draxos mage specialty with its own combat doctrine, starter deck, passive ability, and hero power.
 
-Their in-universe roles within the Draxos expedition hierarchy are still being defined. Narrative anchoring for each class — how they fit within Draxos society, what their training path looks like, and how NPCs refer to them — should be developed in coordination with the shared lore and the roguelike's character and NPC work.
+Their detailed in-universe roles remain deliberately undefined. Future anchoring must use shared lore plus an explicit local decision; another project's character work cannot define it implicitly.
 
 ## Encounter Arc
 
@@ -39,4 +42,6 @@ The current world map runs eight encounters as a linear Draxos operation:
 7. **Nucleo Fragmentado** — destroy the multi-part elemental construct (chefe_multiparte)
 8. **Ruptura de Selos** — break the astral seals blocking the volcano path (quebra_cabeca)
 
-Each encounter has a `mission` field in the catalog that states its operational purpose. Technical IDs (`emboscada_na_ponte`, `duelista_bandido`, etc.) are legacy placeholders and should not be renamed until a dedicated compatibility pass.
+Each encounter has a `mission` field in the catalog that states its operational purpose. The eight chain IDs were migrated in P20 to `operacao_pouso`, `confronto_guardiao`, `tomada_conduto`, `avanco_bastiao`, `ondas_resistencia`, `defesa_base_ether`, `nucleo_fragmentado` and `ruptura_selos` with save v1→v2 compatibility.
+
+Five side encounter IDs remain unchanged and require a future local lore decision before any rename: `patrulha_avancada`, `duelista_sombrio`, `emboscada_reforcos`, `escolta_vulcanica` and `reduto_eter`.

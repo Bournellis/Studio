@@ -83,7 +83,7 @@
       "id": "human_playability",
       "status": "manual",
       "runner_ids": [],
-      "evidence": "docs/first-playable-slice-smoke.md; not revalidated after the P20 integrity repair"
+      "evidence": "docs/resume-brief.md and implementation/current-status.md; not revalidated after the P20 integrity repair"
     }
   ]
 }
