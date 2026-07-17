@@ -1,5 +1,14 @@
 # AGENTS.md
 
+## Metadata
+
+- status: living
+- authority: operational_contract
+- last_verified: 2026-07-16
+- review_when: governança, arquitetura ou gates locais mudarem
+- supersedes: AGENTS.md anterior ao cutover de governança v2
+- superseded_by: none
+
 This file governs agent behavior for the Godot implementation of RPG Turnos.
 
 ## Project Role
