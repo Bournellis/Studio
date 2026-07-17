@@ -3,7 +3,7 @@
 ## Metadata
 
 - closure_protocol: agent_local_merge_v3
-- technical_status: in_progress
+- technical_status: ready_for_merge
 - human_gate_required: no
 - human_gate_status: not_required
 - human_gate_scope: none
@@ -19,7 +19,7 @@
 - worktree_status: open
 - branch_cleanup: pending
 - validation_tier: Runtime
-- validation_result: pending
+- validation_result: pass — Runtime 2x, 108/108 testes, 1.844 asserts, zero side effects
 - global_sync_needed: yes
 
 ## Objetivo
@@ -32,3 +32,11 @@ Instalar a coordenação local-first, reduzir documentos vivos, manter uma únic
 - `tools/validate.gd --profile=full` sem side effects rastreados.
 - baseline preservada: 108 testes e 1.844 asserts.
 - UTF-8, NUL, links, JSON e `git diff --check`.
+
+## Resultado
+
+- Import headless concluído; warnings históricos de UID do addon seguem para a onda mecânica de UIDs.
+- Runtime integral executado duas vezes: 108/108 testes e 1.844 asserts em ambas.
+- Segunda execução: status Git antes/depois vazio; nenhum side effect rastreado.
+- Manifesto JSON e correspondência exata de IDs verificados.
+- Nenhum pacote, remoto, publicação, tuning ou gate humano executado.
