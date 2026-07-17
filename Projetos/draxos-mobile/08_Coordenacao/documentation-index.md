@@ -26,4 +26,3 @@
 - continuation: `Handoffs/`
 
 Pre-cutover global cards and handoffs remain in `../../../08_Coordenacao_Agentes/`. Product delivery history remains in `../implementation/tracks/` and package lineage in `../docs/release-history.md`.
-

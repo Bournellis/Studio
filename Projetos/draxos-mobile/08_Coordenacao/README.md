@@ -27,4 +27,3 @@ New project-only cards and handoffs live here. Global records before the 2026-07
 Every card uses metadata v3 and records validation, merge/worktree/branch cleanup, publication status and `global_sync_needed`. Local work never updates global portfolio hot files directly; a later `portfolio_sync` consumes the queue.
 
 No local card can approve Arena proof, tuning, economy, PVP, visual direction, remote mutation, device QA or release.
-

@@ -68,4 +68,3 @@ if ($gutText -notmatch "Tests\s+$ExpectedTests(?:\D|$)" -or
 }
 
 Write-Host "GUT_SHORT_PASS tests=$ExpectedTests asserts=$ExpectedAsserts"
-

@@ -42,4 +42,3 @@ Counts are exact at `main@756e82eb`; addons and generated/import caches are excl
 - A surgical correction of at most 20 lines is allowed only when it adds no responsibility and includes focused regression evidence.
 - Files above 700 lines trigger review for a boundary extraction; this migration does not authorize mass refactoring.
 - When a listed file changes, record before/after counts and the responsibility decision in the local card.
-
