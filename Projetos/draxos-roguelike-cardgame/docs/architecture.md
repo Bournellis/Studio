@@ -4,7 +4,7 @@
 
 - status: living
 - authority: technical_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: ownership, data flow, generation or runtime boundaries mudar
 - supersedes: none
 - superseded_by: none
@@ -17,7 +17,7 @@ Keep roguelike run rules, card battle rules, data, validation, and presentation 
 
 The JSON Track 02 catalog is the authored source of truth for current content. Generated `.tres` resources must be deterministic and idempotent. `tools/catalog_source_loader.gd` now creates a domain seam for future composed sources while preserving the current single JSON semantics.
 
-For closeout ownership and remaining debt, use `docs/foundation-closeout.md` together with this architecture file.
+For current ownership use this architecture file. Remaining debt is governed by `implementation/engineering-health-baseline.md`; `docs/foundation-closeout.md` is historical closeout evidence only.
 
 ## Authority And Ownership
 
@@ -202,3 +202,5 @@ Run Lab is not a replacement for human playtest.
 ## Current Checkpoint
 
 Track 02 is the live baseline. Track 01 / 13-map architecture notes are historical unless explicitly adopted by current docs or code.
+
+Planning documents under `implementation/tracks/` and promoted design proposals do not own runtime boundaries. When they disagree with this file or the current code/data contracts, this architecture and the validated implementation prevail.

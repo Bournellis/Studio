@@ -4,7 +4,7 @@
 
 - status: living
 - authority: product_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-07-17
 - review_when: loop, regras, progressao, conteudo oficial ou balanceamento mudar
 - supersedes: none
 - superseded_by: none
@@ -16,6 +16,20 @@ Baseline de design preservada: Track 02 complete-run.
 Este e um roguelike de cartas com lore Draxos e batalha em lanes frontais. O jogador e sempre o Comandante Draxos; a identidade de gameplay vem da `Classe`.
 
 O baseline vivo e Track 02: 3 classes, rota fixa de 29 mapas, save/snapshot v5, recompensas de producao, loja de Almas expandida, reliquias universais, keywords/status completos para a track, galerias inimigas Terra/Gelo/Ar/Fogo, AI/intent inimiga, modos/formatos/field effects e boss hooks.
+
+## Contratos Promovidos
+
+Track 02 promoveu partes de propostas e planos antigos para autoridades vivas. A promocao vale somente para o comportamento confirmado pelo JSON, por este GDD e pelos testes; numeros, alternativas e recomendacoes que ficaram apenas nos documentos de origem continuam historicos.
+
+| Origem historica | Resultado promovido | Autoridade atual |
+|---|---|---|
+| proposta de rota de 29 mapas | quatro blocos elementais, rota linear, modos, formatos, field effects e boss hooks | este GDD e `../data/definitions/slice_catalog.json` |
+| proposta de keywords | vocabulario e timings implementados pela Track 02 | este GDD, JSON, `BattleEngine` e testes de keywords |
+| proposta de reward cards | oito reward cards por classe, com variantes Lvl 2/Lvl 3 | docs de classe, JSON e testes de dados/Card Impact |
+| planos de rewards, relics e AI | agenda de recompensas, 18 relics declaradas, perfis deterministas e intent | este GDD, JSON, arquitetura e testes |
+| mockups de encontros Track 00/01 | apenas a intencao que reaparece na rota Track 02 | JSON, este GDD e validacao de rota |
+
+Os probes de tuning, valores antigos, alternativas cortadas e notas marcadas como futuras nao sao contratos promovidos. Design Lab produz candidatos e manifestos de promocao, mas nenhum candidato entra no catalogo oficial sem aprovacao manual e validacao posterior.
 
 ## Core Loop
 
@@ -123,7 +137,7 @@ substitui o status operacional.
 
 ## Historical Material
 
-Track 01 / 13 mapas e save v3/v4 sao material historico. Use apenas como referencia de evolucao ou comparacao, nao como estado atual.
+Track 00, Track 01 / 13 mapas, save v3/v4, propostas originais, mockups de encontro e logs de execucao sao material historico. Use apenas como proveniencia ou comparacao; nunca para substituir este GDD, o JSON, os testes ou `implementation/current-status.md`.
 
 ## Pending Design
 
