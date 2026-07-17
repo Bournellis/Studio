@@ -14,6 +14,7 @@ if str(TOOLS) not in sys.path:
 
 from build_documentation_lite_manifests import (  # noqa: E402
     INDEX,
+    _project_for_global,
     build_artifacts,
     write_artifacts,
 )
@@ -61,6 +62,15 @@ class ManifestBuilderFixture(unittest.TestCase):
 
 
 class ManifestBuilderTests(ManifestBuilderFixture):
+    def test_global_filename_ownership_wins_over_incidental_content(self) -> None:
+        self.assertEqual(
+            _project_for_global(
+                "08_Coordenacao_Agentes/Kanban/Done/2026-06-09_codex_estudio_doc-drift-fix-v1.md",
+                b"RPG Isometrico appeared in the audit.",
+            ),
+            "estudio",
+        )
+
     def test_dry_run_is_deterministic_and_excludes_review(self) -> None:
         track = "Projetos/JogoDaCopa/implementation/tracks/track-00.md"
         done = "08_Coordenacao_Agentes/Kanban/Done/2026-07-17_codex_jogodacopa_done.md"

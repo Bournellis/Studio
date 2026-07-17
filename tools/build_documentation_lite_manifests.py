@@ -143,7 +143,23 @@ def _date_for(path: str, blob: bytes, last_dates: dict[str, str]) -> str:
 
 
 def _project_for_global(path: str, blob: bytes) -> str:
-    value = (path + "\n" + blob[:4096].decode("utf-8", errors="ignore")).casefold()
+    filename = Path(path).name.casefold()
+    strong_rules = (
+        ("rpgturnos", ("rpg-turnos", "rpg_turnos")),
+        ("rpgisometrico", ("rpg-isometrico", "rpg_isometrico")),
+        ("jogodacopa", ("jogodacopa", "jogo-da-copa")),
+        ("fpsplayground", ("fpsplayground", "fpsshooter")),
+        ("draxosmobile", ("draxos-mobile", "draxosmobile")),
+        ("roguelike", ("draxos-roguelike", "roguelike-cardgame", "card-impact", "design-lab")),
+    )
+    if any(token in filename for token in ("_estudio_", "active-games", "modes-integrated", "playground_split")):
+        return "estudio"
+    for key, needles in strong_rules:
+        if any(needle in filename for needle in needles):
+            return key
+    if "_draxos_" in filename or "_draxos-" in filename:
+        return "roguelike"
+    value = blob[:4096].decode("utf-8", errors="ignore").casefold()
     rules = (
         ("rpgturnos", ("rpg-turnos", "rpg_turnos", "rpg turnos")),
         ("rpgisometrico", ("rpg-isometrico", "rpg_isometrico", "rpg isometrico", "isométrico")),
@@ -165,6 +181,7 @@ def _local_candidates(spec: ProjectSpec, paths: set[str], blobs_by_path: dict[st
         if path.startswith(prefix + "08_Coordenacao/")
         and ("/Kanban/Done/" in path or "/Handoffs/" in path)
         and path.endswith(".md")
+        and Path(path).name.casefold() != "readme.md"
     }
     result.update(
         path for path in paths
