@@ -610,7 +610,8 @@ function Assert-BaselineDriftAbsent {
     $requiredMarkers = @(
         @{ Base = $ProjectPath; Path = "implementation\current-status.md"; Needles = @("TRACK_13_VALIDATION_RELEASE_SAFETY_DELIVERED", "TRACK_14_AGENT_OPS_FOUNDATION_ACTIVE", "docs/pve-arena-v1.md", "docs/release-history.md") },
         @{ Base = $ProjectPath; Path = "docs\agent-operating-manual.md"; Needles = @("Foundation Hardening V2", "Track 13", "Track 14", "Track 18", "implementation/current-status.md", "docs/release-history.md") },
-        @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("track-18-pve-arena-initial", "track-21-arena-loop-unlock-friction", "Arena PVE") },
+        @{ Base = $ProjectPath; Path = "docs\documentation-index.md"; Needles = @("implementation/history.md", "Arena PVE") },
+        @{ Base = $ProjectPath; Path = "implementation\history.md"; Needles = @("track-18-pve-arena-initial", "track-21-arena-loop-unlock-friction", "docs/release-history.md") },
         @{ Base = $ProjectPath; Path = "docs\pve-arena-initial-direction.md"; Needles = @("PVE_ARENA_INITIAL_DIRECTION_APPROVED", "Arena PVE", "PVP continua no plano") },
         # Global portfolio wording is intentionally projected by portfolio_sync.
         # This local validator checks stable routing only; the governance checker

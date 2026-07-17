@@ -86,7 +86,7 @@ Deno.test("endpoint matrix declares service scope for every current endpoint", a
 
 Deno.test("feature registry cards have complete contract fields", async () => {
   const registry = await readProjectText(
-    "implementation/tracks/track-06-feature-installation-rails-and-first-slices/feature-registry.md",
+    "docs/contracts/feature-registry.md",
   );
   const cardsSection = extractBetween(
     registry,
