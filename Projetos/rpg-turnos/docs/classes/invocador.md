@@ -1,9 +1,10 @@
 # Invocador
 
-- Last Updated: `2026-05-12`
+- Last Updated: `2026-08-26`
 - Status: `design completo — deck inicial pendente de sessão dedicada`
 - Índice: `README.md`
-- Autoridade de Lore: `Projetos/draxos-roguelike-cardgame/docs/classes/invocador.md`
+- Autoridade de identidade e lore compartilhada: `D:\Studio Core\universe\windows\DRAXOS_ELEMENTAL_EXPEDITION.md@lore.v2`
+- Autoridade mecânica: este arquivo; o binding está em `../../STUDIO_CORE.md`
 
 ## Identidade
 

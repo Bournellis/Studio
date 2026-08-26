@@ -10,7 +10,7 @@
 - NPC dialogue, route choice, encounters, stats, level, items, and inventory as expected pillars
 - combat as a separate C1 card-slot mode with battle modes like `limpar_mesa`
 - 20-card deck setup and data-driven cards, boards, and encounters
-- initial narrative focus on a novice Draxos mage invading an elemental planet from an ether-plasm base
+- initial narrative focus on the Draxos commander leading the shared expedition against an elemental planet from an ether-plasm base under the Grande Mestre
 - current runtime names are placeholders until migrated to the Draxos/elemental-planet lore
 - final visual direction is currently 2D for the slice, with broader product presentation decisions still open
 

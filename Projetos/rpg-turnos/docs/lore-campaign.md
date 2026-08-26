@@ -9,25 +9,34 @@
 - supersedes: `lore pointer delegated to the Roguelike project`
 - superseded_by: `none`
 
-Shared-universe binding: `../STUDIO_CORE.md`. Shared facts come only from the adopted `shared_foundation`, `draxos` and `draxos_elemental_expedition` domains in Studio Core revision `lore.v1`.
+Shared-universe binding: `../STUDIO_CORE.md`. Shared facts come only from the
+adopted `shared_foundation`, `draxos` and `draxos_elemental_expedition` domains
+in Studio Core revision `lore.v2`. The exact cross-project authority is
+`D:\Studio Core\universe\windows\DRAXOS_ELEMENTAL_EXPEDITION.md`.
 
 ## Lore Authority
 
-Studio Core is the authority for reusable Draxos and expedition facts. This file is the local authority for the campaign framing explicitly adopted by RPG Turnos.
+Studio Core is the sole authority for reusable Draxos facts and for the lore,
+characters, classes, narrative and general expedition objective shared with
+Draxos Roguelike. This file owns only the RPG Turnos manifestation and local
+narrative delivery.
 
-The Roguelike is a separate product and is not a lore or mechanics authority for this project. Any cross-project idea must first be promoted to the Core and then explicitly adopted here.
+The Roguelike remains a separate product and is not a mechanics or
+implementation authority for this project. Neither game's local documents are
+a second shared authority; any change to the shared axis must first be authored
+in Core and then adopted by both bindings.
 
 ## What RPG Turnos Owns
 
-RPG Turnos owns its mechanics, classes, encounter rules, and progression systems.
+RPG Turnos owns its class mechanics, encounter rules, progression systems, runtime and implementation.
 
-Its local characters, encounter arc and narrative delivery remain local. Only facts inside the adopted Core domains are shared.
+Its encounter arc and concrete delivery remain local. Only the lore, characters, classes, narrative and general objective enumerated by the adopted Core window are shared; new local details do not rise to that window automatically.
 
 ## Class Lore
 
-The three active classes are Invocador, Arcano, and Necromante. Each represents a Draxos mage specialty with its own combat doctrine, starter deck, passive ability, and hero power.
+The three active classes are Invocador, Arcano, and Necromante. Their names, fiction and roleplay identity are shared with Draxos Roguelike through the adopted Core window.
 
-Their detailed in-universe roles remain deliberately undefined. Future anchoring must use shared lore plus an explicit local decision; another project's character work cannot define it implicitly.
+Their combat doctrines, starter decks, passive abilities, hero powers and board behavior are local RPG Turnos mechanics. The class documents must point to Core for shared identity and to themselves for mechanics.
 
 ## Encounter Arc
 

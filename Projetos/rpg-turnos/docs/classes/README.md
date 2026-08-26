@@ -3,13 +3,19 @@
 - Last Updated: `2026-08-26`
 - Status: `implemented baseline; human playability not revalidated after P20 repair`
 - Referência: `../lore-campaign.md`, `../game-design-document.md`
-- Autoridade de lore compartilhado: `../../STUDIO_CORE.md`; adoção e detalhes locais: `../lore-campaign.md`
+- Autoridade de identidade e lore compartilhada: `D:\Studio Core\universe\windows\DRAXOS_ELEMENTAL_EXPEDITION.md@lore.v2`, adotada por `../../STUDIO_CORE.md`
+- Autoridade mecânica: este índice e os três documentos de classe locais
 
 ## Decisão de Design
 
 O jogador escolhe uma classe no início da campanha e mantém essa identidade até o fim. Recompensas são definidas pelos encontros, não pela classe — qualquer classe pode receber qualquer recompensa de campanha.
 
 O jogador é sempre um **Comandante Draxos**. A classe define o estilo de combate, não a raça.
+
+Arcano, Invocador e Necromante compartilham nome, identidade ficcional e papel
+narrativo com Draxos Roguelike somente no recorte da janela do Core. Passivas,
+hero powers, decks, cartas, stats, encounters e comportamento no tabuleiro
+descritos aqui são locais ao RPG Turnos.
 
 ## As Três Classes
 

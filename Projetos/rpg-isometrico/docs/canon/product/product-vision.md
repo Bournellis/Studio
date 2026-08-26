@@ -4,7 +4,7 @@
 
 - status: living
 - authority: product_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-08-26
 - review_when: identidade, escopo ou pilares do produto mudarem
 - supersedes: none
 - superseded_by: none
@@ -82,6 +82,11 @@ Lore is primarily presented and evolved through campaigns. Complementary modes m
 
 Players who want lore should be able to discover it, but the game should never force heavy exposition before the combat fantasy is clear.
 
+Shared foundation, Draxos and broad Imortais-continuity facts are constrained by
+`../../../STUDIO_CORE.md` and its exact `lore.v2` thematic authorities. Campaign
+realization, race gameplay, weapons, skills and every product-specific detail in
+this document remain local.
+
 ---
 
 ## 4. Race System
@@ -104,6 +109,11 @@ Placeholder race directions:
 - **Draxos**: arcane intergalactic beings, astral energy, domination, enslavement, ether-plasm bases, magical mobility and control
 
 These race directions are canonical as identity territory, but not as a declaration of fully authored content.
+
+For Draxos, the shared fictional facts come from the adopted `draxos` domain;
+the combat identity and product examples above are local RPG Isometrico design.
+The `imortais_troll_forja` domain establishes only the shared facts enumerated
+by Core and does not promote this project's detailed race or campaign material.
 
 ### Race Growth Rule
 

@@ -6,10 +6,14 @@
 - authority: `product_contract`
 - last_verified: `2026-08-26`
 - review_when: `a campanha local ou os domínios adotados mudar`
-- supersedes: `lore-campaign anterior ao Studio Core lore.v1`
+- supersedes: `lore-campaign anterior ao alinhamento temático lore.v2`
 - superseded_by: `none`
 
-Shared-universe binding: `../STUDIO_CORE.md`. Shared facts come only from the adopted `shared_foundation`, `draxos` and `draxos_elemental_expedition` domains. This document owns the Roguelike's local campaign delivery.
+Shared-universe binding: `../STUDIO_CORE.md`. Shared facts come only from the
+adopted `shared_foundation`, `draxos` and `draxos_elemental_expedition` domains
+at `lore.v2`. The exact cross-project authority is
+`D:\Studio Core\universe\windows\DRAXOS_ELEMENTAL_EXPEDITION.md`; this document
+owns only the Roguelike's local campaign delivery.
 
 ## Premise
 
@@ -47,8 +51,14 @@ The Draxos want to:
 
 ## Relationship To RPG Turnos
 
-RPG Turnos independently adopts the same Core expedition domain through its own `STUDIO_CORE.md`; it does not inherit lore directly from this document.
+The adopted Core window declares that this game and RPG Turnos share lore,
+characters, classes, narrative and the expedition's general objective. This
+document is not a second shared authority; it manifests that shared axis for
+the Roguelike.
 
-RPG Turnos does not inherit exploration movement, campaign progression, combat economy, or board complexity from this project. Those are independent mechanics.
+Mechanics, runtime, encounter rules, campaign progression, combat economy, board structure, presentation and implementation remain independent and local to each game.
 
-Neither project may promote the other's characters, encounters or implementation into shared canon. Shared changes must first be authored in the Studio Core and then adopted through each local binding.
+The shared scope is exactly what the Core window enumerates. A new local
+character, encounter or delivery detail does not become shared by proximity;
+changes to the shared axis must first be authored in Studio Core and then
+adopted through both bindings.

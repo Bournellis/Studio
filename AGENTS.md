@@ -128,7 +128,10 @@ Route domains:
 
 ## Studio Core, Canon And Product Boundaries
 
-- `STUDIO_CORE.md` routes shared lore to the external `D:\Studio Core` authority at logical revision `lore.v1`.
+- `STUDIO_CORE.md` routes shared lore to the thematic authorities and exact
+  provenance snapshots in external `D:\Studio Core` at logical revision
+  `lore.v2`; `CANON_CURRENT.md` and `NARRATIVE_WINDOWS.md` are routers, not
+  monolithic authorities.
 - Every official project declares `shared` or `none` plus adopted domains in its local `STUDIO_CORE.md`.
 - `canon/shared-lore/` contains superseded recovery bridges, not living shared authority.
 - `canon/studio-conventions/project-boundaries.md` remains the local operational adoption contract.
@@ -137,7 +140,7 @@ Route domains:
 - A mechanic crosses projects only through explicit adoption in the receiving project's local contract.
 - JogoDaCopa and FpsPlayground inherit no Draxos gameplay/economy/progression/backend rules.
 - DraxosMobile inherits no gameplay from the Roguelike, RPG Turnos or RPG Isometrico.
-- Shared-universe membership never implies crossover, shared campaign, knowledge between peoples or promotion of local lore.
+- Shared-universe membership never implies crossover, shared campaign, knowledge between peoples or promotion of local lore; only a literally adopted thematic authority or narrative window can declare a narrower shared scope.
 
 ## Godot And Validation
 

@@ -12,10 +12,11 @@
 ## Binding
 
 - project_id: `rpg-isometrico`
-- core_revision: `lore.v1`
+- core_revision: `lore.v2`
 - universe_binding: `shared`
-- adopted_domains: `[shared_foundation, imortais_troll_forja]`
+- adopted_domains: `[shared_foundation, draxos, imortais_troll_forja]`
+- domain_authorities: `shared_foundation -> universe/{FOUNDATION,HUMANITIES_AND_FACTIONS,COEXISTING_BEINGS}.md; draxos -> universe/DRAXOS.md; imortais_troll_forja -> universe/{IMORTAIS,CONTINUITY}.md`
 - local_lore_authority: `docs/canon/`
 - cannot_infer: `o vínculo não promove detalhes, campanhas, personagens ou relações locais de Imortais, Troll ou Forja ao cânone compartilhado`
 
-O Core governa somente os fatos dos domínios adotados. Cânone de produto, campanha, personagens, mecânicas e implementação permanecem locais.
+O Core governa somente os fatos das autoridades temáticas adotadas. Cânone de produto, campanha, personagens, mecânicas e implementação permanecem locais.

@@ -12,10 +12,12 @@
 ## Binding
 
 - project_id: `rpg-turnos`
-- core_revision: `lore.v1`
+- core_revision: `lore.v2`
 - universe_binding: `shared`
 - adopted_domains: `[shared_foundation, draxos, draxos_elemental_expedition]`
+- domain_authorities: `shared_foundation -> universe/{FOUNDATION,HUMANITIES_AND_FACTIONS,COEXISTING_BEINGS}.md; draxos -> universe/DRAXOS.md; draxos_elemental_expedition -> universe/windows/DRAXOS_ELEMENTAL_EXPEDITION.md`
 - local_lore_authority: `docs/lore-campaign.md`
-- cannot_infer: `o vínculo não transforma outro jogo em autoridade local nem compartilha mecânica, progressão, personagem ou implementação`
+- shared_with_draxos_roguelike: `lore, personagens, classes, narrativa e objetivo geral da expedição, somente no recorte da janela adotada`
+- cannot_infer: `o compartilhamento aprovado não inclui mecânica, runtime, encontros, progressão, apresentação ou implementação`
 
-O Core governa somente os fatos dos domínios adotados. A campanha, encontros, classes, conteúdo e implementação deste jogo permanecem locais.
+O Core e sua janela governam o recorte compartilhado. `docs/lore-campaign.md` governa somente a manifestação local do RPG Turnos; mecânica, runtime, encontros e implementação permanecem locais.

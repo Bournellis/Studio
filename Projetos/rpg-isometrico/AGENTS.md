@@ -15,7 +15,10 @@ O RPG Isométrico permanece `PAUSADO_INDEFINIDO`. O portfólio em `../../08_Coor
 
 `implementation/current-status.md` é a única autoridade técnica local. Documentos de track são história até retomada explícita.
 
-O canon de produto vive em `docs/canon/`. `STUDIO_CORE.md` declara os domínios compartilhados adotados na revisão `lore.v1`; nenhuma regra ou detalhe local deste produto se aplica automaticamente aos demais projetos ou sobe ao Core.
+O canon de produto vive em `docs/canon/`. `STUDIO_CORE.md` declara
+`shared_foundation`, `draxos` e `imortais_troll_forja` na revisão `lore.v2` e
+aponta para as autoridades temáticas exatas; nenhuma regra ou detalhe local
+deste produto se aplica automaticamente aos demais projetos ou sobe ao Core.
 
 ## Ordem de leitura
 

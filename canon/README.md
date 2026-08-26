@@ -9,16 +9,19 @@
 - supersedes: none
 - superseded_by: ../STUDIO_CORE.md
 
-O cânone compartilhado vivo passou para `D:\Studio Core` na revisão lógica `lore.v1`. A ponte oficial deste workspace é `../STUDIO_CORE.md`.
+O cânone compartilhado vivo passou para `D:\Studio Core` na revisão lógica `lore.v2`. A ponte oficial deste workspace é `../STUDIO_CORE.md`.
 
 ## Leitura
 
-1. `../STUDIO_CORE.md` para localizar a autoridade compartilhada.
+1. `../STUDIO_CORE.md` para localizar as autoridades temáticas detalhadas e as janelas compartilhadas.
 2. `../Projetos/<projeto>/STUDIO_CORE.md` para confirmar vínculo e domínios adotados.
 3. `studio-conventions/project-boundaries.md` para adoção operacional local.
 4. Contratos locais do projeto para produto, campanha, personagens e implementação.
 
-`shared-lore/` contém pontes superseded com proveniência recuperável. Esses arquivos não devem ser usados para introduzir ou decidir fatos de universo.
+`shared-lore/` contém pontes superseded com proveniência recuperável. Cada ponte
+aponta para sua autoridade temática `lore.v2` e para o snapshot literal exato em
+`D:\Studio Core\provenance\source_snapshots\estudio-d6db58e4\`. Esses arquivos e
+snapshots não devem ser usados para introduzir ou decidir fatos de universo.
 
 ## Autoridades de produto locais
 
@@ -28,4 +31,7 @@ O cânone compartilhado vivo passou para `D:\Studio Core` na revisão lógica `l
 - DraxosMobile: `../Projetos/draxos-mobile/docs/product-vision.md` e demais contratos locais
 - JogoDaCopa e FpsPlayground: documentos locais dos respectivos tech probes
 
-Todo projeto deve adotar explicitamente qualquer regra externa em documento local. Vínculo com o universo não implica compartilhar mecânicas, campanhas, personagens, conhecimento diegético ou crossovers.
+Todo projeto deve adotar explicitamente qualquer regra externa em documento
+local. Vínculo com o universo não implica compartilhar mecânicas, campanhas,
+personagens, conhecimento diegético ou crossovers; uma exceção só existe quando
+uma autoridade temática ou janela adotada a declara literalmente.

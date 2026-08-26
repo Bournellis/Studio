@@ -1,8 +1,17 @@
 # Classes - Indice
 
-- Last Updated: `2026-05-27`
+- Last Updated: `2026-08-26`
 - Status: `Track 02 complete-run baseline`
 - Referencia: `../game-design-document.md`
+
+## Fronteira de autoridade
+
+Os nomes, a identidade ficcional e o papel narrativo de Arcano, Invocador e
+Necromante pertencem ao recorte compartilhado com RPG Turnos declarado
+exclusivamente em
+`D:\Studio Core\universe\windows\DRAXOS_ELEMENTAL_EXPEDITION.md@lore.v2`.
+Decks, cartas, passivas, habilidades, unlocks, rewards, stats e balanceamento
+descritos aqui são mecânicas locais do Roguelike.
 
 ## Decisao Atual
 

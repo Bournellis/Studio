@@ -34,7 +34,7 @@ Global documentation router. It carries no package, marker, release URL or next 
 
 ## Canon
 
-- `../STUDIO_CORE.md` - bridge to shared canon revision `lore.v1` and binding registry in `D:\Studio Core`.
+- `../STUDIO_CORE.md` - bridge to thematic shared canon revision `lore.v2`, exact source snapshots and the binding registry in `D:\Studio Core`.
 - Project `STUDIO_CORE.md` - explicit `shared` or `none` binding, adopted domains and local lore authority.
 - `../canon/canon-brief.md` and `../canon/README.md` - transitional local routers to the Core.
 - `../canon/shared-lore/` - superseded provenance bridges; not living canon.

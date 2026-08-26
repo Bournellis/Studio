@@ -12,7 +12,7 @@
 ## Binding
 
 - project_id: `JogoDaCopa`
-- core_revision: `lore.v1`
+- core_revision: `lore.v2`
 - universe_binding: `none`
 - adopted_domains: `[]`
 - local_lore_authority: `none`

@@ -33,7 +33,8 @@ Reuso de código também exige compatibilidade com os limites locais. Copiar uma
 
 - O canon de produto do RPG Isométrico vive em `Projetos/rpg-isometrico/docs/canon/`.
 - RPG Turnos não herda loadout, combate em tempo real, câmera, modos ou roadmap do RPG Isométrico.
-- Draxos Roguelike Cardgame não é variante do RPG Turnos.
+- Draxos Roguelike Cardgame e RPG Turnos adotam `D:\Studio Core\universe\windows\DRAXOS_ELEMENTAL_EXPEDITION.md@lore.v2`, que compartilha exatamente lore, personagens, classes, narrativa e objetivo geral da expedição.
+- Os dois não são variantes entre si: mecânica, runtime, encontros, economia, progressão, apresentação e implementação permanecem locais.
 - DraxosMobile não herda gameplay, economia ou progressão dos outros projetos Draxos.
 - JogoDaCopa e FpsPlayground possuem `universe_binding: none` e não herdam lore, identidade ou sistemas Draxos.
 - Referências visuais eventuais são locais e não alteram esse vínculo.

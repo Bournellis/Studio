@@ -216,7 +216,10 @@ Evitar:
 
 Este documento e canon local de produto para DraxosMobile. Ele informa `docs/product-brief.md`, `docs/game-design-document.md`, `docs/architecture.md`, `docs/contracts/` e as tracks de implementacao.
 
-O binding `../STUDIO_CORE.md` adota somente `shared_foundation` e `draxos` da revisão `lore.v1`. Produto, gameplay, plataforma e toda narrativa local permanecem governados por este projeto; nenhum outro jogo é autoridade implícita.
+O binding `../STUDIO_CORE.md` adota somente `shared_foundation` e `draxos` da
+revisão `lore.v2`, roteados às autoridades temáticas exatas ali declaradas.
+Produto, gameplay, plataforma e toda narrativa local permanecem governados por
+este projeto; nenhum outro jogo é autoridade implícita.
 
 ## Preservado Para Calibragem Futura
 

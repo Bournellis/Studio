@@ -1,7 +1,7 @@
 # RPG Turnos Game Design Document
 
 - Version: `1.1`
-- Last Updated: `2026-05-12`
+- Last Updated: `2026-08-26`
 - Status: `C1_LOCKED_AS_CURRENT_CARDGAME_CORE`
 - Incorporated Source: `C:/Users/Fabio/Downloads/cardgame_slots_implementacao_codex_v0_1.md`
 
@@ -11,7 +11,10 @@
 
 The active narrative direction is defined in `lore-campaign.md` and its lore authority: the first campaign follows a Draxos commander during the invasion of an elemental planet, operating under the orders of the Grande Mestre. Existing runtime names in the playable slice are placeholders until migrated by a dedicated content pass.
 
-The game has **3 classes**: Arcano, Invocador, and Necromante. These are the same classes as in `Projetos/draxos-roguelike-cardgame` in terms of lore identity and roleplay. Their mechanics are independently designed for the RPG Turnos board system. See `docs/classes/README.md` for the full class index.
+The game has **3 classes**: Arcano, Invocador, and Necromante. Studio Core's
+adopted expedition window makes their lore identity and roleplay shared with
+Draxos Roguelike. Their mechanics are independently designed for the RPG Turnos
+board system. See `docs/classes/README.md` for the full class index.
 
 C1 is no longer a variant. C1 is the current game:
 

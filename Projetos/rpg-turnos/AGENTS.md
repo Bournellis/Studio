@@ -21,8 +21,10 @@ Current premise:
 
 - provisional project name: `rpg-turnos`
 - complete Godot project, started clean
-- shared lore: only the `lore.v1` domains explicitly adopted in `STUDIO_CORE.md`
-- initial story: a novice Draxos mage joins a respected strike team invading an elemental planet from an ether-plasm base
+- shared lore: only the `lore.v2` thematic authorities explicitly adopted in `STUDIO_CORE.md`
+- the adopted expedition window is the sole authority for lore, characters, classes, narrative and the general expedition objective shared with Draxos Roguelike
+- mechanics, runtime, encounter rules, progression, presentation and implementation remain local to RPG Turnos
+- initial story: the Draxos commander leads the shared expedition against an elemental planet from an ether-plasm base under the Grande Mestre's strategic authority
 - current runtime names are placeholders unless promoted by `docs/lore-campaign.md`
 - RPG exploration with a freely moving map character
 - NPC conversations, route choices, items, stats, level, and progression are expected pillars
@@ -59,9 +61,14 @@ For bounded work:
 
 ## Canon Rule
 
-Only the Core domains declared in `STUDIO_CORE.md` inform this project.
+Only the Core domains declared in `STUDIO_CORE.md` inform this project. The
+expedition window there defines the exact shared scope with Draxos Roguelike;
+neither project's local document becomes a second shared authority.
 
-Do not silently import RPG Isometrico mechanics as RPG Turnos canon. The action loadout, real-time combat, fixed action camera, and campaign progression rules from RPG Isometrico are references only unless a local RPG Turnos document explicitly adopts them.
+Do not silently import RPG Isometrico mechanics as RPG Turnos canon. The action
+loadout, real-time combat, fixed action camera, and campaign progression rules
+from RPG Isometrico are references only unless a local RPG Turnos document
+explicitly adopts them.
 
 If local RPG Turnos lore conflicts with an adopted Core fact, the Core fact wins until either the binding or Core canon is explicitly updated. Product and mechanics remain local.
 

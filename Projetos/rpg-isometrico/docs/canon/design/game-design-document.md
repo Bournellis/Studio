@@ -4,7 +4,7 @@
 
 - status: living
 - authority: product_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-08-26
 - review_when: regras centrais, modos, armas ou campanha mudarem
 - supersedes: none
 - superseded_by: none
@@ -61,6 +61,8 @@ Each race has:
 | Draxos | Arcane intergalactic beings | Astral spells, ether constructs, domination tools | Astral energy, magical mobility, control, enslavement |
 
 These are product-level design territories, not a declaration of currently implemented content.
+
+Shared Draxos and Imortais-continuity facts are governed through `../../../STUDIO_CORE.md` at `lore.v2`. Weapon examples, resource direction, combat rules and all concrete race implementation in this table remain local product design.
 
 ### Race and Weapon Relationship
 

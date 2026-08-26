@@ -27,8 +27,9 @@ Enquanto o portifolio mantiver o projeto pausado, permita somente consulta, gove
 - classes Arcano, Invocador e Necromante;
 - regras de deck, mana, compra, run, recompensa e combate sao locais;
 - `rpg-turnos`, `rpg-isometrico` e DraxosMobile nao sao fontes automaticas de mecanica;
-- `STUDIO_CORE.md` adota somente `shared_foundation`, `draxos` e `draxos_elemental_expedition` da revisao `lore.v1`;
-- o Core informa os fatos compartilhados, mas nao importa gameplay, economia, personagens locais, campanha ou plataforma.
+- `STUDIO_CORE.md` adota somente `shared_foundation`, `draxos` e `draxos_elemental_expedition` da revisao `lore.v2` e aponta para cada autoridade tematica exata;
+- a janela da expedicao e a unica autoridade para o recorte compartilhado com RPG Turnos: lore, personagens, classes, narrativa e objetivo geral;
+- mecanica, runtime, encontros, economia, progressao, apresentacao e implementacao continuam locais a cada jogo.
 
 ## Leitura
 
