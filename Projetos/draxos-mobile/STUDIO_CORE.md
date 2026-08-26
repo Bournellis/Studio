@@ -15,7 +15,7 @@
 - core_revision: `lore.v2`
 - universe_binding: `shared`
 - adopted_domains: `[shared_foundation, draxos]`
-- domain_authorities: `shared_foundation -> universe/{FOUNDATION,HUMANITIES_AND_FACTIONS,COEXISTING_BEINGS}.md; draxos -> universe/DRAXOS.md`
+- domain_authorities: `shared_foundation -> universe/FOUNDATION.md + universe/HUMANITIES_AND_FACTIONS.md + universe/COEXISTING_BEINGS.md; draxos -> universe/DRAXOS.md`
 - local_lore_authority: `docs/product-vision.md`
 - cannot_infer: `o vínculo não adota a expedição elemental, gameplay, economia, progressão ou campanha de outro projeto`
 
