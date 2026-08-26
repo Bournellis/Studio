@@ -15,8 +15,19 @@
 - core_revision: `lore.v2`
 - universe_binding: `shared`
 - adopted_domains: `[shared_foundation, draxos, imortais_troll_forja]`
-- domain_authorities: `shared_foundation -> universe/FOUNDATION.md + universe/HUMANITIES_AND_FACTIONS.md + universe/COEXISTING_BEINGS.md; draxos -> universe/DRAXOS.md; imortais_troll_forja -> universe/IMORTAIS.md + universe/CONTINUITY.md`
+- domain_authorities: `consulte Autoridades exatas abaixo`
 - local_lore_authority: `docs/canon/`
 - cannot_infer: `o vínculo não promove detalhes, campanhas, personagens ou relações locais de Imortais, Troll ou Forja ao cânone compartilhado`
 
 O Core governa somente os fatos das autoridades temáticas adotadas. Cânone de produto, campanha, personagens, mecânicas e implementação permanecem locais.
+
+## Autoridades exatas
+
+- `shared_foundation`:
+  - `D:\Studio Core\universe\FOUNDATION.md`
+  - `D:\Studio Core\universe\HUMANITIES_AND_FACTIONS.md`
+  - `D:\Studio Core\universe\COEXISTING_BEINGS.md`
+- `draxos`: `D:\Studio Core\universe\DRAXOS.md`
+- `imortais_troll_forja`:
+  - `D:\Studio Core\universe\IMORTAIS.md`
+  - `D:\Studio Core\universe\CONTINUITY.md`
