@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `operational_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-08-26`
 - review_when: `project boundaries, QA or local coordination change`
 - supersedes: `FpsPlayground AGENTS before Governance v2`
 - superseded_by: `none`
@@ -15,18 +15,20 @@ This file governs agent work inside `Projetos/FpsPlayground`.
 
 1. Read `../../08_Coordenacao_Agentes/Prioridades_Estudio.md` for allowed work.
 2. Read `implementation/current-status.md` for the local technical baseline and next technical step.
-3. Read `08_Coordenacao/README.md`, `08_Coordenacao/TRIAGE.md` and the live local card.
-4. Use `docs/documentation-index.md` and `qa/QA_INDEX.md` to select the smallest relevant references and checks.
+3. Read `STUDIO_CORE.md` when universe, fiction or shared identity is relevant.
+4. Read `08_Coordenacao/README.md`, `08_Coordenacao/TRIAGE.md` and the live local card.
+5. Use `docs/documentation-index.md` and `qa/QA_INDEX.md` to select the smallest relevant references and checks.
 
 The portfolio authority may not be redefined locally. Local work queues `global_sync_needed` and does not edit the global snapshot.
 
 ## Project Boundary
 
 - PC Windows editor-first first-person arena gameplay laboratory.
+- `STUDIO_CORE.md` declares `universe_binding: none`; Studio membership does not adopt shared lore, cosmology or aesthetics.
 - Owns the three 1x1 arenas, rifle/Plasma combat, pickups, jump pads, duel flow, local telemetry and route-first bot.
 - Football/TPS belongs to `../JogoDaCopa`.
 - No export, Web/mobile, multiplayer/backend, progression or Draxos economy is implied.
-- Shared lore or another project's mechanics apply only through an explicit local adoption contract.
+- Another project's lore or mechanics apply only through an explicit local adoption contract and an intentional binding change.
 
 ## Local-First Workflow
 

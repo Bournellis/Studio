@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `runbook`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-26`
 - review_when: `authority order, worktree, closure or portfolio-sync contracts change`
 - supersedes: `estudio-agent-workflow-current.md before Documentation Lite`
 - superseded_by: `none`
@@ -21,7 +21,7 @@ This is a compact execution guide. `AGENTS.md` remains the operational contract 
 6. Target project `implementation/current-status.md`.
 7. Target local coordination card, `TRIAGE.md` and `qa/QA_INDEX.md`.
 
-Read `canon/canon-brief.md` only for shared lore or project-boundary questions. Never infer current focus from this guide.
+Read `STUDIO_CORE.md` and the target project binding only for shared lore or universe-membership questions. Read `canon/studio-conventions/project-boundaries.md` for local adoption rules. Never infer current focus from this guide.
 
 ## Worktree Rule
 

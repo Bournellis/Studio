@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `operational_contract`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-26`
 - review_when: `governance, portfolio, Git or validation contract changes`
 - supersedes: `AGENTS.md before Governance v2`
 - superseded_by: `none`
@@ -126,15 +126,18 @@ Route domains:
 
 `Draxos` alone does not select a project. Paused projects allow only consultation, governance and explicitly authorized integrity work unless Fabio explicitly resumes product work.
 
-## Canon And Product Boundaries
+## Studio Core, Canon And Product Boundaries
 
-- `canon/shared-lore/` contains reusable lore and stable cross-project identity.
-- `canon/studio-conventions/project-boundaries.md` defines adoption boundaries.
+- `STUDIO_CORE.md` routes shared lore to the external `D:\Studio Core` authority at logical revision `lore.v1`.
+- Every official project declares `shared` or `none` plus adopted domains in its local `STUDIO_CORE.md`.
+- `canon/shared-lore/` contains superseded recovery bridges, not living shared authority.
+- `canon/studio-conventions/project-boundaries.md` remains the local operational adoption contract.
 - RPG Isometrico product canon lives in `Projetos/rpg-isometrico/docs/canon/`.
 - Other projects own their product, mechanics, progression, architecture and platform contracts locally.
 - A mechanic crosses projects only through explicit adoption in the receiving project's local contract.
 - JogoDaCopa and FpsPlayground inherit no Draxos gameplay/economy/progression/backend rules.
 - DraxosMobile inherits no gameplay from the Roguelike, RPG Turnos or RPG Isometrico.
+- Shared-universe membership never implies crossover, shared campaign, knowledge between peoples or promotion of local lore.
 
 ## Godot And Validation
 

@@ -4,7 +4,7 @@
 
 - status: living
 - authority: operational_contract
-- last_verified: 2026-07-17
+- last_verified: 2026-08-26
 - review_when: governança, arquitetura ou gates locais mudarem
 - supersedes: AGENTS.md anterior ao cutover de governança v2
 - superseded_by: none
@@ -15,13 +15,13 @@ This file governs agent behavior for the Godot implementation of RPG Turnos.
 
 `Projetos/rpg-turnos/` is a new Godot project for a 2D RPG with turn-based card-and-board battles.
 
-The project is independent from `Projetos/rpg-isometrico/` at the mechanics and runtime level, but it may share the same broader lore and setting territory from the studio canon.
+The project is independent from `Projetos/rpg-isometrico/` at the mechanics and runtime level. It adopts only the Studio Core domains declared in `STUDIO_CORE.md`.
 
 Current premise:
 
 - provisional project name: `rpg-turnos`
 - complete Godot project, started clean
-- shared lore: far-future galaxy, post-nuclear Earth, human factions, celestial/intergalactic beings, and Draxos as arcane astral conquerors
+- shared lore: only the `lore.v1` domains explicitly adopted in `STUDIO_CORE.md`
 - initial story: a novice Draxos mage joins a respected strike team invading an elemental planet from an ether-plasm base
 - current runtime names are placeholders unless promoted by `docs/lore-campaign.md`
 - RPG exploration with a freely moving map character
@@ -39,32 +39,31 @@ Current active combat rule:
 
 Before substantial work:
 
-1. `../../canon/canon-brief.md`
-2. `../../canon/shared-lore/shared-lore.md`
-3. `../../canon/shared-lore/draxos-invasion.md`
-4. `docs/lore-campaign.md`
-5. `implementation/current-status.md`
+1. `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
+2. `implementation/current-status.md`
+3. this file
+4. `STUDIO_CORE.md`, then `../../STUDIO_CORE.md`, only when lore or universe is relevant
+5. `docs/lore-campaign.md`
 6. `docs/resume-brief.md`
 7. `docs/game-design-document.md`
 8. `docs/architecture.md`
 9. `docs/class-catalog-schema.md`
-10. this file
-11. touched files
+10. touched files
 
 For bounded work:
 
-1. `../../canon/canon-brief.md`
-2. `implementation/current-status.md`
-3. this file
+1. `implementation/current-status.md`
+2. this file
+3. `STUDIO_CORE.md` when lore or universe is relevant
 4. touched files
 
 ## Canon Rule
 
-Shared lore and setting canon may inform this project.
+Only the Core domains declared in `STUDIO_CORE.md` inform this project.
 
 Do not silently import RPG Isometrico mechanics as RPG Turnos canon. The action loadout, real-time combat, fixed action camera, and campaign progression rules from RPG Isometrico are references only unless a local RPG Turnos document explicitly adopts them.
 
-If local RPG Turnos design conflicts with shared lore, shared lore wins until the canon is explicitly updated.
+If local RPG Turnos lore conflicts with an adopted Core fact, the Core fact wins until either the binding or Core canon is explicitly updated. Product and mechanics remain local.
 
 ## Godot Rule
 

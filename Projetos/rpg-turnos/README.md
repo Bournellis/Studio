@@ -1,6 +1,6 @@
 # RPG Turnos
 
-`rpg-turnos` is a provisional Godot project for a 2D RPG with turn-based card-and-board battles. It shares studio lore while remaining mechanically independent from RPG Isometrico.
+`rpg-turnos` is a provisional Godot project for a 2D RPG with turn-based card-and-board battles. It adopts only the Studio Core domains declared in `STUDIO_CORE.md` and remains mechanically independent from RPG Isometrico.
 
 ## Current Shape
 
@@ -30,4 +30,4 @@
 
 ## Start Here
 
-Read `AGENTS.md`, `../../canon/shared-lore/shared-lore.md`, `docs/lore-campaign.md`, `docs/game-design-document.md`, `docs/architecture.md`, and `implementation/current-status.md` before making meaningful changes.
+Read `AGENTS.md`, `STUDIO_CORE.md`, `docs/lore-campaign.md`, `docs/game-design-document.md`, `docs/architecture.md`, and `implementation/current-status.md` before making meaningful changes.

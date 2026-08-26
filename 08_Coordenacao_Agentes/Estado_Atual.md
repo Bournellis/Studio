@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `portfolio_snapshot`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-26`
 - review_when: `PortfolioSync_QUEUE has a pending local baseline change`
 - supersedes: `none`
 - superseded_by: `none`
@@ -88,4 +88,4 @@
 
 ## Canon
 
-- Fonte compartilhada estavel: `canon/` (brief rapido: `canon/canon-brief.md`)
+- Ponte para a autoridade compartilhada externa: `../STUDIO_CORE.md`; cada projeto declara seu vínculo em `STUDIO_CORE.md` local.

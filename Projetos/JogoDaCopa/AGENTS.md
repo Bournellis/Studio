@@ -4,23 +4,26 @@
 
 - status: living
 - authority: operational_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-08-26
 - review_when: governança, arquitetura ou gates locais mudarem
 - supersedes: AGENTS.md anterior ao cutover de governança v2
 - superseded_by: none
 
 ## Papel do projeto
 
-`JogoDaCopa` é o projeto Godot oficial do minigame TPS de futebol `Super Campeao`. Ele é independente do FPS, não possui armas e não herda mecânicas Draxos. O portfólio governa o trabalho permitido; este arquivo governa como trabalhar localmente.
+`JogoDaCopa` é o projeto Godot oficial do minigame TPS de futebol `Super Campeao`. Seu `STUDIO_CORE.md` declara `universe_binding: none`: ele é independente do universo compartilhado, do FPS e de mecânicas Draxos.
+
+O portfólio governa o trabalho permitido; este arquivo governa como trabalhar localmente.
 
 ## Ordem de leitura
 
 1. `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 2. `implementation/current-status.md`
-3. `08_Coordenacao/README.md`
-4. `qa/QA_INDEX.md`
-5. `docs/documentation-index.md`
-6. contrato ou arquivo tocado
+3. `STUDIO_CORE.md` quando universo, ficção ou identidade compartilhada forem relevantes
+4. `08_Coordenacao/README.md`
+5. `qa/QA_INDEX.md`
+6. `docs/documentation-index.md`
+7. contrato ou arquivo tocado
 
 ## Coordenação e Git
 

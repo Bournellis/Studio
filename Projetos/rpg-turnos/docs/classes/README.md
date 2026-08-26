@@ -1,9 +1,9 @@
 # Classes — Índice
 
-- Last Updated: `2026-07-17`
+- Last Updated: `2026-08-26`
 - Status: `implemented baseline; human playability not revalidated after P20 repair`
 - Referência: `../lore-campaign.md`, `../game-design-document.md`
-- Autoridade de Lore: `../../../canon/shared-lore/` com adoção local em `../lore-campaign.md`
+- Autoridade de lore compartilhado: `../../STUDIO_CORE.md`; adoção e detalhes locais: `../lore-campaign.md`
 
 ## Decisão de Design
 

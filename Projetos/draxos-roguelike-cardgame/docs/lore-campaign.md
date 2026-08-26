@@ -1,8 +1,15 @@
 # Lore Campaign
 
-- Last Updated: `2026-05-07`
-- Status: `bootstrap narrative direction`
-- Shared Canon: `../../../canon/shared-lore/shared-lore.md`, `../../../canon/shared-lore/draxos-invasion.md`
+## Metadata
+
+- status: `living`
+- authority: `product_contract`
+- last_verified: `2026-08-26`
+- review_when: `a campanha local ou os domínios adotados mudar`
+- supersedes: `lore-campaign anterior ao Studio Core lore.v1`
+- superseded_by: `none`
+
+Shared-universe binding: `../STUDIO_CORE.md`. Shared facts come only from the adopted `shared_foundation`, `draxos` and `draxos_elemental_expedition` domains. This document owns the Roguelike's local campaign delivery.
 
 ## Premise
 
@@ -40,8 +47,8 @@ The Draxos want to:
 
 ## Relationship To RPG Turnos
 
-RPG Turnos shares all Draxos lore from this document.
+RPG Turnos independently adopts the same Core expedition domain through its own `STUDIO_CORE.md`; it does not inherit lore directly from this document.
 
 RPG Turnos does not inherit exploration movement, campaign progression, combat economy, or board complexity from this project. Those are independent mechanics.
 
-The shared lore anchor is `../../../canon/shared-lore/draxos-invasion.md`.
+Neither project may promote the other's characters, encounters or implementation into shared canon. Shared changes must first be authored in the Studio Core and then adopted through each local binding.

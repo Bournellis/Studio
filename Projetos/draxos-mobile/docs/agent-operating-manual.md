@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `runbook`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-26`
 - review_when: `task routing, validation or hard stops change`
 - supersedes: `none`
 - superseded_by: `none`
@@ -21,21 +21,22 @@ This manual explains how agents should operate DraxosMobile without reopening ol
 Read live docs in this order:
 
 1. `AGENTS.md` - fast operating rules.
-2. `implementation/current-status.md` - short decision snapshot.
-3. `docs/documentation-index.md` - where each doc belongs.
-4. `docs/foundation-expansion-readiness.md` - delivered pre-expansion gate and closeout contract base.
-5. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
-6. `docs/product-vision.md` - local long-term product canon.
-7. `docs/pve-arena-initial-direction.md` - approved early-game direction.
-8. `docs/arena-pve-product-proof.md` - current Arena proof/verdict guardrail.
-9. `docs/arena-ux-proof-release-discipline-plan.md` - Arena UX proof execution and anti-micro-release plan.
-10. `docs/game-design-document.md` - implementation reference and mock/substance context.
-11. `docs/contracts/` - executable backend, content, feature and release contracts.
-12. `docs/design-pending.md` - only live register of unresolved design decisions.
-13. `docs/multi-agent-workflow.md` - required when coordinating parallel hardening lanes or mode work.
-14. `docs/hardening-program.md` - required for long-term refactor/hardening gates across active lanes.
+2. `STUDIO_CORE.md` - shared-universe binding; read the referenced Core only for lore or universe work.
+3. `implementation/current-status.md` - short decision snapshot.
+4. `docs/documentation-index.md` - where each doc belongs.
+5. `docs/foundation-expansion-readiness.md` - delivered pre-expansion gate and closeout contract base.
+6. `docs/foundation-responsive-layout-contract.md` - required when touching Entry, Refugio, Battle or visual/layout code.
+7. `docs/product-vision.md` - local long-term product canon.
+8. `docs/pve-arena-initial-direction.md` - approved early-game direction.
+9. `docs/arena-pve-product-proof.md` - current Arena proof/verdict guardrail.
+10. `docs/arena-ux-proof-release-discipline-plan.md` - Arena UX proof execution and anti-micro-release plan.
+11. `docs/game-design-document.md` - implementation reference and mock/substance context.
+12. `docs/contracts/` - executable backend, content, feature and release contracts.
+13. `docs/design-pending.md` - only live register of unresolved design decisions.
+14. `docs/multi-agent-workflow.md` - required when coordinating parallel hardening lanes or mode work.
+15. `docs/hardening-program.md` - required for long-term refactor/hardening gates across active lanes.
 
-If a historical track conflicts with these docs, the live docs win. If local product design conflicts with shared lore in `../../canon/`, escalate instead of silently choosing.
+If a historical track conflicts with these docs, the live docs win. If local lore conflicts with an adopted Studio Core fact, escalate instead of silently choosing; product design remains governed locally.
 
 ## Current Stage
 

@@ -1,47 +1,21 @@
-# Imortais
+# Imortais — fonte substituída
 
 ## Metadata
 
-- status: living
-- authority: product_contract
-- last_verified: 2026-07-16
-- review_when: o lore detalhado de Imortais for decidido
-- supersedes: none
-- superseded_by: none
+- status: `superseded`
+- authority: `historical_record`
+- last_verified: `2026-08-26`
+- review_when: `a proveniência ou a rota de recuperação mudar`
+- supersedes: `none`
+- superseded_by: `D:\Studio Core\universe\CANON_CURRENT.md@lore.v1`
 
-## Purpose
+Este caminho não é mais autoridade de cânone. Consulte `../../STUDIO_CORE.md` e `../../Projetos/rpg-isometrico/STUDIO_CORE.md` antes de interpretar a adoção local do domínio que reúne Imortais, Troll e Forja.
 
-This document records the current naming decision for Imortais.
+## Proveniência congelada
 
-Imortais replaces the old player-facing placeholder `Heroic` / `Heroico`.
+- source_commit: `d6db58e44b923e6fbad11cdbc37328c852c9eba9`
+- source_path: `canon/shared-lore/immortals.md`
+- source_sha256: `2db143b8dfbd30db357fa0300f54923acbb94bb0435d1d589793b2ee57241542`
+- recovery: `git show d6db58e44b923e6fbad11cdbc37328c852c9eba9:canon/shared-lore/immortals.md`
 
-## Current Canon
-
-Detailed Imortais lore is TBD.
-
-This TBD is an intentional canon gap, not a blocker for the current active P0
-or P2 work. Do not fill it from historical placeholder material without an
-explicit lore decision.
-
-Do not use old placeholder files, old campaign notes, or old Troll/Dragon campaign fragments as canon for the Imortais until the user explicitly re-establishes that material.
-
-## Current Mechanical Territory
-
-The existing RPG Isometrico implementation may still use technical IDs such as `heroic`, `heroic_hammer`, and related resource paths for stability.
-
-Those IDs are technical legacy IDs, not player-facing lore. A future rename should happen only as a dedicated compatibility pass that updates definitions, generated resources, tests, save/profile assumptions, and scene references together.
-
-The current player-facing mechanical identity can remain:
-
-- mythic weapons with magical properties
-- direct combat expression
-- melee pressure where the weapon supports it
-- hammer, bow, sword, and spear as example weapon territory
-
-This mechanical territory is not a complete lore description.
-
-## Project Usage
-
-`Projetos/rpg-isometrico` may use Imortais as the player-facing label for the current direct-combat baseline.
-
-The active story of the Imortais in RPG Isometrico is pending consolidation.
+A síntese compartilhada vive no Studio Core. Detalhes, personagens, campanhas e relações locais de Imortais, Troll e Forja não são promovidos por esta ponte; o conteúdo literal anterior permanece recuperável pelo commit e hash acima.

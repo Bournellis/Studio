@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `product_contract`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-26`
 - review_when: `Fabio approves a product-direction change`
 - supersedes: `promoted mobile-universe product framing`
 - superseded_by: `none`
@@ -216,7 +216,7 @@ Evitar:
 
 Este documento e canon local de produto para DraxosMobile. Ele informa `docs/product-brief.md`, `docs/game-design-document.md`, `docs/architecture.md`, `docs/contracts/` e as tracks de implementacao.
 
-O canon compartilhado em `../../canon/` informa lore, identidade Draxos e limites gerais do estudio. Ele ainda e majoritariamente orientado ao RPG Isometrico em produto/gameplay/plataforma; portanto, regras de RPG Isometrico nao sao aplicadas automaticamente aqui.
+O binding `../STUDIO_CORE.md` adota somente `shared_foundation` e `draxos` da revisão `lore.v1`. Produto, gameplay, plataforma e toda narrativa local permanecem governados por este projeto; nenhum outro jogo é autoridade implícita.
 
 ## Preservado Para Calibragem Futura
 

@@ -4,7 +4,7 @@
 
 - status: living
 - authority: operational_contract
-- last_verified: 2026-07-17
+- last_verified: 2026-08-26
 - review_when: pausa, governança, canon local ou arquitetura mudar
 - supersedes: AGENTS.md anterior ao cutover de governança v2
 - superseded_by: none
@@ -15,17 +15,18 @@ O RPG Isométrico permanece `PAUSADO_INDEFINIDO`. O portfólio em `../../08_Coor
 
 `implementation/current-status.md` é a única autoridade técnica local. Documentos de track são história até retomada explícita.
 
-O canon de produto vive em `docs/canon/`; lore compartilhado vive em `../../canon/shared-lore/`. Nenhuma regra deste produto se aplica automaticamente aos demais projetos.
+O canon de produto vive em `docs/canon/`. `STUDIO_CORE.md` declara os domínios compartilhados adotados na revisão `lore.v1`; nenhuma regra ou detalhe local deste produto se aplica automaticamente aos demais projetos ou sobe ao Core.
 
 ## Ordem de leitura
 
 1. `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 2. `implementation/current-status.md`
-3. `08_Coordenacao/README.md`
-4. `qa/QA_INDEX.md`
-5. `docs/canon/README.md` quando o pedido exigir produto/canon
-6. `implementation/history.md` e ledger/receipt somente quando o pedido exigir história exata
-7. arquivos tocados
+3. `STUDIO_CORE.md` quando o pedido exigir lore ou universo
+4. `08_Coordenacao/README.md`
+5. `qa/QA_INDEX.md`
+6. `docs/canon/README.md` quando o pedido exigir produto/canon
+7. `implementation/history.md` e ledger/receipt somente quando o pedido exigir história exata
+8. arquivos tocados
 
 Durante a pausa, não abra track, gate ou conteúdo de produto. História de Track 02 só é lida para responder pergunta específica ou executar reparo explicitamente autorizado.
 

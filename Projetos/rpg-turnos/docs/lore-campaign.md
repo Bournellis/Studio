@@ -4,24 +4,24 @@
 
 - status: `frozen`
 - authority: `product_contract`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-26`
 - review_when: `shared lore changes or RPG Turnos explicitly adopts new local narrative`
 - supersedes: `lore pointer delegated to the Roguelike project`
 - superseded_by: `none`
 
-Shared canon: `../../../canon/shared-lore/shared-lore.md` and `../../../canon/shared-lore/draxos-invasion.md`.
+Shared-universe binding: `../STUDIO_CORE.md`. Shared facts come only from the adopted `shared_foundation`, `draxos` and `draxos_elemental_expedition` domains in Studio Core revision `lore.v1`.
 
 ## Lore Authority
 
-Shared lore is the studio authority for reusable Draxos facts. This file is the local authority for the campaign framing explicitly adopted by RPG Turnos.
+Studio Core is the authority for reusable Draxos and expedition facts. This file is the local authority for the campaign framing explicitly adopted by RPG Turnos.
 
-The Roguelike is a separate product and is not a lore or mechanics authority for this project. Any cross-project idea must first be promoted to shared lore and then adopted here.
+The Roguelike is a separate product and is not a lore or mechanics authority for this project. Any cross-project idea must first be promoted to the Core and then explicitly adopted here.
 
 ## What RPG Turnos Owns
 
 RPG Turnos owns its mechanics, classes, encounter rules, and progression systems.
 
-It does not own a separate Draxos story. Setting, characters, world, and narrative framing come from the shared lore.
+Its local characters, encounter arc and narrative delivery remain local. Only facts inside the adopted Core domains are shared.
 
 ## Class Lore
 

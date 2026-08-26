@@ -4,7 +4,7 @@
 
 - status: active
 - authority: operational_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-08-26
 - review_when: governanca local, produto ou validacao mudar
 - supersedes: AGENTS.md before Governance v2
 - superseded_by: none
@@ -27,16 +27,18 @@ Enquanto o portifolio mantiver o projeto pausado, permita somente consulta, gove
 - classes Arcano, Invocador e Necromante;
 - regras de deck, mana, compra, run, recompensa e combate sao locais;
 - `rpg-turnos`, `rpg-isometrico` e DraxosMobile nao sao fontes automaticas de mecanica;
-- lore compartilhada informa identidade, mas nao importa gameplay, economia ou plataforma.
+- `STUDIO_CORE.md` adota somente `shared_foundation`, `draxos` e `draxos_elemental_expedition` da revisao `lore.v1`;
+- o Core informa os fatos compartilhados, mas nao importa gameplay, economia, personagens locais, campanha ou plataforma.
 
 ## Leitura
 
 1. `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`
 2. `../../08_Coordenacao_Agentes/Estado_Atual.md`
-3. `implementation/current-status.md`
-4. `08_Coordenacao/TRIAGE.md` e card vivo
-5. `qa/QA_INDEX.md`
-6. contrato e arquivo tocado
+3. `STUDIO_CORE.md` quando lore ou universo forem relevantes
+4. `implementation/current-status.md`
+5. `08_Coordenacao/TRIAGE.md` e card vivo
+6. `qa/QA_INDEX.md`
+7. contrato e arquivo tocado
 
 Para decisao ampla de produto, acrescente `docs/product-brief.md`, `docs/game-design-document.md`, `docs/architecture.md` e os contratos da Track 02 indicados pelo estado local.
 

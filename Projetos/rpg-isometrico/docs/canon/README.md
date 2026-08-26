@@ -4,7 +4,7 @@
 
 - status: living
 - authority: router
-- last_verified: 2026-07-16
+- last_verified: 2026-08-26
 - review_when: o contrato de produto, arquitetura, roadmap ou plataforma mudar
 - supersedes: none
 - superseded_by: none
@@ -26,4 +26,4 @@ Esta pasta é a autoridade local de produto do RPG Isométrico. Nenhum conteúdo
 
 `historical-provenance.md` mapeia decisões e supersessões de G1–G4 e das Tracks 01–02 para as autoridades acima. É referência histórica, não uma camada adicional de canon ou estado.
 
-Lore compartilhado permanece em `../../../../canon/shared-lore/`. Estado técnico e execução permanecem em `../../implementation/current-status.md` e na coordenação local.
+Lore compartilhado é adotado por `../../STUDIO_CORE.md`. Detalhes locais não sobem ao Core por inferência; estado técnico e execução permanecem em `../../implementation/current-status.md` e na coordenação local.

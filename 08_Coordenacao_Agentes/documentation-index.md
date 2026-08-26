@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `router`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-26`
 - review_when: `authority map or official project registry changes`
 - supersedes: `documentation-index.md before Governance v2`
 - superseded_by: `none`
@@ -34,8 +34,10 @@ Global documentation router. It carries no package, marker, release URL or next 
 
 ## Canon
 
-- `../canon/canon-brief.md` - fast shared-lore and boundary map.
-- `../canon/shared-lore/` - reusable lore.
+- `../STUDIO_CORE.md` - bridge to shared canon revision `lore.v1` and binding registry in `D:\Studio Core`.
+- Project `STUDIO_CORE.md` - explicit `shared` or `none` binding, adopted domains and local lore authority.
+- `../canon/canon-brief.md` and `../canon/README.md` - transitional local routers to the Core.
+- `../canon/shared-lore/` - superseded provenance bridges; not living canon.
 - `../canon/studio-conventions/project-boundaries.md` - adoption rules.
 - `../canon/studio-conventions/prospective-asset-provenance.md` - provenance required for new runtime assets.
 - `../canon/studio-conventions/code-convergence-registry.md` - read-only convergence policy; no shared core.

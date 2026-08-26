@@ -4,7 +4,7 @@
 
 - status: living
 - authority: product_contract
-- last_verified: 2026-07-16
+- last_verified: 2026-08-26
 - review_when: identidade, promessa, escopo ou fronteiras de produto mudar
 - supersedes: none
 - superseded_by: none
@@ -15,7 +15,9 @@ Baseline de produto preservada: Track 02 complete-run e Design Lab como laborato
 
 `draxos-roguelike-cardgame` is a menu-first roguelike cardgame about a Draxos expedition invading an elemental planet.
 
-The game shares lore, characters, classes, narrative direction, and campaign objective territory with other Draxos material in the studio, but it is its own product. Do not treat it as a variant of `rpg-turnos`, `rpg-isometrico`, or `draxos-mobile`.
+The game adopts the Studio Core domains declared in `../STUDIO_CORE.md`. Its characters, classes, narrative delivery and campaign implementation remain local.
+
+Do not treat it as a variant or authority for `rpg-turnos`, `rpg-isometrico`, or `draxos-mobile`.
 
 ## Core Promise
 

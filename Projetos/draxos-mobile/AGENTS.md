@@ -4,7 +4,7 @@
 
 - status: `living`
 - authority: `operational_contract`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-26`
 - review_when: `authority, validation or release safety changes`
 - supersedes: `global-first DraxosMobile coordination`
 - superseded_by: `none`
@@ -14,12 +14,13 @@ This is the fast operational entrypoint for `Projetos/draxos-mobile`. Do not con
 ## Authority
 
 1. Portfolio focus and allowed work: `../../08_Coordenacao_Agentes/Prioridades_Estudio.md`.
-2. Local technical baseline and next technical step: `implementation/current-status.md`.
-3. Product contracts: `docs/product-vision.md`, `docs/pve-arena-initial-direction.md` and `docs/game-design-document.md`.
-4. QA commands: `qa/qa_manifest.json`; journeys and human gates: `qa/QA_INDEX.md`.
-5. Package lineage and endpoints: `docs/release-history.md`.
+2. Shared-universe binding and adopted domains: `STUDIO_CORE.md`.
+3. Local technical baseline and next technical step: `implementation/current-status.md`.
+4. Product contracts: `docs/product-vision.md`, `docs/pve-arena-initial-direction.md` and `docs/game-design-document.md`.
+5. QA commands: `qa/qa_manifest.json`; journeys and human gates: `qa/QA_INDEX.md`.
+6. Package lineage and endpoints: `docs/release-history.md`.
 
-No local file may redefine portfolio priority. DraxosMobile owns its mechanics; shared lore or another project's implementation is not an implicit gameplay contract.
+No local file may redefine portfolio priority. DraxosMobile adopts only the Core domains declared in its binding and owns all local lore, product and mechanics; another project's campaign or implementation is never an implicit contract.
 
 ## Local-first cycle
 

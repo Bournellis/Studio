@@ -2,11 +2,11 @@
 
 This file captures the current Godot-local guidance for platform-specific rendering quality, 3D asset export, and initial content budgets.
 
-It applies the shared canon platform posture to the active Godot implementation. It does not redefine canon.
+It applies the project-local platform posture to the Godot implementation. Studio Core governs shared lore only and does not define platform or export policy.
 
 ## Canon Alignment
 
-- shared canon remains the source of truth for platform posture in `../../canon/`
+- local product canon remains the source of truth for platform posture in `canon/platform/steam-platform.md`
 - PC and Steam-first remain the active baseline
 - mobile remains a future expansion surface, not the current primary target
 - mobile support should scale quality down from the same game, not fork gameplay or content rules

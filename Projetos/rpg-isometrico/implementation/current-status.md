@@ -4,7 +4,7 @@
 
 - status: living
 - authority: local_state
-- last_verified: 2026-07-17
+- last_verified: 2026-08-26
 - review_when: pausa, baseline técnica ou autorização de retomada mudar
 - supersedes: current-status anterior ao cutover de governança v2
 - superseded_by: none
@@ -28,7 +28,7 @@
 ## Autoridades e dívida
 
 - Canon de produto: `../docs/canon/README.md`.
-- Lore compartilhado: `../../../canon/shared-lore/`.
+- Vínculo e domínios de lore compartilhado: `../STUDIO_CORE.md`; canon de produto permanece local.
 - QA: `../qa/qa_manifest.json` e `../qa/QA_INDEX.md`.
 - Dívida: `engineering-health-baseline.md`; não pode crescer quando tocada.
 - História consolidada: `history.md` e `history-ledger/`; fontes detalhadas retiradas do `HEAD` permanecem recuperáveis pelo baseline Documentation Lite.
