@@ -9,7 +9,7 @@
 - supersedes: `<decision id | none>`
 - superseded_by: `<decision id | none>`
 - data: `<YYYY-MM-DD>`
-- decisor: `Fabio | Hermes | Codex | Shared`
+- decisor: `Fabio | Codex | Shared`
 - projeto: `estudio | JogoDaCopa | FpsPlayground | draxos-roguelike-cardgame | draxos-mobile | rpg-isometrico | rpg-turnos`
 - coordination_scope: `project_local | cross_project | portfolio_sync | global_governance | documentation_alignment`
 - prioridade_portfolio: `<value from Prioridades_Estudio.md | unchanged>`

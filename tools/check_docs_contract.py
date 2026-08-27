@@ -3,11 +3,19 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 
 from check_agent_closure_protocol import check_closure
 from check_portfolio_sync_queue import check_queue
-from estudio_governance import CheckReport, check_docs, emit, load_governance, resolve_projects
+from estudio_governance import (
+    CheckReport,
+    check_docs,
+    check_studio_core_bindings,
+    emit,
+    load_governance,
+    resolve_projects,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -25,6 +33,10 @@ def main(argv: list[str] | None = None) -> int:
         selected = {item["id"] for item in resolve_projects(config, args.project)}
         checks = [
             check_docs(root, config),
+            check_studio_core_bindings(
+                root, config,
+                allow_missing_registry=os.environ.get("GITHUB_ACTIONS", "").casefold() == "true",
+            ),
             check_closure(root, config, selected),
             check_queue(root, config),
         ]

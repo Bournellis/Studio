@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `portfolio_state`
-- last_verified: `2026-07-16`
+- last_verified: `2026-08-27`
 - review_when: `Fabio changes focus, portfolio status or allowed work`
 - supersedes: `none`
 - superseded_by: `none`
@@ -48,7 +48,7 @@ Baselines, markers e detalhes por projeto vivem em `Estado_Atual.md` e no `imple
 ## Regras Para Agentes
 
 - Leia este arquivo antes de escolher projeto alvo.
-- Se o pedido nao citar projeto nem dominio claro, confirme o alvo entre os focos ativos (`JogoDaCopa`, `draxos-mobile`) antes de agir.
+- Se o pedido nao citar projeto nem dominio claro, confirme o alvo entre os focos ativos (`JogoDaCopa`, `draxos-mobile`, `FpsPlayground`) antes de agir.
 - Ignore os projetos `PAUSADO_TEMPORARIO`/`PAUSADO_INDEFINIDO` por padrao, salvo pedido explicito de retomada ou consulta historica.
 - Nao mova mecanicas, decisoes ou escopo entre projetos sem documento local adotando a regra.
 - Em `_conceitos/mobile-universe/`, apenas leitura e referencia de design - o projeto ativo e `draxos-mobile/`.

@@ -1,5 +1,17 @@
 # RPGMobile
 
+## Classificacao atual
+
+- status: `historical_redundant`
+- authority: `historical_record`
+- superseded_by: `../mobile-universe/README.md`
+- current_product_binding: `../../draxos-mobile/STUDIO_CORE.md`
+
+Este arquivo preserva o conceito anterior e seus detalhes substantivos para
+consulta historica. Os campos de status, direcao e proximo passo abaixo nao sao
+executaveis; o arquivo de design promovido esta em `../mobile-universe/` e o
+produto vigente declara seu vinculo em `../../draxos-mobile/STUDIO_CORE.md`.
+
 Status: `P1_CONCEITO`
 
 RPGMobile e um projeto em incubacao conceitual do Estudio. A direcao atual prioriza gameplay, exploracao, combate, loot e progressao antes de qualquer lore definitivo.

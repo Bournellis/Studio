@@ -1,5 +1,10 @@
 # RPGMobile - Game Design Document
 
+> **Arquivo historico e superado.** Este GDD preserva o conceito RPGMobile na
+> forma em que foi escrito. Ele nao governa trabalho atual; consulte
+> `../../mobile-universe/README.md` para o arquivo promovido e
+> `../../../draxos-mobile/STUDIO_CORE.md` para o vinculo vigente do produto.
+
 - Last Updated: `2026-05-14`
 - Status: `P1_CONCEITO - core gameplay definido`
 

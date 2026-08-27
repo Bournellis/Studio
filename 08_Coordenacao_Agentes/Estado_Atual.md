@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `portfolio_snapshot`
-- last_verified: `2026-08-26`
+- last_verified: `2026-08-27`
 - review_when: `PortfolioSync_QUEUE has a pending local baseline change`
 - supersedes: `none`
 - superseded_by: `none`
@@ -42,7 +42,7 @@
 - Validacao local: `226/226`, `1.975 asserts`; labs continuam evidencias, nao autoridade de produto.
 - Gates em Review: promocao Design Lab, balance e sensacao da run.
 - Trabalho permitido: consulta historica e retomada somente por pedido explicito.
-- Proximo passo: escolher candidatos Wave 01 para promocao manual e priorizar suporte real para mecanicas bloqueadas.
+- Proximo passo: nenhum enquanto pausado; uma retomada explicita deve reavaliar candidatos e prioridade antes de executar trabalho de produto.
 
 ## DraxosMobile
 

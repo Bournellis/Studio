@@ -1,5 +1,10 @@
 # Jogos Irmãos — BattleMobile & RPGMobile
 
+> **Arquivo historico e superado.** Este pitch preserva integralmente a proposta
+> dos dois aplicativos separados; ele nao governa produto, vinculo ou trabalho
+> atual. A promocao consolidada vive em `mobile-universe/README.md`, e o produto
+> vigente declara seu vinculo em `../draxos-mobile/STUDIO_CORE.md`.
+
 **Status**: Incubação Conceitual  
 **Data**: 2026-05-14  
 **Universo**: Draxos  

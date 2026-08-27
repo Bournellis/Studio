@@ -3,7 +3,7 @@
 ## Metadata
 
 - id: `<YYYY-MM-DD_slug>`
-- owner: `Fabio | Hermes | Codex | Shared`
+- owner: `Fabio | Codex | Shared`
 - status: `Backlog | Doing | Review | Done`
 - projeto: `<project>`
 - prioridade_portfolio: `<value from Prioridades_Estudio.md>`

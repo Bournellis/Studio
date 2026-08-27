@@ -4,7 +4,7 @@
 
 - id: `<YYYY-MM-DD_slug>`
 - data: `<YYYY-MM-DD>`
-- agente: `Codex | Hermes | Outro`
+- agente: `Codex | Outro`
 - projeto: `<project | estudio | portfolio>`
 - prioridade_portfolio: `<value from Prioridades_Estudio.md>`
 - coordination_scope: `project_local | cross_project | global_governance | documentation_alignment | portfolio_sync`

@@ -81,7 +81,10 @@ pode virar entrada publica direta quando passar por:
 - Oficial aqui significa `mode_registry.status=active` no canal `internal_alpha`, nao publicacao publica.
 - `/minigames` nao e contrato ativo em V1.
 - `open_minigame_shell` e `minigame_shell` nao sao contrato ativo em V1.
-- Cardgame do DraxosMobile compartilha lore com outros projetos, mas nao herda mecanicas do `draxos-roguelike-cardgame`.
+- Cardgame do DraxosMobile permanece no vinculo do produto:
+  adota somente `shared_foundation` e `draxos`; nao adota
+  `draxos_elemental_expedition` nem lore local de outro projeto; e nao herda
+  mecanicas do `draxos-roguelike-cardgame`.
 - Towerdefense futuro usa fantasia de heroi/mago em torre central estatica contra hordas.
 
 ## Decision Packs

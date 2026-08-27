@@ -33,6 +33,7 @@ from estudio_governance import (
     check_config,
     check_docs,
     check_qa,
+    check_studio_core_bindings,
     check_text,
     load_governance,
     read_json,
@@ -473,6 +474,10 @@ def run_validation(args: argparse.Namespace) -> dict[str, Any]:
         check_config(root, args.config),
         check_text(root, config),
         check_docs(root, config),
+        check_studio_core_bindings(
+            root, config,
+            allow_missing_registry=os.environ.get("GITHUB_ACTIONS", "").casefold() == "true",
+        ),
         check_closure(root, config, selected),
         check_queue(root, config),
         check_qa(root, config, selected),

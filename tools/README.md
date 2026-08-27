@@ -72,3 +72,8 @@ recalibrate the baseline.
   requires pre/post validation and never invokes a remote command.
 - `check_doc_drift.ps1` remains available as a compatibility alias for the
   complete `DocsOnly` profile.
+- `DocsOnly` and `studio_doctor Core` compare the six local `STUDIO_CORE.md`
+  contracts with `D:\Studio Core\bindings\PROJECTS.json`. Binding, domain,
+  revision, path or project-set drift fails locally. An isolated GitHub checkout
+  without that external repository emits `STUDIO_CORE_REGISTRY_UNAVAILABLE` as
+  a warning; it does not prove parity or replace the canonical local check.

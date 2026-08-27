@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `operational_contract`
-- last_verified: `2026-08-26`
+- last_verified: `2026-08-27`
 - review_when: `governance, portfolio, Git or validation contract changes`
 - supersedes: `AGENTS.md before Governance v2`
 - superseded_by: `none`
@@ -133,6 +133,8 @@ Route domains:
   `lore.v2`; `CANON_CURRENT.md` and `NARRATIVE_WINDOWS.md` are routers, not
   monolithic authorities.
 - Every official project declares `shared` or `none` plus adopted domains in its local `STUDIO_CORE.md`.
+- `DocsOnly` and `studio_doctor Core` compare all six local bindings with `D:\Studio Core\bindings\PROJECTS.json`; drift fails the local validation.
+- An isolated GitHub checkout without the external Core reports that comparison as unavailable, never as proof of parity; canonical local validation remains required before integration.
 - `canon/shared-lore/` contains superseded recovery bridges, not living shared authority.
 - `canon/studio-conventions/project-boundaries.md` remains the local operational adoption contract.
 - RPG Isometrico product canon lives in `Projetos/rpg-isometrico/docs/canon/`.

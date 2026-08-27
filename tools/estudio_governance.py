@@ -14,7 +14,7 @@ import json
 import re
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any, Iterable
 
 
@@ -110,7 +110,7 @@ def validate_governance(config: Any, root: Path) -> list[Issue]:
     roots: list[str] = []
     aliases: dict[str, str] = {}
     project_required = {
-        "id", "name", "aliases", "root", "portfolio_key", "current_status",
+        "id", "name", "aliases", "root", "studio_core_binding", "portfolio_key", "current_status",
         "coordination_root", "qa_manifest", "qa_index", "lanes",
         "supported_profiles", "evidence_roots",
     }
@@ -244,6 +244,17 @@ def _portfolio_rows(text: str) -> dict[str, str]:
     return rows
 
 
+def _expected_portfolio_groups(config: dict[str, Any], rows: dict[str, str]) -> dict[str, set[str]]:
+    expected = {"Active": set(), "Paused": set()}
+    for project in config["projects"]:
+        status = rows.get(project["root"].rstrip("/"), "")
+        if re.fullmatch(r"P[0-2]_[A-Z0-9_]+", status):
+            expected["Active"].add(project["id"])
+        elif status.startswith("PAUSADO_"):
+            expected["Paused"].add(project["id"])
+    return expected
+
+
 def check_docs(root: Path, config: dict[str, Any]) -> CheckReport:
     report = CheckReport("documentation_contract")
     docs = config["documentation"]
@@ -312,7 +323,167 @@ def check_docs(root: Path, config: dict[str, Any]) -> CheckReport:
             root_key = project["root"].rstrip("/")
             if root_key not in rows:
                 report.fail("PORTFOLIO_PROJECT_MISSING", "official project is missing from portfolio table", root_key)
+        expected_groups = _expected_portfolio_groups(config, rows)
+        for group, expected_ids in expected_groups.items():
+            configured_ids = set(config.get("groups", {}).get(group, []))
+            if configured_ids != expected_ids:
+                report.fail(
+                    "PORTFOLIO_GROUP_DRIFT",
+                    f"groups.{group}={sorted(configured_ids)} but portfolio statuses require {sorted(expected_ids)}",
+                    "tools/estudio_governance.json",
+                )
     report.metrics["live_documents"] = len(docs["live_documents"])
+    return report
+
+
+STUDIO_CORE_BINDING_FIELDS = {
+    "project_id", "core_revision", "universe_binding", "adopted_domains",
+}
+
+
+def _parse_studio_core_binding(text: str, report: CheckReport, rel: str) -> dict[str, Any]:
+    section = re.search(r"(?ms)^## Binding\s*\n(.*?)(?=^##\s|\Z)", text)
+    if not section:
+        report.fail("STUDIO_CORE_BINDING_SECTION", "missing exact '## Binding' section", rel)
+        return {}
+    values: dict[str, str] = {}
+    for match in re.finditer(r"(?m)^-\s*([a-z_]+):\s*`([^`\n]*)`\s*$", section.group(1)):
+        key, value = match.group(1), match.group(2).strip()
+        if key in STUDIO_CORE_BINDING_FIELDS:
+            if key in values:
+                report.fail("STUDIO_CORE_BINDING_DUPLICATE", f"duplicate binding field: {key}", rel)
+            values[key] = value
+    for field in sorted(STUDIO_CORE_BINDING_FIELDS):
+        if field not in values:
+            report.fail("STUDIO_CORE_BINDING_FIELD", f"missing binding field: {field}", rel)
+    if "adopted_domains" in values:
+        raw = values["adopted_domains"]
+        if not (raw.startswith("[") and raw.endswith("]")):
+            report.fail("STUDIO_CORE_DOMAINS_FORMAT", "adopted_domains must use [a, b] form", rel)
+        else:
+            inside = raw[1:-1].strip()
+            values["adopted_domains"] = [] if not inside else [item.strip() for item in inside.split(",")]
+    return values
+
+
+def _windows_path_key(value: str) -> str:
+    return str(PureWindowsPath(value.replace("/", "\\"))).rstrip("\\").casefold()
+
+
+def check_studio_core_bindings(
+    root: Path,
+    config: dict[str, Any],
+    registry_path: Path | None = None,
+    allow_missing_registry: bool = False,
+) -> CheckReport:
+    """Compare every local Estudio binding with the external Core registry."""
+    report = CheckReport("studio_core_bindings")
+    registry = registry_path or Path(r"D:\Studio Core\bindings\PROJECTS.json")
+    try:
+        payload = read_json(registry)
+    except FileNotFoundError as exc:
+        if allow_missing_registry:
+            report.warn(
+                "STUDIO_CORE_REGISTRY_UNAVAILABLE",
+                "external registry is unavailable in this isolated environment; run the local canonical check before integration",
+                str(registry),
+            )
+            return report
+        report.fail("STUDIO_CORE_REGISTRY_LOAD", str(exc), str(registry))
+        return report
+    except (OSError, json.JSONDecodeError) as exc:
+        report.fail("STUDIO_CORE_REGISTRY_LOAD", str(exc), str(registry))
+        return report
+    if not isinstance(payload, dict) or payload.get("schema") != "studio.core.projects.v2":
+        report.fail("STUDIO_CORE_REGISTRY_SCHEMA", "expected schema studio.core.projects.v2", str(registry))
+        return report
+    core_revision = payload.get("core_revision")
+    if not isinstance(core_revision, str) or not core_revision:
+        report.fail("STUDIO_CORE_REGISTRY_REVISION", "core_revision must be a non-empty string", str(registry))
+    project_entries = payload.get("projects")
+    if not isinstance(project_entries, list):
+        report.fail("STUDIO_CORE_REGISTRY_PROJECTS", "projects must be an array", str(registry))
+        return report
+    entries = [
+        item for item in project_entries
+        if isinstance(item, dict) and item.get("workspace") == "estudio" and item.get("kind") == "game"
+    ]
+    by_id: dict[str, dict[str, Any]] = {}
+    for entry in entries:
+        project_id = str(entry.get("id", ""))
+        if not project_id:
+            report.fail("STUDIO_CORE_REGISTRY_ID", "Estudio game entry has no id", str(registry))
+        elif project_id in by_id:
+            report.fail("STUDIO_CORE_REGISTRY_DUPLICATE", f"duplicate project id: {project_id}", str(registry))
+        else:
+            by_id[project_id] = entry
+
+    local_ids: set[str] = set()
+    checked = 0
+    for project in config["projects"]:
+        rel = str(project.get("studio_core_binding", ""))
+        path = root / rel
+        if not path.is_file():
+            report.fail("STUDIO_CORE_LOCAL_MISSING", "local binding is missing", rel)
+            continue
+        try:
+            binding = _parse_studio_core_binding(path.read_text(encoding="utf-8", errors="strict"), report, rel)
+        except UnicodeDecodeError as exc:
+            report.fail("STUDIO_CORE_LOCAL_ENCODING", str(exc), rel)
+            continue
+        project_id = str(binding.get("project_id", ""))
+        if not project_id:
+            continue
+        if project_id in local_ids:
+            report.fail("STUDIO_CORE_LOCAL_DUPLICATE", f"duplicate local project_id: {project_id}", rel)
+        local_ids.add(project_id)
+        central = by_id.get(project_id)
+        if central is None:
+            report.fail("STUDIO_CORE_PROJECT_MISSING", f"{project_id} is absent from the Core registry", rel)
+            continue
+        checked += 1
+        if binding.get("core_revision") != core_revision:
+            report.fail(
+                "STUDIO_CORE_REVISION_DRIFT",
+                f"local={binding.get('core_revision')!r}, central={core_revision!r}",
+                rel,
+            )
+        if binding.get("universe_binding") != central.get("universe_binding"):
+            report.fail(
+                "STUDIO_CORE_UNIVERSE_DRIFT",
+                f"local={binding.get('universe_binding')!r}, central={central.get('universe_binding')!r}",
+                rel,
+            )
+        if binding.get("adopted_domains") != central.get("adopted_domains"):
+            report.fail(
+                "STUDIO_CORE_DOMAINS_DRIFT",
+                f"local={binding.get('adopted_domains')!r}, central={central.get('adopted_domains')!r}",
+                rel,
+            )
+        expected_path_display = r"D:\Estudio" + "\\" + project["root"].replace("/", "\\")
+        expected_path = _windows_path_key(expected_path_display)
+        if _windows_path_key(str(central.get("project_path", ""))) != expected_path:
+            report.fail(
+                "STUDIO_CORE_PATH_DRIFT",
+                f"central project_path does not match {expected_path_display}",
+                rel,
+            )
+        if str(central.get("local_binding", "")) != PureWindowsPath(rel).name:
+            report.fail(
+                "STUDIO_CORE_LOCAL_POINTER_DRIFT",
+                f"central local_binding={central.get('local_binding')!r}, local file={PureWindowsPath(rel).name!r}",
+                rel,
+            )
+
+    extra = sorted(set(by_id) - local_ids)
+    if extra:
+        report.fail("STUDIO_CORE_LOCAL_SET_DRIFT", f"Core has Estudio games without local bindings: {extra}", str(registry))
+    report.metrics.update({
+        "bindings_expected": len(config["projects"]),
+        "bindings_checked": checked,
+        "central_estudio_games": len(entries),
+        "registry": str(registry),
+    })
     return report
 
 

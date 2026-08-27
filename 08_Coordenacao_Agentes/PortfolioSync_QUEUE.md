@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `portfolio_snapshot`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-27`
 - review_when: `pending entry exceeds 48 hours or cutover rules change`
 - supersedes: `none`
 - superseded_by: `none`
@@ -26,7 +26,7 @@ O conteudo refletido vive em `Estado_Atual.md`; esta fila registra somente o ato
 
 ## Rules
 
-- Somente tarefas `portfolio_sync`, `cross_project` ou `global_governance` editam esta fila.
-- Tarefa local adiciona uma entrada; nao atualiza `Estado_Atual.md` diretamente.
+- Uma tarefa local que altere uma baseline pode somente acrescentar sua propria entrada `pending`; ela nao altera entradas existentes nem atualiza `Estado_Atual.md`.
+- Somente tarefas `portfolio_sync`, `cross_project` ou `global_governance` consomem a fila: refletem, adiam, superam ou removem entradas e, quando aplicavel, atualizam `Estado_Atual.md`.
 - `Prioridades_Estudio.md` muda apenas quando Fabio muda foco, status ou trabalho permitido.
 - Uma entrada pode ser `pending`, `reflected`, `deferred` ou `superseded`.

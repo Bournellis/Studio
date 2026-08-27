@@ -2,8 +2,8 @@
 
 ## Metadata
 
-- from: `Fabio | Hermes | Codex`
-- to: `Fabio | Hermes | Codex`
+- from: `Fabio | Codex`
+- to: `Fabio | Codex`
 - date: `<YYYY-MM-DD>`
 - status: `open | closed | superseded`
 - projeto: `<project>`
