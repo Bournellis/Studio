@@ -10,9 +10,11 @@
 - Internal disabled action: `mode_disabled:cardgame`
 - Route: none
 
-Cardgame is a future planned/disabled DraxosMobile mode identity. It can share broad lore
-with other Draxos projects, but it does not inherit mechanics, pacing, rewards
-or deck rules from `draxos-roguelike-cardgame`.
+Cardgame is a future planned/disabled DraxosMobile mode identity. Under the
+product binding, it adopts only `shared_foundation` and `draxos`; it does not
+adopt `draxos_elemental_expedition` or local lore from another project, and it
+does not inherit mechanics, pacing, rewards or deck rules from
+`draxos-roguelike-cardgame`.
 
 ## Current Scope
 
