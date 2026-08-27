@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import ntpath
 import os
 import re
 import shutil
@@ -57,6 +58,18 @@ def _result(name: str, status: str, duration: float, **extra: Any) -> dict[str, 
     return {"name": name, "status": status, "duration_seconds": round(duration, 3), **extra}
 
 
+def _windows_powershell_environment(source: dict[str, str]) -> dict[str, str]:
+    """Let WinPS 5.1 rebuild its native module path instead of inheriting pwsh's."""
+    return {key: value for key, value in source.items() if key.casefold() != "psmodulepath"}
+
+
+def _process_environment(command: list[str], env: dict[str, str] | None) -> dict[str, str] | None:
+    executable = ntpath.basename(command[0]).casefold() if command else ""
+    if os.name == "nt" and executable in {"powershell", "powershell.exe"}:
+        return _windows_powershell_environment(os.environ if env is None else env)
+    return env
+
+
 def _run_process(
     command: list[str], cwd: Path, timeout: int, env: dict[str, str] | None = None
 ) -> tuple[int, float, str, str]:
@@ -72,7 +85,7 @@ def _run_process(
         stderr=subprocess.PIPE,
         creationflags=creationflags,
         start_new_session=os.name != "nt",
-        env=env,
+        env=_process_environment(command, env),
     )
     try:
         stdout, stderr = process.communicate(timeout=timeout)

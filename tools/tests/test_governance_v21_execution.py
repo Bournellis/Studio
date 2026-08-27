@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 TOOLS = Path(__file__).resolve().parents[1]
 if str(TOOLS) not in sys.path:
@@ -16,12 +18,79 @@ from run_validation import (  # noqa: E402
     _contract_hash,
     _isolated_environment,
     _parse_structured_result,
+    _process_environment,
+    _run_process,
     _runner_resources,
     _runner_user_data_mode,
+    _windows_powershell_environment,
 )
 
 
 class ExecutionIsolationTests(unittest.TestCase):
+    def test_windows_powershell_environment_excludes_pwsh_module_roots(self) -> None:
+        source = {
+            "PSMODULEPATH": (
+                r"C:\Users\Tester\Documents\PowerShell\Modules;"
+                r"C:\Program Files\PowerShell\Modules;"
+                r"C:\runtime\native\powershell\Modules"
+            ),
+            "PsmodulePath": r"C:\duplicate",
+            "PATH": r"C:\keep",
+            "APPDATA": r"C:\isolated\roaming",
+            "GODOT_USER_HOME": r"C:\isolated\godot",
+        }
+        env = _windows_powershell_environment(source)
+        self.assertFalse(any(key.casefold() == "psmodulepath" for key in env))
+        self.assertEqual(r"C:\keep", env["PATH"])
+        self.assertEqual(r"C:\isolated\roaming", env["APPDATA"])
+        self.assertEqual(r"C:\isolated\godot", env["GODOT_USER_HOME"])
+
+    def test_process_environment_sanitizes_only_windows_powershell(self) -> None:
+        source = {
+            "USERPROFILE": r"C:\Users\Tester",
+            "PROGRAMFILES": r"C:\Program Files",
+            "WINDIR": r"C:\Windows",
+            "PSModulePath": r"C:\contaminated",
+        }
+        with mock.patch("run_validation.os.name", "nt"):
+            self.assertFalse(
+                any(
+                    key.casefold() == "psmodulepath"
+                    for key in _process_environment(
+                        [r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"], source
+                    )
+                )
+            )
+            self.assertIs(source, _process_environment(["pwsh"], source))
+            self.assertIs(source, _process_environment(["python"], source))
+
+    @unittest.skipUnless(os.name == "nt" and shutil.which("powershell"), "Windows PowerShell is required")
+    def test_windows_powershell_hash_command_survives_contaminated_parent_environment(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            bad_root = Path(temp) / "PowerShell" / "Modules"
+            bad_root.mkdir(parents=True)
+            env = os.environ.copy()
+            for key in list(env):
+                if key.casefold() == "psmodulepath":
+                    del env[key]
+            env["PSModulePath"] = str(bad_root)
+            command = [
+                "powershell", "-NoProfile", "-Command",
+                (
+                    "Get-Command Get-FileHash -ErrorAction Stop | Out-Null; "
+                    "powershell -NoProfile -Command "
+                    "'\"CHILD_PATH=\" + $env:PSModulePath; "
+                    "Get-Command Get-FileHash -ErrorAction Stop | Out-Null'; "
+                    "if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; "
+                    "\"PARENT_PATH=\" + $env:PSModulePath; 'HASH_OK'"
+                ),
+            ]
+            code, _, stdout, stderr = _run_process(command, TOOLS.parent, 30, env=env)
+            self.assertEqual(0, code, stderr)
+            self.assertIn("HASH_OK", stdout)
+            self.assertIn("WindowsPowerShell", stdout)
+            self.assertNotIn(str(bad_root), stdout)
+
     def test_powershell_and_python_use_the_same_mutex_name(self) -> None:
         module = (TOOLS / "estudio_execution_lock.psm1").read_text(encoding="utf-8")
         self.assertIn('"Local\\Estudio.$Resource.v1"', module)
