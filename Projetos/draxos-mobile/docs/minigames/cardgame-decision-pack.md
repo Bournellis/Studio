@@ -12,7 +12,7 @@ Foundation Hardening V2 baseline. It does not approve playable work.
 
 ## Decision Summary
 
-Cardgame remains staged/disabled and hidden from player-facing navigation.
+Cardgame remains staged/disabled. It is hidden from player-facing navigation.
 Under the DraxosMobile product binding, it adopts only `shared_foundation` and
 `draxos`; it does not adopt `draxos_elemental_expedition` or local lore from
 another project, and it does not inherit mechanics, pacing, rewards, deck
