@@ -133,7 +133,7 @@ Route domains:
   `lore.v2`; `CANON_CURRENT.md` and `NARRATIVE_WINDOWS.md` are routers, not
   monolithic authorities.
 - Every official project declares `shared` or `none` plus adopted domains in its local `STUDIO_CORE.md`.
-- `DocsOnly` and `studio_doctor Core` compare all six local bindings with `D:\Studio Core\bindings\PROJECTS.json`; drift fails the local validation.
+- `DocsOnly` and `studio_doctor Core` prove the canonical clean Core on `main`, official `origin/main` tracking and equal registry blobs before comparing all six local bindings; drift fails local validation.
 - An isolated GitHub checkout without the external Core reports that comparison as unavailable, never as proof of parity; canonical local validation remains required before integration.
 - `canon/shared-lore/` contains superseded recovery bridges, not living shared authority.
 - `canon/studio-conventions/project-boundaries.md` remains the local operational adoption contract.

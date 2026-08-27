@@ -339,6 +339,9 @@ def check_docs(root: Path, config: dict[str, Any]) -> CheckReport:
 STUDIO_CORE_BINDING_FIELDS = {
     "project_id", "core_revision", "universe_binding", "adopted_domains",
 }
+STUDIO_CORE_CANONICAL_ROOT = Path(r"D:\Studio Core")
+STUDIO_CORE_REGISTRY_REL = "bindings/PROJECTS.json"
+STUDIO_CORE_OFFICIAL_ORIGIN = "https://github.com/Bournellis/Studio-Core.git"
 
 
 def _parse_studio_core_binding(text: str, report: CheckReport, rel: str) -> dict[str, Any]:
@@ -358,11 +361,18 @@ def _parse_studio_core_binding(text: str, report: CheckReport, rel: str) -> dict
             report.fail("STUDIO_CORE_BINDING_FIELD", f"missing binding field: {field}", rel)
     if "adopted_domains" in values:
         raw = values["adopted_domains"]
-        if not (raw.startswith("[") and raw.endswith("]")):
-            report.fail("STUDIO_CORE_DOMAINS_FORMAT", "adopted_domains must use [a, b] form", rel)
+        if not re.fullmatch(r"\[(?:[a-z0-9_]+(?:, [a-z0-9_]+)*)?\]", raw):
+            report.fail(
+                "STUDIO_CORE_DOMAINS_FORMAT",
+                "adopted_domains must use exact [a, b] lowercase form",
+                rel,
+            )
         else:
             inside = raw[1:-1].strip()
-            values["adopted_domains"] = [] if not inside else [item.strip() for item in inside.split(",")]
+            domains = [] if not inside else inside.split(", ")
+            if len(domains) != len(set(domains)):
+                report.fail("STUDIO_CORE_DOMAINS_DUPLICATE", "adopted_domains repeats a domain", rel)
+            values["adopted_domains"] = domains
     return values
 
 
@@ -370,18 +380,147 @@ def _windows_path_key(value: str) -> str:
     return str(PureWindowsPath(value.replace("/", "\\"))).rstrip("\\").casefold()
 
 
+def _core_git_process(core_root: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["git", "-C", str(core_root), *args],
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        capture_output=True,
+        check=False,
+    )
+
+
+def _prove_core_registry_git_state(
+    registry: Path,
+    report: CheckReport,
+    *,
+    expected_core_root: Path,
+    expected_origin_url: str,
+) -> bool:
+    failures_before = sum(issue.severity == "fail" for issue in report.issues)
+    core_root = registry.parent.parent.resolve()
+    expected_root = expected_core_root.resolve()
+    expected_registry = expected_root / STUDIO_CORE_REGISTRY_REL
+    if _windows_path_key(str(core_root)) != _windows_path_key(str(expected_root)):
+        report.fail(
+            "STUDIO_CORE_ROOT_NOT_CANONICAL",
+            f"registry root must be {expected_root}, got {core_root}",
+            str(registry),
+        )
+    if _windows_path_key(str(registry.resolve())) != _windows_path_key(str(expected_registry.resolve())):
+        report.fail(
+            "STUDIO_CORE_REGISTRY_NOT_CANONICAL",
+            f"registry must be {expected_registry}",
+            str(registry),
+        )
+
+    def git_text(code: str, label: str, *args: str) -> str | None:
+        result = _core_git_process(core_root, *args)
+        if result.returncode != 0:
+            detail = (result.stderr or result.stdout).strip()
+            report.fail(code, f"{label}: {detail or 'git command failed'}", str(core_root))
+            return None
+        return result.stdout.strip()
+
+    top = git_text("STUDIO_CORE_GIT_REPOSITORY", "cannot resolve Git root", "rev-parse", "--show-toplevel")
+    if top is not None and _windows_path_key(top) != _windows_path_key(str(expected_root)):
+        report.fail("STUDIO_CORE_GIT_ROOT", f"Git root must be {expected_root}, got {top}", str(core_root))
+
+    branch = git_text("STUDIO_CORE_GIT_BRANCH", "cannot resolve branch", "symbolic-ref", "--quiet", "--short", "HEAD")
+    if branch is not None and branch != "main":
+        report.fail("STUDIO_CORE_GIT_BRANCH", f"expected main, got {branch}", str(core_root))
+
+    status = git_text(
+        "STUDIO_CORE_GIT_STATUS", "cannot inspect worktree", "status", "--porcelain=v1", "--untracked-files=all"
+    )
+    if status:
+        report.fail("STUDIO_CORE_GIT_DIRTY", "canonical Core worktree must be clean", str(core_root))
+
+    fetch_urls = git_text("STUDIO_CORE_ORIGIN", "cannot resolve origin fetch URL", "remote", "get-url", "--all", "origin")
+    push_urls = git_text(
+        "STUDIO_CORE_ORIGIN", "cannot resolve origin push URL", "remote", "get-url", "--push", "--all", "origin"
+    )
+    if fetch_urls is not None and fetch_urls.splitlines() != [expected_origin_url]:
+        report.fail("STUDIO_CORE_ORIGIN", f"unexpected origin fetch URLs: {fetch_urls.splitlines()}", str(core_root))
+    if push_urls is not None and push_urls.splitlines() != [expected_origin_url]:
+        report.fail("STUDIO_CORE_ORIGIN", f"unexpected origin push URLs: {push_urls.splitlines()}", str(core_root))
+
+    upstream = git_text(
+        "STUDIO_CORE_TRACKING", "cannot resolve main upstream",
+        "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{upstream}",
+    )
+    if upstream is not None and upstream != "origin/main":
+        report.fail("STUDIO_CORE_TRACKING", f"expected origin/main, got {upstream}", str(core_root))
+
+    head = git_text("STUDIO_CORE_HEAD", "cannot resolve HEAD", "rev-parse", "HEAD")
+    tracking = git_text("STUDIO_CORE_TRACKING", "cannot resolve origin/main", "rev-parse", "origin/main")
+    relation = _core_git_process(core_root, "merge-base", "--is-ancestor", "origin/main", "HEAD")
+    if relation.returncode == 1:
+        report.fail(
+            "STUDIO_CORE_TRACKING_RELATION",
+            "HEAD must equal or be ahead of origin/main without divergence",
+            str(core_root),
+        )
+    elif relation.returncode != 0:
+        detail = (relation.stderr or relation.stdout).strip()
+        report.fail("STUDIO_CORE_TRACKING_RELATION", detail or "cannot compare HEAD with origin/main", str(core_root))
+
+    relative = STUDIO_CORE_REGISTRY_REL
+    working_blob = git_text(
+        "STUDIO_CORE_REGISTRY_WORKTREE_BLOB", "cannot hash filtered working registry",
+        "hash-object", f"--path={relative}", relative,
+    )
+    head_blob = git_text(
+        "STUDIO_CORE_REGISTRY_HEAD_BLOB", "cannot resolve registry blob at HEAD",
+        "rev-parse", f"HEAD:{relative}",
+    )
+    tracking_blob = git_text(
+        "STUDIO_CORE_REGISTRY_TRACKING_BLOB", "cannot resolve registry blob at origin/main",
+        "rev-parse", f"origin/main:{relative}",
+    )
+    if working_blob is not None and head_blob is not None and working_blob != head_blob:
+        report.fail(
+            "STUDIO_CORE_REGISTRY_WORKTREE_DRIFT",
+            "filtered working registry bytes differ from the HEAD blob",
+            str(registry),
+        )
+    if head_blob is not None and tracking_blob is not None and head_blob != tracking_blob:
+        report.fail(
+            "STUDIO_CORE_REGISTRY_TRACKING_DRIFT",
+            "HEAD registry blob differs from origin/main; an ahead Core is allowed only when this blob is unchanged",
+            str(registry),
+        )
+
+    ahead_text = git_text(
+        "STUDIO_CORE_TRACKING_RELATION", "cannot count commits ahead",
+        "rev-list", "--count", "origin/main..HEAD",
+    )
+    report.metrics["core_git"] = {
+        "root": str(core_root),
+        "branch": branch,
+        "head": head,
+        "tracking": tracking,
+        "ahead": int(ahead_text) if ahead_text and ahead_text.isdigit() else None,
+        "registry_blob": head_blob,
+    }
+    failures_after = sum(issue.severity == "fail" for issue in report.issues)
+    return failures_after == failures_before
+
+
 def check_studio_core_bindings(
     root: Path,
     config: dict[str, Any],
     registry_path: Path | None = None,
     allow_missing_registry: bool = False,
+    expected_core_root: Path | None = None,
+    expected_origin_url: str = STUDIO_CORE_OFFICIAL_ORIGIN,
 ) -> CheckReport:
     """Compare every local Estudio binding with the external Core registry."""
     report = CheckReport("studio_core_bindings")
-    registry = registry_path or Path(r"D:\Studio Core\bindings\PROJECTS.json")
-    try:
-        payload = read_json(registry)
-    except FileNotFoundError as exc:
+    canonical_root = expected_core_root or STUDIO_CORE_CANONICAL_ROOT
+    registry = registry_path or canonical_root / STUDIO_CORE_REGISTRY_REL
+    if not registry.is_file():
         if allow_missing_registry:
             report.warn(
                 "STUDIO_CORE_REGISTRY_UNAVAILABLE",
@@ -389,8 +528,17 @@ def check_studio_core_bindings(
                 str(registry),
             )
             return report
-        report.fail("STUDIO_CORE_REGISTRY_LOAD", str(exc), str(registry))
+        report.fail("STUDIO_CORE_REGISTRY_LOAD", "registry file is missing", str(registry))
         return report
+    if not _prove_core_registry_git_state(
+        registry,
+        report,
+        expected_core_root=canonical_root,
+        expected_origin_url=expected_origin_url,
+    ):
+        return report
+    try:
+        payload = read_json(registry)
     except (OSError, json.JSONDecodeError) as exc:
         report.fail("STUDIO_CORE_REGISTRY_LOAD", str(exc), str(registry))
         return report
@@ -454,12 +602,25 @@ def check_studio_core_bindings(
                 f"local={binding.get('universe_binding')!r}, central={central.get('universe_binding')!r}",
                 rel,
             )
-        if binding.get("adopted_domains") != central.get("adopted_domains"):
-            report.fail(
-                "STUDIO_CORE_DOMAINS_DRIFT",
-                f"local={binding.get('adopted_domains')!r}, central={central.get('adopted_domains')!r}",
-                rel,
-            )
+        local_domains = binding.get("adopted_domains")
+        central_domains = central.get("adopted_domains")
+        central_domains_valid = isinstance(central_domains, list)
+        if not central_domains_valid:
+            report.fail("STUDIO_CORE_CENTRAL_DOMAINS", "central adopted_domains must be an array", str(registry))
+        else:
+            if any(not isinstance(domain, str) or not re.fullmatch(r"[a-z0-9_]+", domain) for domain in central_domains):
+                report.fail("STUDIO_CORE_CENTRAL_DOMAINS", "central adopted_domains contains a malformed value", str(registry))
+                central_domains_valid = False
+            if len(central_domains) != len(set(central_domains)):
+                report.fail("STUDIO_CORE_CENTRAL_DOMAINS", "central adopted_domains repeats a domain", str(registry))
+                central_domains_valid = False
+        if isinstance(local_domains, list) and central_domains_valid:
+            if sorted(local_domains) != sorted(central_domains):
+                report.fail(
+                    "STUDIO_CORE_DOMAINS_DRIFT",
+                    f"local={local_domains!r}, central={central_domains!r}",
+                    rel,
+                )
         expected_path_display = r"D:\Estudio" + "\\" + project["root"].replace("/", "\\")
         expected_path = _windows_path_key(expected_path_display)
         if _windows_path_key(str(central.get("project_path", ""))) != expected_path:

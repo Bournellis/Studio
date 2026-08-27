@@ -73,7 +73,10 @@ recalibrate the baseline.
 - `check_doc_drift.ps1` remains available as a compatibility alias for the
   complete `DocsOnly` profile.
 - `DocsOnly` and `studio_doctor Core` compare the six local `STUDIO_CORE.md`
-  contracts with `D:\Studio Core\bindings\PROJECTS.json`. Binding, domain,
-  revision, path or project-set drift fails locally. An isolated GitHub checkout
-  without that external repository emits `STUDIO_CORE_REGISTRY_UNAVAILABLE` as
-  a warning; it does not prove parity or replace the canonical local check.
+  contracts with `D:\Studio Core\bindings\PROJECTS.json` only after proving a
+  clean canonical Core on `main`, official `origin/main` tracking and equality
+  of the filtered working, `HEAD` and tracking registry blobs. `HEAD` may be
+  ahead only while that blob remains unchanged. Binding, domain, revision, path
+  or project-set drift fails locally. An isolated GitHub checkout without the
+  external repository emits `STUDIO_CORE_REGISTRY_UNAVAILABLE` as a warning; it
+  does not prove parity or replace the canonical local check.

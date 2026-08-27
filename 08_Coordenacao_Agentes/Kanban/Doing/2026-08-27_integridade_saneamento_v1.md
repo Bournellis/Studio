@@ -50,7 +50,7 @@ provar a paridade dos bindings com o Studio Core, sem alterar produto ou lore.
 
 - Um commit logico de documentacao e tooling.
 - `validate_estudio.ps1 -Profile DocsOnly -Project AllOfficial -AuditOnly`.
-- `studio_doctor.ps1 -Profile Core -AuditOnly`.
+- `studio_doctor.ps1 -Mode Core -AuditOnly`.
 
 ## Hard Stops And Handoff
 
