@@ -608,10 +608,13 @@ def check_studio_core_bindings(
         if not central_domains_valid:
             report.fail("STUDIO_CORE_CENTRAL_DOMAINS", "central adopted_domains must be an array", str(registry))
         else:
-            if any(not isinstance(domain, str) or not re.fullmatch(r"[a-z0-9_]+", domain) for domain in central_domains):
+            all_domains_are_strings = all(isinstance(domain, str) for domain in central_domains)
+            if not all_domains_are_strings or any(
+                not re.fullmatch(r"[a-z0-9_]+", domain) for domain in central_domains
+            ):
                 report.fail("STUDIO_CORE_CENTRAL_DOMAINS", "central adopted_domains contains a malformed value", str(registry))
                 central_domains_valid = False
-            if len(central_domains) != len(set(central_domains)):
+            if all_domains_are_strings and len(central_domains) != len(set(central_domains)):
                 report.fail("STUDIO_CORE_CENTRAL_DOMAINS", "central adopted_domains repeats a domain", str(registry))
                 central_domains_valid = False
         if isinstance(local_domains, list) and central_domains_valid:

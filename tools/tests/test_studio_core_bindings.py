@@ -176,6 +176,15 @@ class StudioCoreBindingTests(unittest.TestCase):
         report = self.check()
         self.assertTrue(any(issue.code == "STUDIO_CORE_DOMAINS_DUPLICATE" for issue in report.issues))
 
+    def test_non_hashable_central_domain_fails_structurally(self) -> None:
+        payload = json.loads(self.registry.read_text(encoding="utf-8"))
+        payload["projects"][0]["adopted_domains"] = ["shared_foundation", {"invalid": "domain"}]
+        self.registry.write_text(json.dumps(payload), encoding="utf-8")
+        self.commit_registry()
+        report = self.check()
+        self.assertTrue(report.failed)
+        self.assertTrue(any(issue.code == "STUDIO_CORE_CENTRAL_DOMAINS" for issue in report.issues))
+
     def test_domain_drift_fails(self) -> None:
         text = self.local.read_text(encoding="utf-8").replace(
             "[shared_foundation, draxos]", "[shared_foundation]"
