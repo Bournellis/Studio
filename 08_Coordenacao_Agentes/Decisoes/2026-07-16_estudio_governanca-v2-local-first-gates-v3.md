@@ -27,7 +27,7 @@ Cards novos usam `agent_local_merge_v3`. `Review` contem apenas decisao humana p
 - Nao mover os cards/handoffs globais historicos para projetos.
 - Nao criar `08_Coordenacao/Estado.md`; manter `implementation/current-status.md`.
 - Nao importar mecanicas entre projetos.
-- Push, fetch, pull, publicacao e mutacao remota continuam exclusivos de Fabio.
+- A sincronizacao Git rotineira segue a delegacao estreita de `2026-08-27_estudio_git_push_seguro_delegado_codex.md`; publicacao de produto e demais mutacoes remotas continuam exclusivas de Fabio.
 
 ## Review when
 

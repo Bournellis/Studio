@@ -4,7 +4,7 @@
 
 - status: living
 - authority: runbook
-- last_verified: 2026-07-16
+- last_verified: 2026-08-27
 - review_when: gates ou taxonomia de triagem mudar
 - supersedes: none
 - superseded_by: none
@@ -23,4 +23,4 @@
 - qualidade visual;
 - publicação.
 
-Publicação, remoto e mudança de prioridade são hard stops sem autorização explícita de Fabio.
+Publicação, remotos de produto e mudança de prioridade são hard stops sem autorização explícita de Fabio; a sincronização Git rotineira segue o contrato global.

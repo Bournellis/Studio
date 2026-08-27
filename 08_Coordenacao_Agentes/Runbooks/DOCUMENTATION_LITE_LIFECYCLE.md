@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `runbook`
-- last_verified: `2026-07-17`
+- last_verified: `2026-08-27`
 - review_when: `o formato de card, ledger, receipt, recuperação ou autoridade documental mudar`
 - supersedes: `lições dispersas de drift, snapshots, worktrees e escritor único`
 - superseded_by: `none`
@@ -69,7 +69,7 @@ Restaurar é uma nova tarefa explícita: conferir receipt e SHA-256, recuperar s
 - Antes de tocar globais: `git status --short`, `git worktree list` e leitura das autoridades.
 - Um escritor por worktree e por índice Git. IDE/GitHub Desktop não faz stage, discard ou commit enquanto o agente escreve naquela árvore.
 - Commit usa paths explícitos e diff auditado. Mudança inesperada interrompe o lote.
-- `push`, `fetch`, `pull`, login e token continuam exclusivos de Fabio; fechamento declara push pendente.
+- O helper de fechamento permanece local. Depois dele, somente o coordenador global executa a sincronização Git segura delegada em `GIT_SAFE_PUSH.md`; `pull`, login/token, refs extras e publicação de produto permanecem fora do fluxo.
 
 ## Incidentes preservados
 

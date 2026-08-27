@@ -1,6 +1,6 @@
 # Decisao: Backup Remoto No GitHub E Fluxo Com GitHub Desktop
 
-> Historico: esta decisao foi substituida pela politica de `2026-06-11_estudio_git_remote_github_desktop.md` e reafirmada por `2026-06-14_estudio_git_remote_exclusivo_fabio.md`. A regra atual e: agentes fazem git LOCAL apenas; `push`, `fetch` e `pull` sao exclusivos de Fabio via GitHub Desktop.
+> Historico: esta decisao foi substituida em 2026-06 e a politica resultante foi depois superada por `2026-08-27_estudio_git_push_seguro_delegado_codex.md`. O corpo abaixo preserva o contexto original, nao a regra vigente.
 
 ## Metadata
 

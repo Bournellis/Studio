@@ -1,6 +1,6 @@
 # Painel Fabio - Estudio
 
-- Ultima atualizacao: `2026-06-29`
+- Ultima atualizacao de produto: `2026-06-29`; politica Git atualizada em `2026-08-27`.
 - Tipo: sintese humana para decisao rapida do Fabio.
 - Visualizacao em navegador: `08_Coordenacao_Agentes/FABIO_DASHBOARD.html`.
 - Nao e fonte tecnica de verdade.
@@ -56,7 +56,7 @@ O Estudio tem tres frentes ativas ou retomaveis no curto prazo:
 
 ## O que nao fazer automaticamente
 
-- Push, fetch ou pull no Git remoto.
+- Usar `pull`, force, tags, outras refs/remotos ou sincronização Git fora do runbook delegado.
 - Publicar, subir pacote, mutar Cloudflare/Supabase ou deployar manifest.
 - Trocar foco de portfolio.
 - Deletar branches/worktrees antigas.

@@ -1,6 +1,6 @@
 # Decisao Historica: Teste De Push Git Nao Interativo Para Agentes
 
-> Status: superseded no mesmo dia por `2026-06-14_estudio_git_remote_exclusivo_fabio.md`. Este arquivo fica como registro dos testes; a regra vigente nao permite push por agente.
+> Status: registro historico dos testes, superado por `2026-08-27_estudio_git_push_seguro_delegado_codex.md`. O corpo abaixo nao e a regra vigente.
 
 ## Metadata
 

@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `runbook`
-- last_verified: `2026-08-26`
+- last_verified: `2026-08-27`
 - review_when: `authority order, worktree, closure or portfolio-sync contracts change`
 - supersedes: `estudio-agent-workflow-current.md before Documentation Lite`
 - superseded_by: `none`
@@ -39,7 +39,7 @@ Use `codex/<project>/<slug>` for Codex and `<agent>/<project>/<slug>` for other 
 - Queue global projection changes in `08_Coordenacao_Agentes/PortfolioSync_QUEUE.md`; local work does not edit `Estado_Atual.md`.
 - Use `Review` only for a pending human decision. Technical work may be integrated and cleaned first.
 - Use `tools/validate_estudio.ps1` with the smallest proportional profile.
-- Use `tools/close_worktree_powershell.ps1` for a verified local lifecycle. It never pushes.
+- Use `tools/close_worktree_powershell.ps1` for a verified local lifecycle. It never pushes; after closure, the global coordinator follows `08_Coordenacao_Agentes/Runbooks/GIT_SAFE_PUSH.md`.
 - Never import mechanics between projects without explicit adoption in the receiving project.
 
 ## Handoff Rule

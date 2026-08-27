@@ -4,7 +4,7 @@
 
 - status: living
 - authority: operational_contract
-- last_verified: 2026-08-26
+- last_verified: 2026-08-27
 - review_when: governança, arquitetura ou gates locais mudarem
 - supersedes: AGENTS.md anterior ao cutover de governança v2
 - superseded_by: none
@@ -31,7 +31,7 @@ O portfólio governa o trabalho permitido; este arquivo governa como trabalhar l
 - Cards e handoffs novos de escopo local vivem em `08_Coordenacao/`.
 - Trabalho local enfileira `global_sync_needed`; não edita `Prioridades_Estudio.md`, `Estado_Atual.md` ou dashboards.
 - Commits separam documentação, QA, runtime, evidência e coordenação.
-- Git é somente local. Push, fetch, pull, deploy e publicação são exclusivos de Fabio.
+- Autoria e integração Git permanecem locais; o push rotineiro pós-fechamento segue exclusivamente o contrato e o runbook globais. Deploy, release, publicação e remotos de produto continuam fora deste fluxo.
 
 ## Arquitetura
 
@@ -65,4 +65,4 @@ Bugfix reproduzível começa com teste vermelho. Fallback degradante deve emitir
 
 ## Hard stops
 
-Pare diante de segredo, remoto/publicação, cena ou binário ambíguo, mudança de produto/prioridade, conflito semântico de história única ou necessidade de decidir gate humano.
+Pare diante de segredo, remoto/publicação fora do push Git delegado, cena ou binário ambíguo, mudança de produto/prioridade, conflito semântico de história única ou necessidade de decidir gate humano.

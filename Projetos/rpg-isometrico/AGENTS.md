@@ -4,7 +4,7 @@
 
 - status: living
 - authority: operational_contract
-- last_verified: 2026-08-26
+- last_verified: 2026-08-27
 - review_when: pausa, governança, canon local ou arquitetura mudar
 - supersedes: AGENTS.md anterior ao cutover de governança v2
 - superseded_by: none
@@ -39,7 +39,7 @@ Durante a pausa, não abra track, gate ou conteúdo de produto. História de Tra
 - Cards e handoffs novos vivem em `08_Coordenacao/`.
 - Trabalho local enfileira `global_sync_needed`; não edita estado global.
 - Commits separam documentação, QA, runtime e coordenação.
-- Git é local. Push, fetch, pull, deploy e publicação são exclusivos de Fabio.
+- Autoria e integração Git permanecem locais; o push rotineiro pós-fechamento segue exclusivamente o contrato e o runbook globais. Deploy, release, publicação e remotos de produto continuam fora deste fluxo.
 
 ## Base técnica
 
@@ -56,4 +56,4 @@ Não há gate humano ativo enquanto pausado. Retomada, campanha, lore, progress�
 
 ## Hard stops
 
-Pare diante de retomada implícita, mudança de prioridade/produto/canon, segredo, remoto/publicação, cena/binário ambíguo, conflito histórico único ou decisão humana não existente.
+Pare diante de retomada implícita, mudança de prioridade/produto/canon, segredo, remoto/publicação fora do push Git delegado, cena/binário ambíguo, conflito histórico único ou decisão humana não existente.

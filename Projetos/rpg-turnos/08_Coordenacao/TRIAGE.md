@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `runbook`
-- last_verified: `2026-07-16`
+- last_verified: `2026-08-27`
 - review_when: `portfolio permissions or the closure protocol changes`
 - supersedes: `none`
 - superseded_by: `none`
@@ -28,4 +28,4 @@
 - Product direction, playability, visual quality, balance, release and publication are human gates.
 - `human_gate_required: no` requires `human_gate_status: not_required`.
 - `Done` rejects `human_gate_status: pending`.
-- Remote mutation, publication, device testing and portfolio priority changes remain hard stops.
+- Product/backend remote mutation, publication, device testing and portfolio priority changes remain hard stops; routine Git synchronization follows the global contract.

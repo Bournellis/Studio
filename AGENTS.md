@@ -11,6 +11,10 @@
 
 This file governs agent behavior for `D:\Estudio`.
 
+Fabio decides product, priority, human QA, gates, release and product/operations
+remote mutations. Routine Git push from `main` to `origin/main` is permanently
+delegated to Codex under the exact limits below.
+
 ## Authority Order
 
 1. Latest active decision for the affected product or process.
@@ -73,7 +77,7 @@ New cards use `closure_protocol: agent_local_merge_v3` and record technical, hum
 - `Done` rejects a pending human gate.
 - Technical work may be committed, merged and cleaned when automation is green even if a human product gate remains pending.
 - Approval, rejection or supersession resolves the human gate and moves the card to Done.
-- General approval never implies release, remote mutation, monetization, device QA, priority change or approval of unrelated gates.
+- General approval never implies release, remote mutation beyond the already delegated routine Git synchronization, monetization, device QA, priority change or approval of unrelated gates.
 - Product, visual, feel, device, release, monetization and priority decisions remain Fabio's.
 
 ## Multi-Agent And Worktrees
@@ -92,7 +96,7 @@ codex/<project>/<slug>
 - Project agents touch only their project; the global coordinator is the sole writer of shared files.
 - Before shared edits, run `git status --short`, `git worktree list` and read the current authority docs.
 - Register objective, branch, worktree, intended files, validation and handoff before editing.
-- Stop on semantic conflict, ambiguous scene/binary, unexpected generated diff, secret, remote mutation or a new human decision.
+- Stop on semantic conflict, ambiguous scene/binary, unexpected generated diff, secret, unexpected remote mutation or a new human decision.
 
 ## Git And Remote Boundary
 
@@ -100,8 +104,13 @@ codex/<project>/<slug>
 - Use logical commits; do not mix docs, runtime, validation and publication in a mega commit.
 - Merge approved technical branches locally with `ff-only` after rebasing onto current `main`.
 - Keep worktrees clean; validate after merge, remove worktree, delete branch and prune.
-- Never run `push`, `fetch`, `pull`, GitHub login, PAT setup or remote publication.
-- Final handoff states `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`.
+- After validated integration on a clean `main`, the global Codex coordinator
+  runs the safe `main` to `origin/main` synchronization in
+  `08_Coordenacao_Agentes/Runbooks/GIT_SAFE_PUSH.md`, verifies remote OID equals
+  `HEAD` and does not request new authorization.
+- Only the runbook's exact preflight fetch and exact push are delegated. `pull`, login/PAT, credential changes, force/force-with-lease, tags, extra branches/refs/remotes and product publication remain prohibited.
+- Fetch, authentication, fast-forward, LFS/hook, push or verification failure stops the flow and preserves the local commits.
+- Final handoff records `git_sync_status` independently from product publication.
 - While the agent commits/merges in a tree, GitHub Desktop and IDEs must not stage, discard or commit in that tree.
 
 ## Portfolio Gate And Routing
@@ -186,7 +195,7 @@ Never automate or infer authorization for:
 
 - product, feel, visual or human playtest approval;
 - priority or portfolio changes;
-- remote mutation, publication or release;
+- remote mutation, publication or release outside the delegated routine Git synchronization;
 - secrets, production signing or credentials;
 - physical-device authority;
 - importing mechanics between projects;

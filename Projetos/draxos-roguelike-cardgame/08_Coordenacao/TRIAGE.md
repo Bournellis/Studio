@@ -4,7 +4,7 @@
 
 - status: living
 - authority: runbook
-- last_verified: 2026-07-16
+- last_verified: 2026-08-27
 - review_when: gates ou taxonomia de triagem mudar
 - supersedes: none
 - superseded_by: none
@@ -21,4 +21,4 @@
 - balanceamento da Track 02;
 - sensacao da run completa em playtest humano.
 
-Publicacao, remoto, retomada de produto e mudanca de prioridade sao hard stops sem autorizacao explicita de Fabio.
+Publicacao, remotos de produto, retomada de produto e mudanca de prioridade sao hard stops sem autorizacao explicita de Fabio; a sincronizacao Git rotineira segue o contrato global.

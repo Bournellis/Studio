@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `operational_contract`
-- last_verified: `2026-07-16`
+- last_verified: `2026-08-27`
 - review_when: `local coordination or gates v3 contract changes`
 - supersedes: `global-only project coordination before Governance v2`
 - superseded_by: `none`
@@ -28,7 +28,7 @@ This directory coordinates project-local work without duplicating portfolio or t
 
 ## Boundaries
 
-- No remote mutation, publication, device authority or priority change.
+- No product/backend remote mutation, publication, device authority or priority change; routine Git synchronization follows the global contract.
 - No football/TPS scope; that belongs to `../JogoDaCopa`.
 - Do not create a second state file under this directory.
 - Preserve movement, weapon feel, bot fairness, map and tuning decisions for Fabio.

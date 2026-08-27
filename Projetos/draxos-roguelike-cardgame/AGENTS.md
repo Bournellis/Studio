@@ -4,7 +4,7 @@
 
 - status: active
 - authority: operational_contract
-- last_verified: 2026-08-26
+- last_verified: 2026-08-27
 - review_when: governanca local, produto ou validacao mudar
 - supersedes: AGENTS.md before Governance v2
 - superseded_by: none
@@ -50,7 +50,7 @@ Para decisao ampla de produto, acrescente `docs/product-brief.md`, `docs/game-de
 - trabalho local apenas enfileira `global_sync_needed`; nao edita snapshots globais;
 - separe commits de coordenacao, documentacao, QA e runtime;
 - valide antes/depois de rebase e entregue arvore limpa;
-- nunca execute push, fetch, pull, login, publicacao ou mutacao remota.
+- autoria e integracao Git permanecem locais; o push rotineiro pos-fechamento segue exclusivamente o contrato e o runbook globais. Login, deploy, release, publicacao e remotos de produto continuam fora deste fluxo.
 
 ## Godot e conteudo
 
@@ -75,4 +75,4 @@ Para decisao ampla de produto, acrescente `docs/product-brief.md`, `docs/game-de
 - sensacao da run completa;
 - visual, feel e publicacao.
 
-Pare diante de conflito semantico, recurso gerado inesperado, cena/binario ambiguo, segredo, remoto, mudanca de produto/prioridade ou nova decisao humana.
+Pare diante de conflito semantico, recurso gerado inesperado, cena/binario ambiguo, segredo, remoto fora do push Git delegado, mudanca de produto/prioridade ou nova decisao humana.

@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `router`
-- last_verified: `2026-08-26`
+- last_verified: `2026-08-27`
 - review_when: `authority map or official project registry changes`
 - supersedes: `documentation-index.md before Governance v2`
 - superseded_by: `none`
@@ -27,6 +27,7 @@ Global documentation router. It carries no package, marker, release URL or next 
 - `History/` - compact monthly history absorbed from redundant global records.
 - `Receipts/DocumentationLite/` - exact cutover receipts and recovery provenance.
 - `Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md` - active lifecycle for compact history and recoverable cleanup.
+- `Runbooks/GIT_SAFE_PUSH.md` - exact delegated synchronization of `main` to `origin/main`.
 - `Runbooks/VISUAL_PRODUCTION_PIPELINE.md` - prospective visual production and independent gates.
 - `Kanban/` and `Handoffs/` - current global/cross-project work; closed narratives are absorbed into compact history.
 - Project `08_Coordenacao/` - new project-local cards, triage and handoffs.

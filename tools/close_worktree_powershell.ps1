@@ -142,5 +142,5 @@ Write-Host '- worktree_status: removed'
 Write-Host '- branch_cleanup: deleted'
 Write-Host "- post_merge_validation: PASS - $profile $ValidationProject pre/post merge - BaseRef $mergeBase"
 Write-Host "- closure_summary: technical branch integrated and locally cleaned; remote/publication unchanged"
-Write-Host 'PUSH PENDENTE: Fabio - GitHub Desktop - Push origin'
+Write-Host 'GIT_SYNC_NEXT: Codex global coordinator - follow GIT_SAFE_PUSH.md'
 exit 0

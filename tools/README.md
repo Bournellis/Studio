@@ -69,7 +69,9 @@ recalibrate the baseline.
 - UID, health, storage and evidence policies are prospective and preserve
   historical assets and debt through explicit baselines.
 - `close_worktree_powershell.ps1` supports only local fast-forward integration,
-  requires pre/post validation and never invokes a remote command.
+  requires pre/post validation and never invokes a remote command. The global
+  coordinator performs the separate delegated Git synchronization through
+  `08_Coordenacao_Agentes/Runbooks/GIT_SAFE_PUSH.md`.
 - `check_doc_drift.ps1` remains available as a compatibility alias for the
   complete `DocsOnly` profile.
 - `DocsOnly` and `studio_doctor Core` compare the six local `STUDIO_CORE.md`

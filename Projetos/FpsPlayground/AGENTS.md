@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `operational_contract`
-- last_verified: `2026-08-26`
+- last_verified: `2026-08-27`
 - review_when: `project boundaries, QA or local coordination change`
 - supersedes: `FpsPlayground AGENTS before Governance v2`
 - superseded_by: `none`
@@ -36,7 +36,7 @@ The portfolio authority may not be redefined locally. Local work queues `global_
 - Create project-local cards and handoffs under `08_Coordenacao/`; keep pre-cutover global records as history.
 - Use gates v3. `Review` is only for an actual pending human decision, and `Done` cannot contain a pending gate.
 - Commit documentation, runtime, QA and coordination changes as separate logical stages.
-- Never push, fetch, pull, publish or mutate a remote service.
+- Git authorship and integration remain local; routine post-close push follows only the global contract and runbook. Deploy, release, publication and product remotes remain outside this flow.
 
 ## Human Authority
 
@@ -75,4 +75,4 @@ Before handoff run the proportional QA profile, `git diff --check` and `git stat
 
 ## Hard Stops
 
-Stop on a semantic history conflict, ambiguous generated scene or binary, unexpected generator diff, secret, remote/publication attempt, product/priority change or a human gate requiring Fabio's decision.
+Stop on a semantic history conflict, ambiguous generated scene or binary, unexpected generator diff, secret, remote/publication outside the delegated Git push, product/priority change or a human gate requiring Fabio's decision.

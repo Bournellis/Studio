@@ -23,7 +23,7 @@ Este e um plano multiagentes flexivel. Ele nao muda prioridade de portfolio, sta
 
 - Fabio continua decisor final de produto, prioridade, QA humano, aprovacoes humanas de track quando houver gate, releases e mutacoes remotas.
 - Qualquer edicao de repo continua exigindo worktree/branch isolada, salvo pedido explicito em contrario.
-- Push, fetch, pull e sincronizacao remota continuam exclusivos de Fabio/GitHub Desktop conforme a politica viva do repo.
+- A sincronizacao Git rotineira segue a delegacao estreita de `2026-08-27_estudio_git_push_seguro_delegado_codex.md`; release e demais mutacoes remotas continuam sob decisao de Fabio.
 - Nenhum agente aprova visual/produto/release em nome de Fabio.
 - Projetos pausados, historicos ou de arquivo continuam respeitando `Prioridades_Estudio.md`.
 

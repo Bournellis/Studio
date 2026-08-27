@@ -17,6 +17,7 @@
 - human_gate_scope: `<scope | none>`
 - human_gate_evidence: `<paths | n/a>`
 - publication_status: `<state>`
+- git_sync_status: `pending_safe_push | pushed_verified@<oid> | blocked:<reason> | n/a`
 - blocking_decision: `<exact decision | none>`
 - execution_mode: `single_agent | multi_agent`
 - delegated_scope: `<scope | none>`
@@ -50,6 +51,7 @@ State what is integrated and what remains a human or portfolio decision.
 
 ## Next Step
 
-Name the next owner and smallest safe action. Never imply push, release or human approval.
+Name the next owner and smallest safe action. Record routine Git synchronization
+separately; never imply release, product publication or human approval.
 
 Do not create this file when the card itself can close the work without a real responsibility transfer.

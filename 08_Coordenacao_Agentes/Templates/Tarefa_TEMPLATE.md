@@ -17,6 +17,7 @@
 - human_gate_scope: `<decision surface | none>`
 - human_gate_evidence: `<paths/receipt | n/a>`
 - publication_status: `not_requested | not_authorized | dry_run | published_by_fabio`
+- git_sync_status: `pending_safe_push | pushed_verified@<oid> | blocked:<reason> | n/a`
 - blocking_decision: `<exact decision | none>`
 - execution_mode: `single_agent | multi_agent`
 - delegated_scope: `<bounded scope | none>`
@@ -57,4 +58,4 @@ Describe the concrete outcome in one sentence.
 - Commits: `<sha subjects>`
 - Lifecycle receipt: `<output from close_worktree_powershell.ps1 | pending>`
 - Handoff: `none | path`
-- Push: `PUSH PENDENTE: Fabio - GitHub Desktop - Push origin`
+- Git sync: `<pending_safe_push | pushed_verified@<oid> | blocked:<reason> | n/a>`

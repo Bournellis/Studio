@@ -6,6 +6,8 @@
 - decisor: `Usuario`
 - projeto: `estudio`
 - prioridade_portfolio: `-`
+- status: `superseded`
+- superseded_by: `2026-08-27_estudio_git_push_seguro_delegado_codex.md`
 
 ## Contexto
 

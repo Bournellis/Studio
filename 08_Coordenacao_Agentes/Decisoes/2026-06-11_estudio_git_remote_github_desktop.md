@@ -1,6 +1,6 @@
 # Decisao: Git Local Para Agentes E Rede Pelo GitHub Desktop
 
-> Status: reafirmada em `2026-06-14` por `2026-06-14_estudio_git_remote_exclusivo_fabio.md`. Esta decisao permanece como historico da falha original; a regra vigente e rede Git remota exclusiva de Fabio via GitHub Desktop.
+> Status: historico da falha original; superado por `2026-08-27_estudio_git_push_seguro_delegado_codex.md`. O corpo abaixo nao e a regra vigente.
 
 ## Metadata
 

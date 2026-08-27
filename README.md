@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `router`
-- last_verified: `2026-08-26`
+- last_verified: `2026-08-27`
 - review_when: `workspace structure or authority model changes`
 - supersedes: `README.md before Governance v2`
 - superseded_by: `none`
@@ -39,4 +39,6 @@ Recover exact removed sources only through the recorded Git baseline/tag.
 
 Only projects with `universe_binding: shared` adopt the declared Core domains. Product, gameplay, progression, architecture and platform contracts remain local unless the receiving project explicitly adopts a rule.
 
-Agents perform local Git only. Fabio owns push/fetch/pull, release, publication and remote mutation.
+Codex performs only the safe routine `main` to `origin/main` Git synchronization
+defined by `AGENTS.md` and its runbook. Release, product publication and every
+other remote mutation remain Fabio-owned decisions.
