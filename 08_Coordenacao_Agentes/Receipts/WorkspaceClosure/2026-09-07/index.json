@@ -1,0 +1,272 @@
+{
+  "schema": "studio.workspace.closure.index.v1",
+  "repository": "estudio",
+  "recorded_at": "2026-09-07T03:08:34.170819+00:00",
+  "status": "custody_classification_and_staging_retirement_verified",
+  "baseline_commit": "dd914833f3c1f0f5521219136dfd672fbe0cb907",
+  "baseline_tree": "9a1bb6e3713325d60c5bb47f2bb863473b71c59b",
+  "canonical_effect": "none",
+  "product_effect": "none",
+  "human_gate_effect": "none",
+  "custody_root": "D:\\StudioRecovery\\closure-20260907",
+  "independent_root": "C:\\Users\\Fabio\\StudioRecovery\\closure-20260907",
+  "scope_note": "Manifests may overlap; file counts are per restored set, not deduplicated storage totals. Retained components were not all functionally restored.",
+  "custody": {
+    "estudio-git": {
+      "files": 5087,
+      "bytes": 758685269,
+      "manifest": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\custody\\estudio-git\\manifest.json",
+        "bytes": 1130448,
+        "sha256": "a378633dc4ff1ed649ad6311d4742337b921608b5b16ebc8d90da2355dfa1f5c"
+      },
+      "independent": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\independent-receipts\\estudio-git.json",
+        "bytes": 638,
+        "sha256": "2c0f18071a09dbe92e1b2426231331f692ff67c02d56c3ecfef0d040b4779a66"
+      },
+      "restore": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\restore-receipts\\estudio-git-from-c.json",
+        "bytes": 673,
+        "sha256": "6cce22eff61519e614349dcd39d8ccad9d4d2d1b1442653d02c08aecdc6dbc8e"
+      },
+      "off_machine": false
+    },
+    "estudio-reports": {
+      "files": 18,
+      "bytes": 386348,
+      "manifest": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\custody\\estudio-reports\\manifest.json",
+        "bytes": 4310,
+        "sha256": "eb72a95e052b5e08416d5777c02300d67b85a057154372a2f63498e9b8bd52f7"
+      },
+      "independent": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\independent-receipts\\estudio-reports.json",
+        "bytes": 640,
+        "sha256": "468675d02383ffd963475003dca2b8fc5e5216305ccab3aa59606fed2323978d"
+      },
+      "restore": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\restore-receipts\\estudio-reports-from-c.json",
+        "bytes": 676,
+        "sha256": "ba80d14bd1e29aeb7853cf6bc319df8e6ad81500104986efc97f9f009d946a76"
+      },
+      "off_machine": false
+    },
+    "copa-track04f2": {
+      "files": 26,
+      "bytes": 21578020,
+      "manifest": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\custody\\copa-track04f2\\manifest.json",
+        "bytes": 6040,
+        "sha256": "988aa55b8db3a8254449e314fb1b5d24eed3bd8e13a05d3e542b0ef2d9e93c5a"
+      },
+      "independent": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\independent-receipts\\copa-track04f2.json",
+        "bytes": 641,
+        "sha256": "066bb4cc2af5374f45dc1018e07a83d552ece966221ad49c7e94846c36f18718"
+      },
+      "restore": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\restore-receipts\\copa-track04f2-from-c.json",
+        "bytes": 676,
+        "sha256": "1f952471e24a81fe4d61133d180bddf811a8269cc9385ed7b5b144576f51e20c"
+      },
+      "off_machine": false
+    },
+    "copa-historical-docs": {
+      "files": 3,
+      "bytes": 14336,
+      "manifest": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\custody\\copa-historical-docs\\manifest.json",
+        "bytes": 1139,
+        "sha256": "198619d7277d406b84be4f401439e7c129a987b2a82de9676b859c753d2b2da4"
+      },
+      "independent": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\independent-receipts\\copa-historical-docs.json",
+        "bytes": 648,
+        "sha256": "5a8f0607bd3d3f9db2076577e6bfa93f9735ad6da2e40cffbc004da04d86410d"
+      },
+      "restore": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\restore-receipts\\copa-historical-docs-from-c.json",
+        "bytes": 684,
+        "sha256": "027769c8e9013f24a635371bbf1903f294558b1223fb670aa2a45baecf4a8fec"
+      },
+      "off_machine": false
+    },
+    "external-retirement": {
+      "files": 3655,
+      "bytes": 375362837,
+      "manifest": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\custody\\external-retirement\\manifest.json",
+        "bytes": 1715024,
+        "sha256": "549b006a3b32c90f85ee36f13ab9295315322881c01e13f8ca0fe02084960489"
+      },
+      "independent": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\independent-receipts\\external-retirement.json",
+        "bytes": 654,
+        "sha256": "4c2845450a7e1eca2f1b5e761f378ebb2474e579f31091a23b5a05d8659adb13"
+      },
+      "restore": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\restore-receipts\\external-retirement-from-c.json",
+        "bytes": 689,
+        "sha256": "0fa450867f3cda90490a908dd34c85f4886600fbf3a74e6ab699151712f90131"
+      },
+      "off_machine": false
+    },
+    "estudio-history-metadata": {
+      "files": 521,
+      "bytes": 62093369,
+      "manifest": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\custody\\estudio-history-metadata\\manifest.json",
+        "bytes": 125151,
+        "sha256": "087ff9b59bbb009a58ace6b6e956a32733ceabf3a6335fee2e92f951433623b7"
+      },
+      "independent": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\independent-receipts\\estudio-history-metadata.json",
+        "bytes": 662,
+        "sha256": "1a72924135bfbf1e39f385f9488e23676570469d043fa850d13ea80dcdc40075"
+      },
+      "restore": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\restore-receipts\\estudio-history-metadata-from-c.json",
+        "bytes": 697,
+        "sha256": "9457cf16549b33a626a7988c215391b01aba059741ce96c4606af14aed668e85"
+      },
+      "off_machine": false
+    },
+    "estudio-history-replay": {
+      "files": 1,
+      "bytes": 12459,
+      "manifest": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\custody\\estudio-history-replay\\manifest.json",
+        "bytes": 739,
+        "sha256": "361ddefa26cc34c5da6905cae77b197afe021a3d78aa64b8a940a73d218be113"
+      },
+      "independent": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\independent-receipts\\estudio-history-replay.json",
+        "bytes": 652,
+        "sha256": "12b746bb7b61979dab9f0d2dd2dbfa1ebb4b6a8149520c2cdaee2362ca63871d"
+      },
+      "restore": {
+        "path": "D:\\StudioRecovery\\closure-20260907\\restore-receipts\\estudio-history-replay-from-c.json",
+        "bytes": 688,
+        "sha256": "e12b6f887ed7aecc9ba6d725c5563488668ea5f6b7b97c5b28f173124a77cd51"
+      },
+      "off_machine": false
+    }
+  },
+  "evidence": [
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\preflight.json",
+      "bytes": 12386,
+      "sha256": "70d50a96ef7c85eaa9215be4b77890c9dfea6533afb870b1181297d163af3ef2"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\retirement\\receipt.json",
+      "bytes": 49776,
+      "sha256": "129b9e86e9a1c8df7ecdfcbaaa9117865425a885c6b9150bd03b8311b678416e"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\retirement\\plan.json",
+      "bytes": 2716565,
+      "sha256": "e38bcf52807c212f62e1105d19e02ac207d8c188f546d71e41b4f2884473360e"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\retirement\\removed-files.jsonl",
+      "bytes": 976461,
+      "sha256": "6fcbb41a5a24226c3fe4358845db226a85cdd7ebc1e5bf44654e825642e7c255"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\external-disposition\\groups.json",
+      "bytes": 4886365,
+      "sha256": "d7c6ac7f613e3cf253301edc36e188999d51f1dd2606d77027699167938e678a"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\external-disposition\\retain_paths.json",
+      "bytes": 8285,
+      "sha256": "55bf56551705d8930667cd12108cc36128c44c32cfbd75c1bfa4d3696ab0e811"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\external-disposition\\validation.json",
+      "bytes": 1358,
+      "sha256": "7c37b7da2c4d1c37a0e974fbfc00c8f289e3ddd47e18b7acaab9a1eae16efb3c"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\external-disposition\\post-retirement-audit.json",
+      "bytes": 9031,
+      "sha256": "4df16744de4308fd669775b299e2149d3a6a8d51c8932cf2969f270988312b20"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-protected-refs.json",
+      "bytes": 23712,
+      "sha256": "f221ba49dc60dedfcff6222ccb97066b329ada6924d881d9328bb24d0fd85b7a"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-history\\README.md",
+      "bytes": 8749,
+      "sha256": "30053580fc3a3626119364a821d978f1a476d591893a54e2fe05c03ebba9e62f"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-history\\report-manifest.json",
+      "bytes": 543896,
+      "sha256": "248e874fa97766195868159c4af46d1f9af4fd51eb547da6e3b258f898cade96"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-history\\classification-final.json",
+      "bytes": 2066212,
+      "sha256": "9776e3a8f85fb6586b26eb106b6a699cba1b10b862b02577ff345e031d7a144d"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-history\\residual-tree-review-final.json",
+      "bytes": 5290416,
+      "sha256": "06a49368d7dc9a3764fbccb1f2c0e3dd7c6a123adcf91e6366fcf8545c187051"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-history\\residual-standalone-review.json",
+      "bytes": 292782,
+      "sha256": "48e3691870907c685b35c449cb3e374cf4a982879c149cdfdcb3d4a95b226c03"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-history\\verification-complete.json",
+      "bytes": 1386,
+      "sha256": "1e40d070ce245e75e83ffcb776581e194693c20738c6b6f99a95709b75503e59"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-history\\payload-copa-track04f2.json",
+      "bytes": 13221,
+      "sha256": "40ed8cb4dffaef9d2e2acc6f32e1a2378b03f44c68ca1bf462306caeba6a0c02"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-history\\payload-copa-historical-docs.json",
+      "bytes": 1572,
+      "sha256": "0d684f1e289e47eaedc7ade20a59ecf79e9cb04d98bb5330c48e9aa96e5fa160"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-retention\\ignored-retention.json",
+      "bytes": 3941039,
+      "sha256": "6ba20aa7557cf68a019f0df79c91d4bc01e00b1d1ee618f646f4f9b5d8a3f68d"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\estudio-retention\\summary.json",
+      "bytes": 15106,
+      "sha256": "043c73745107bdd850e2392e8e6b5cb2fbaebfc97771031d373dc557fbc78aae"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\restore-receipts\\estudio-cas-from-independent-git.json",
+      "bytes": 617306,
+      "sha256": "4ff5a433a762f2fdb3d63b8522f00cdaf7ca8fdf7e1e6f6f315ca03b9621453d"
+    },
+    {
+      "path": "D:\\StudioRecovery\\closure-20260907\\restore-receipts\\estudio-history-independent-composition.json",
+      "bytes": 1107919,
+      "sha256": "2b319419a7dd1939b84c89eae18032d65bd53426ec4833dabc4af93118cbd4e0"
+    }
+  ],
+  "retirement": {
+    "files": 3655,
+    "bytes": 375362837,
+    "empty_directories": 503
+  },
+  "git_integration_and_publication": "Recorded separately after exact candidate closure; not asserted by this pre-integration index.",
+  "final_receipt_locator": "D:\\StudioRecovery\\closure-20260907\\final-closure.json",
+  "federated_receipt_id": "studio-workspace-closure-v1",
+  "federated_receipt_status_at_index": "not_created_or_published; requires observed remote agreement and Core authorization"
+}
