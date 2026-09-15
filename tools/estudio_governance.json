@@ -17,8 +17,8 @@
     ]
   },
   "groups": {
-    "Active": ["JogoDaCopa", "DraxosMobile", "FpsPlayground"],
-    "Paused": ["DraxosRoguelike", "RpgIsometrico", "RpgTurnos"],
+    "Active": [],
+    "Paused": ["JogoDaCopa", "DraxosMobile", "FpsPlayground", "DraxosRoguelike", "RpgIsometrico", "RpgTurnos"],
     "AllOfficial": ["JogoDaCopa", "DraxosMobile", "FpsPlayground", "DraxosRoguelike", "RpgIsometrico", "RpgTurnos"]
   },
   "projects": [
