@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `portfolio_state`
-- last_verified: `2026-09-15`
+- last_verified: `2026-09-21`
 - review_when: `Fabio changes focus, portfolio status or allowed work`
 - supersedes: `none`
 - superseded_by: `none`
@@ -13,18 +13,16 @@ Este documento e a unica fonte de verdade para foco, status de portfolio e traba
 
 ## Foco Atual
 
-Decisão explícita de Fabio em 2026-09-15: somente MMORPG, em
-`D:/Studio/Projetos/MMORPG`, permanece ativo. Todos os jogos deste workspace
-ficam `PAUSADO_INDEFINIDO`, em todos os processos, até retomada explícita.
+Decisão explícita de Fabio em 2026-09-21: o único produto ativo passou a ser
+**RPG Comando**, no repositório independente `D:/RPG Comando`. Todos os jogos e
+processos deste workspace ficam `PAUSADO_INDEFINIDO` até retomada explícita. O
+MMORPG legado em `D:/Studio/Projetos/MMORPG` também está congelado e serve apenas
+como fonte seletiva de recuperação para objetivos de migração nomeados.
+
 Não retomar design, código, QA, builds, infraestrutura, depuração, integração,
 publicação, monitors ou backlog de legados. Autorizações antigas e término de
 outro trabalho não levantam a pausa. Preservar baselines, gates e evidências;
-consulta seletiva ao acervo para objetivo MMORPG autorizado é permitida.
-
-Este alinhamento é `global_governance`, branch `codex/studio/mmorpg-only-freeze`,
-worktree `D:/Estudio-worktrees/studio--root--freeze`; escopo: AGENTS, esta
-prioridade, sua projeção em Estado_Atual e grupos de tools/estudio_governance.json. Validação: DocsOnly/AllOfficial.
-Handoff: nenhuma tarefa de jogo; retomada somente por pedido de Fabio.
+consulta seletiva ao acervo para objetivo RPG Comando autorizado é permitida.
 ## Portfolio
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
@@ -53,7 +51,7 @@ Baselines, markers e detalhes por projeto vivem em `Estado_Atual.md` e no `imple
 ## Regras Para Agentes
 
 - Leia este arquivo antes de escolher projeto alvo.
-- Um pedido genérico não autoriza selecionar um jogo legado. A direção ativa vive em D:/Studio e o produto em D:/Studio/Projetos/MMORPG.
+- Um pedido genérico não autoriza selecionar um jogo legado. O produto ativo vive exclusivamente em `D:/RPG Comando`.
 - Ignore os projetos `PAUSADO_TEMPORARIO`/`PAUSADO_INDEFINIDO` por padrao, salvo pedido explicito de retomada ou consulta historica.
 - Nao mova mecanicas, decisoes ou escopo entre projetos sem documento local adotando a regra.
 - Em `_conceitos/mobile-universe/`, apenas leitura e referencia de design; DraxosMobile também está congelado.

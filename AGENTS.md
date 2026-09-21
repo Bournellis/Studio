@@ -15,13 +15,15 @@ Fabio decides product, priority, human QA, gates, release and product/operations
 remote mutations. Routine Git push from `main` to `origin/main` is permanently
 delegated to Codex under the exact limits below.
 
-## Freeze effective 2026-09-15
+## Freeze effective 2026-09-21
 
-Fabio froze every non-MMORPG project in all processes. Read the current freeze in
+Fabio moved the only active product to the independent repository
+`D:/RPG Comando`. Every project and process in `D:/Estudio`, plus the legacy
+MMORPG in `D:/Studio/Projetos/MMORPG`, is frozen. Read the current freeze in
 `08_Coordenacao_Agentes/Prioridades_Estudio.md` before any legacy task, QA,
 build, debugging, integration, publication or automated follow-up. Preserve old
-evidence; do not resume from historical approvals or tasks. MMORPG remains in
-`D:/Studio/Projetos/MMORPG`; this governance change does not resume game work.
+evidence; do not resume from historical approvals or tasks. Consultation is
+allowed only for an explicit RPG Comando migration objective.
 
 ## Authority Order
 

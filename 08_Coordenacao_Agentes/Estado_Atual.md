@@ -4,12 +4,12 @@
 
 - status: `active`
 - authority: `portfolio_snapshot`
-- last_verified: `2026-09-15`
+- last_verified: `2026-09-21`
 - review_when: `PortfolioSync_QUEUE has a pending local baseline change`
 - supersedes: `none`
 - superseded_by: `none`
 
-- Ultima atualizacao: `2026-09-15`
+- Ultima atualizacao: `2026-09-21`
 - Autoridade de portfolio: `08_Coordenacao_Agentes/Prioridades_Estudio.md`
 - Natureza: projecao curta; estados tecnicos locais vivem em `implementation/current-status.md`.
 - Painel Fabio local: `08_Coordenacao_Agentes/FABIO_DASHBOARD.html`
@@ -18,9 +18,10 @@
 
 ## Prioridade Do Estudio
 
-Todos os seis jogos estão PAUSADO_INDEFINIDO por decisão de Fabio em 2026-09-15.
-Somente MMORPG, no repositório D:/Studio/Projetos/MMORPG, permanece ativo.
-Resultados, baselines e gates abaixo são preservados; não são novos testes.
+Todos os seis jogos estão PAUSADO_INDEFINIDO. O MMORPG legado em
+`D:/Studio/Projetos/MMORPG` também foi congelado. O único produto ativo é o
+repositório independente `D:/RPG Comando`, fora deste portfólio. Resultados,
+baselines e gates abaixo são preservados; não são novos testes.
 
 ## JogoDaCopa
 
