@@ -30,7 +30,7 @@ baselines e gates abaixo são preservados; não são novos testes.
 - Release aprovada: Track 10D; linhagem e fallbacks vivem somente em `Projetos/JogoDaCopa/docs/release-history.md`.
 - Baseline local: governanca local-first e QA tipada; Runtime `108/108`, `1.844 asserts`, sem side effects.
 - Gates humanos preservados: feel, camera, audio, visual e publicacao.
-- Trabalho permitido: preservação e consulta seletiva para objetivo MMORPG autorizado.
+- Trabalho permitido: preservação e consulta seletiva para objetivo nomeado do RPG Comando.
 - Proximo passo: nenhum; retomada somente por pedido explícito de Fabio.
 
 ## draxos-roguelike-cardgame
@@ -39,7 +39,7 @@ baselines e gates abaixo são preservados; não são novos testes.
 - Baseline: Track 02 `T02-P09_COMPLETE`, rota `29/29`, save v5 e tres classes.
 - Validacao local: `226/226`, `1.975 asserts`; labs continuam evidencias, nao autoridade de produto.
 - Gates em Review: promocao Design Lab, balance e sensacao da run.
-- Trabalho permitido: preservação e consulta seletiva para objetivo MMORPG autorizado.
+- Trabalho permitido: preservação e consulta seletiva para objetivo nomeado do RPG Comando.
 - Proximo passo: nenhum; retomada somente por pedido explícito de Fabio.
 
 ## DraxosMobile
@@ -59,7 +59,7 @@ baselines e gates abaixo são preservados; não são novos testes.
 - Baseline: Track 14I aprovada; gameplay Track 14H, movimento, jump pads, mapas e bot route-control preservados.
 - Validacao local: governanca local-first e QA tipada; Runtime `67/67`, `599 asserts`, sem side effects.
 - Gates humanos preservados: movimento, armas, fairness do bot, mapas e tuning.
-- Trabalho permitido: preservação e consulta seletiva para objetivo MMORPG autorizado.
+- Trabalho permitido: preservação e consulta seletiva para objetivo nomeado do RPG Comando.
 - Proximo passo: nenhum; retomada somente por pedido explícito de Fabio.
 
 ## rpg-isometrico
@@ -67,7 +67,7 @@ baselines e gates abaixo são preservados; não são novos testes.
 - Status: `PAUSADO_INDEFINIDO`; trabalhos e gates anteriores preservados, sem execução.
 - Canon de produto local: `Projetos/rpg-isometrico/docs/canon/`.
 - Baseline preservada: B0 interno; Runtime `63/63`, `1.310 asserts`; geracao de cenas byte-estavel.
-- Trabalho permitido: preservação e consulta seletiva para objetivo MMORPG autorizado.
+- Trabalho permitido: preservação e consulta seletiva para objetivo nomeado do RPG Comando.
 - Proximo passo: nenhum; retomada somente por pedido explícito de Fabio.
 
 ## rpg-turnos
@@ -75,7 +75,7 @@ baselines e gates abaixo são preservados; não são novos testes.
 - Status: `PAUSADO_INDEFINIDO`; trabalhos e gates anteriores preservados, sem execução.
 - Baseline reparada: P20 completo, tres classes, 13 encontros e save v1→v2 puro e deterministico.
 - Validacao local: `249/249`, `954 asserts`; automacao verde, playabilidade humana nao revalidada.
-- Trabalho permitido: preservação e consulta seletiva para objetivo MMORPG autorizado.
+- Trabalho permitido: preservação e consulta seletiva para objetivo nomeado do RPG Comando.
 - Proximo passo: nenhum; retomada somente por pedido explícito de Fabio.
 
 ## Kanban Rapido

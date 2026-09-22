@@ -22,18 +22,18 @@ como fonte seletiva de recuperação para objetivos de migração nomeados.
 Não retomar design, código, QA, builds, infraestrutura, depuração, integração,
 publicação, monitors ou backlog de legados. Autorizações antigas e término de
 outro trabalho não levantam a pausa. Preservar baselines, gates e evidências;
-consulta seletiva ao acervo para objetivo RPG Comando autorizado é permitida.
+consulta seletiva ao acervo para objetivo nomeado do RPG Comando é permitida.
 ## Portfolio
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
 |---|---|---|---|---|---|
-| Pausado | JogoDaCopa | `Projetos/JogoDaCopa/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para MMORPG autorizado | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para MMORPG autorizado | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | DraxosMobile | `Projetos/draxos-mobile/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para MMORPG autorizado | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para MMORPG autorizado | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | JogoDaCopa | `Projetos/JogoDaCopa/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | DraxosMobile | `Projetos/draxos-mobile/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - |
-| Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para MMORPG autorizado | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | RPG Turnos | `Projetos/rpg-turnos/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para MMORPG autorizado | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | RPG Turnos | `Projetos/rpg-turnos/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
 
 Baselines, markers e detalhes por projeto vivem em `Estado_Atual.md` e no `implementation/current-status.md` de cada projeto. Historico de pacotes do DraxosMobile: `Projetos/draxos-mobile/docs/release-history.md`.
 
