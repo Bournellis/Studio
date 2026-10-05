@@ -32,14 +32,3 @@ materiais/guides/codex-workflow-guide.md
 materiais/guides/direct-thread-templates.md
 materiais/guides/thread-cheat-sheet.md
 materiais/guides/unity-legacy-surface.md
-
-
-# Preserved references and recovery are read by exact path.
-Projetos/_conceitos/**
-canon/shared-lore/**
-canon/canon-brief.md
-canon/README.md
-08_Coordenacao_Agentes/History/**
-08_Coordenacao_Agentes/Receipts/**
-**/implementation/history.md
-**/implementation/history-ledger/**

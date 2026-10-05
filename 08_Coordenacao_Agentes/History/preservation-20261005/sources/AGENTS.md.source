@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `operational_contract`
-- last_verified: `2026-10-05`
+- last_verified: `2026-08-27`
 - review_when: `governance, portfolio, Git or validation contract changes`
 - supersedes: `AGENTS.md before Governance v2`
 - superseded_by: `none`
@@ -22,14 +22,8 @@ Fabio moved the only active product to the independent repository
 MMORPG in `D:/Studio/Projetos/MMORPG`, is frozen. Read the current freeze in
 `08_Coordenacao_Agentes/Prioridades_Estudio.md` before any legacy task, QA,
 build, debugging, integration, publication or automated follow-up. Preserve old
-evidence; do not resume from historical approvals or tasks.
-
-Fabio authorized documentation maintenance lots 1 and 2 on 2026-10-05:
-align preservation policy and simplify consultation. This exception permits
-documentary edits, exact source preservation and proportional document checks.
-Product/runtime, assets, game QA, builds, legacy integrations and physical
-cleanup remain frozen. RPG Comando is independent of Studio Core; its work
-and state belong exclusively to D:/RPG Comando.
+evidence; do not resume from historical approvals or tasks. Consultation is
+allowed only for an explicit RPG Comando migration objective.
 
 ## Authority Order
 

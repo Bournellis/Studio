@@ -2,24 +2,20 @@
 
 ## Metadata
 
-- status: `paused`
+- status: `active`
 - authority: `local_state`
-- last_verified: `2026-10-05`
+- last_verified: `2026-07-17`
 - review_when: `baseline, human gate, validation or next technical step changes`
 - supersedes: `implementation/current-status.md before Governance v2`
 - superseded_by: `none`
 
-## Preservação vigente
-
-Projeto congelado; somente lotes documentais 1 e 2 autorizados. Baselines e gates preservados, sem novo QA; retomada e execução de recomendações anteriores exigem Fabio e a autoridade de portfólio.
-
 ## Local Truth
 
-- Portfolio classification: `PAUSADO_INDEFINIDO`; allowed work is defined only by `../../../08_Coordenacao_Agentes/Prioridades_Estudio.md`.
+- Portfolio classification: `P2_IMPLEMENTACAO`; allowed work is defined only by `../../../08_Coordenacao_Agentes/Prioridades_Estudio.md`.
 - Technical marker: `FPS_PLAYGROUND_TRACK14I_HUMAN_APPROVED`.
 - Baseline: Track 14I debugger cleanup approved on `2026-06-25`; Track 14H gameplay and the pre-Track-08 player movement feel remain preserved.
 - Surface: PC Windows editor-first local FPS arena laboratory.
-- Next product step: none; former recommendations remain in the preserved source.
+- Next technical step: `Multi-Arena Balance Baseline V1`, evidence-only before any tuning.
 
 ## Implemented Baseline
 
@@ -31,7 +27,8 @@ Projeto congelado; somente lotes documentais 1 e 2 autorizados. Baselines e gate
 
 ## Preserved Gates
 
-- Movement/weapon feel, bot fairness, maps and tuning require human decision; this documentation migration has no pending gate and `08_Coordenacao/TRIAGE.md` is empty.
+- Human decision remains required for movement feel, weapon feel, bot fairness, map quality and tuning.
+- No human decision is pending for this governance migration; `08_Coordenacao/TRIAGE.md` is empty.
 - Do not tune from one arena, add aim advantage or alter jump-pad force without a dedicated evidence-backed track.
 
 ## Risk And Integrity
@@ -42,9 +39,13 @@ Projeto congelado; somente lotes documentais 1 e 2 autorizados. Baselines e gate
 
 ## Validation Baseline
 
-- Godot `4.6.2-stable`, GUT `9.6.0`; full validator: `67/67` tests and `599` asserts.
+- Godot `4.6.2-stable`, GUT `9.6.0`.
+- Full validator: `67/67` tests and `599` asserts.
 - Manual journeys: `../docs/validation.md`; typed runners and coverage: `../qa/QA_INDEX.md`.
 
-## Conditional Reading
+## Read Next
 
-- Orientation: ../AGENTS.md and ../08_Coordenacao/README.md; historical planning/QA: ../docs/work-plan.md and ../qa/QA_INDEX.md.
+1. `../AGENTS.md`
+2. `../08_Coordenacao/README.md`
+3. `../docs/work-plan.md`
+4. `../qa/QA_INDEX.md`

@@ -4,14 +4,10 @@
 
 - status: `living`
 - authority: `local_state`
-- last_verified: `2026-10-05`
+- last_verified: `2026-07-17`
 - review_when: `the observable technical baseline or next technical step changes`
 - supersedes: `52f52f7cd33d1711579f9cccbe4c848ab45a02e4:Projetos/draxos-mobile/implementation/tracks/governance-v2-pre-cutover-status-2026-07-16.md`
 - superseded_by: `none`
-
-## Preservação vigente
-
-Projeto congelado; somente lotes documentais 1 e 2 autorizados. Baselines e gates preservados, sem novo QA; retomada e execução de recomendações anteriores exigem Fabio e a autoridade de portfólio.
 
 ## Authority boundary
 
@@ -36,7 +32,7 @@ Projeto congelado; somente lotes documentais 1 e 2 autorizados. Baselines e gate
 
 - Arena result remains `ARENA_CORE_NEEDS_UX_FIX` plus `ARENA_CORE_NOT_PROVEN`.
 - Human proof in `../docs/arena-pve-product-proof.md` remains pending before tuning, economy, PVP, content or final visual work.
-- Next product step: none; former recommendations remain in the preserved source.
+- Next technical step: preserve the current package and prepare only evidence/support needed for that human proof when explicitly requested.
 - Remote mutation, publication, device validation and human product decisions are outside local automation.
 
 ## Validation contract

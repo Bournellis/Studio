@@ -1,0 +1,178 @@
+{
+  "schema": "studio.documentation-preservation.v1",
+  "recorded_on": "2026-10-05",
+  "workspace": "Estudio",
+  "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+  "authorization": "Fabio: Otimo, pode começar com 1 e 2!",
+  "effects": {
+    "canon": "none",
+    "bindings": "none",
+    "product": "none",
+    "runtime": "none",
+    "operations": "local documentation alignment and conditional reading"
+  },
+  "last_federation_receipt": "2026-09-07_studio-workspace-closure-v1",
+  "core_reference_commit": "cca3663772511ca9fdd852775dc04c77ef9a8603",
+  "source_records": [
+    {
+      "source_path": "AGENTS.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "b3868acdbf9ff1a62aab3da12770c216e95e90f1",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/AGENTS.md.source",
+      "sha256": "277a5ab9197432b59c88e94b62526079b00aaf2698bd94449bd58f23950574c8",
+      "bytes": 12692,
+      "living_target": "AGENTS.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "08_Coordenacao_Agentes/Prioridades_Estudio.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "74080eed993f6a29eefe37febaaf73a83b79bbc7",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/08_Coordenacao_Agentes/Prioridades_Estudio.md.source",
+      "sha256": "3c1d1636fe902d2ca0253f3e9c273e7ddfe9eb2d87ee58f92961585ee180e8d1",
+      "bytes": 4773,
+      "living_target": "08_Coordenacao_Agentes/Prioridades_Estudio.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "08_Coordenacao_Agentes/Estado_Atual.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "9addeffa48a90e6b604f70303f25a37f63e1c284",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/08_Coordenacao_Agentes/Estado_Atual.md.source",
+      "sha256": "3e14d91f29cfec8a948d498404329539e8ae57d956dcb7a147ded0f801e48517",
+      "bytes": 4798,
+      "living_target": "08_Coordenacao_Agentes/Estado_Atual.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "Projetos/JogoDaCopa/implementation/current-status.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "bf70d43e6b8e995c103dc407452b00b4fc0e3349",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/Projetos/JogoDaCopa/implementation/current-status.md.source",
+      "sha256": "3434a6b48068ef5981be1528d4f15b8d6bf67a695175059f4fd693ccdfe75af5",
+      "bytes": 2189,
+      "living_target": "Projetos/JogoDaCopa/implementation/current-status.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "Projetos/FpsPlayground/implementation/current-status.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "24de853132129fbe4ec67fa4fe3c231bec4faaa9",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/Projetos/FpsPlayground/implementation/current-status.md.source",
+      "sha256": "67b959f68cf217c875b8e07faa929a29ec610385ae9f93eaf9ac619c85df2636",
+      "bytes": 2280,
+      "living_target": "Projetos/FpsPlayground/implementation/current-status.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "Projetos/draxos-mobile/implementation/current-status.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "bde46e70f2c14d678a1c0bf08ee84ec3988f2018",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/Projetos/draxos-mobile/implementation/current-status.md.source",
+      "sha256": "736ad6bb217e56e44275621b99522db514257a9e9d92850b5994ebf07d433468",
+      "bytes": 2495,
+      "living_target": "Projetos/draxos-mobile/implementation/current-status.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "Projetos/draxos-roguelike-cardgame/implementation/current-status.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "050c741c81984d34c32e125dbf732b4efb7901c7",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/Projetos/draxos-roguelike-cardgame/implementation/current-status.md.source",
+      "sha256": "01459d7add40c44ed7e234d9e4b040bf910a3593b6b5cfc4f32d0190e3b5825f",
+      "bytes": 1759,
+      "living_target": "Projetos/draxos-roguelike-cardgame/implementation/current-status.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "Projetos/rpg-isometrico/implementation/current-status.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "05ebcada46ff299c40987086a9e050f89f518a7c",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/Projetos/rpg-isometrico/implementation/current-status.md.source",
+      "sha256": "4fc240cf9968c03d844b5678b25f4ce2ab8a342ca493bc3fbdc6d23a32dcc82f",
+      "bytes": 1797,
+      "living_target": "Projetos/rpg-isometrico/implementation/current-status.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "Projetos/rpg-turnos/implementation/current-status.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "2c5f72ad895542491921685496c5ae294f7358d6",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/Projetos/rpg-turnos/implementation/current-status.md.source",
+      "sha256": "904bcc43ae745e2f16e537a9911cd5359ad693630ca665a74748202713ca3a90",
+      "bytes": 2116,
+      "living_target": "Projetos/rpg-turnos/implementation/current-status.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "README.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "3ae1c99c44e22c56bffa0062f4a79bfe5e3e058c",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/README.md.source",
+      "sha256": "528a72236953f93b5ecd559461fb7672b3451a0f56427edb95f1c89beff99f21",
+      "bytes": 2332,
+      "living_target": "README.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "08_Coordenacao_Agentes/documentation-index.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "4f54f87c2b273995315a1d3751a2c8b2c30c5837",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/08_Coordenacao_Agentes/documentation-index.md.source",
+      "sha256": "dd30754e456037f2f661fcd675e509c91d53442ab0a631c0a96fc928484817d4",
+      "bytes": 3768,
+      "living_target": "08_Coordenacao_Agentes/documentation-index.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "08_Coordenacao_Agentes/FABIO_DASHBOARD.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "8b3e2a4d984106eb70abb769d9f2a05eab821ecf",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/08_Coordenacao_Agentes/FABIO_DASHBOARD.md.source",
+      "sha256": "7c5c273e89159c9f97d0caa2f86a5f3fe5021ee9bf64f8d939da78da2c633d7f",
+      "bytes": 3795,
+      "living_target": "08_Coordenacao_Agentes/FABIO_DASHBOARD.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "08_Coordenacao_Agentes/FABIO_DASHBOARD.html",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "576cfc57c0a86c0c3c153c2a51a1290a99309b47",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/08_Coordenacao_Agentes/FABIO_DASHBOARD.html.source",
+      "sha256": "4d0ef036f32e1b65fbc5d4c1892261aa521b2a359e14a4baf1c2cfef65457450",
+      "bytes": 10347,
+      "living_target": "08_Coordenacao_Agentes/FABIO_DASHBOARD.html",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": "Projetos/README.md",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "b8834d6c01e15284022feeefba48f4cc5e045f4b",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/Projetos/README.md.source",
+      "sha256": "b903e7d55e0ea98ea48aa3ffbea51a7f4649c9aac0378b952b32b55b5c685810",
+      "bytes": 2594,
+      "living_target": "Projetos/README.md",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": ".rgignore",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "b86916b7586ed502c69e02bd3e80a31b162344e6",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/.rgignore.source",
+      "sha256": "60347587befd8359bcf63ffaf0c27ad1c8e0baee8169f67da5b8fbdf0cbaaaec",
+      "bytes": 982,
+      "living_target": ".rgignore",
+      "disposition": "corrected_or_reorganized"
+    },
+    {
+      "source_path": ".gitattributes",
+      "source_commit": "20df38876ec3c6b635a2e9d5887fb3b8d50a56b2",
+      "source_blob": "6313b56c57848efce05faa7aa7e901ccfc2886ea",
+      "snapshot_path": "08_Coordenacao_Agentes/History/preservation-20261005/sources/.gitattributes.source",
+      "sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c",
+      "bytes": 19,
+      "living_target": ".gitattributes",
+      "disposition": "corrected_or_reorganized"
+    }
+  ]
+}

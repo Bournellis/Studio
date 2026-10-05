@@ -2,43 +2,45 @@
 
 ## Metadata
 
-- status: `active`
-- authority: `router`
-- last_verified: `2026-08-27`
-- review_when: `workspace structure or authority model changes`
-- supersedes: `README.md before Governance v2`
-- superseded_by: `none`
+- status: active
+- authority: router
+- last_verified: 2026-10-05
+- review_when: workspace structure or authority model changes
+- supersedes: README.md before Governance v2
+- superseded_by: none
 
-Godot-first multi-project workspace for production, coordination and tooling. Shared lore is consumed from the separate Studio Core; this README carries no operational project state.
+Entrada dos seis projetos do Estudio, com contratos, estado técnico e
+evidências locais. RPG Comando é independente, em D:/RPG Comando, fora deste
+portfólio e do Studio Core.
 
-## Start Here
+## Orientação
 
-1. `AGENTS.md` - operational contract and hard stops.
-2. `08_Coordenacao_Agentes/Prioridades_Estudio.md` - portfolio focus, status and allowed work.
-3. `Projetos/README.md` - stable project registry and routing.
-4. `08_Coordenacao_Agentes/Estado_Atual.md` - short portfolio projection.
-5. Target project `AGENTS.md`, `implementation/current-status.md` and `08_Coordenacao/`.
-6. `STUDIO_CORE.md` and the target project binding only when shared lore or universe membership is relevant.
+Leia [AGENTS](AGENTS.md) e [Prioridades](08_Coordenacao_Agentes/Prioridades_Estudio.md)
+para trabalho permitido. O [registro de projetos](Projetos/README.md) seleciona
+a entrada local. Produto, runtime e QA são consultas condicionais.
 
-## Structure
+## Estado
 
-- `Projetos/`: official projects and read-only concept archives.
-- `STUDIO_CORE.md`: bridge to the shared authority in `D:\Studio Core`.
-- Project `STUDIO_CORE.md`: explicit universe binding and adopted domains.
-- `canon/shared-lore/`: superseded provenance bridges retained for recovery.
-- `canon/studio-conventions/`: explicit cross-project adoption boundaries.
-- `08_Coordenacao_Agentes/`: global governance, portfolio sync, compact history, cleanup manifests and receipts.
-- `materiais/`: supporting guides and non-canonical references.
-- `tools/`: machine-readable governance, validation and worktree lifecycle.
+O [estado global](08_Coordenacao_Agentes/Estado_Atual.md) é uma projeção.
+Cada implementation/current-status.md mantém a baseline técnica local.
+O [painel Fabio](08_Coordenacao_Agentes/FABIO_DASHBOARD.html) remete a essas fontes.
 
-Redundant pre-cutover coordination, lessons and migration notes are outside the normal search path after Documentation Lite v2.
-Use project `implementation/history.md`, history ledgers, `08_Coordenacao_Agentes/History/` and the Documentation Lite receipts.
-Recover exact removed sources only through the recorded Git baseline/tag.
+## Recuperação
 
-## Boundaries
+O [índice documental](08_Coordenacao_Agentes/documentation-index.md) roteia
+história e contratos. O [lifecycle](08_Coordenacao_Agentes/Runbooks/DOCUMENTATION_LITE_LIFECYCLE.md)
+explica recuperação literal por blob e hash. As
+[fontes desta reorganização](08_Coordenacao_Agentes/History/preservation-20261005/README.md)
+continuam preservadas integralmente.
 
-Only projects with `universe_binding: shared` adopt the declared Core domains. Product, gameplay, progression, architecture and platform contracts remain local unless the receiving project explicitly adopts a rule.
+## Estrutura e fronteiras
 
-Codex performs only the safe routine `main` to `origin/main` Git synchronization
-defined by `AGENTS.md` and its runbook. Release, product publication and every
-other remote mutation remain Fabio-owned decisions.
+- Projetos/: produto, runtime e estado locais; _conceitos/ é referência.
+- 08_Coordenacao_Agentes/: coordenação, projeção, registros e recuperação.
+- tools/: validação e lifecycle conforme os contratos vigentes.
+- materiais/ e Visual/: referências consultadas por objetivo concreto.
+- [STUDIO_CORE.md](STUDIO_CORE.md): entrada condicional para lore e vínculos.
+- canon/shared-lore/: proveniência histórica; autoridades vivas ficam no Core.
+
+Referências condicionais e história permanecem no acervo, fora da busca
+habitual quando classificadas. O Git seguro segue o contrato e o runbook local.

@@ -4,19 +4,15 @@
 
 - status: living
 - authority: local_state
-- last_verified: `2026-10-05`
+- last_verified: 2026-07-16
 - review_when: baseline técnica, track local ou gate técnico mudar
 - supersedes: current-status anterior ao cutover de governança v2
 - superseded_by: none
 
-## Preservação vigente
-
-Projeto congelado; somente lotes documentais 1 e 2 autorizados. Baselines e gates preservados, sem novo QA; retomada e execução de recomendações anteriores exigem Fabio e a autoridade de portfólio.
-
 ## Baseline
 
 - Projeto: `JogoDaCopa`; produto local: `Super Campeao`.
-- Referência de portfólio: `PAUSADO_INDEFINIDO`; a autoridade permanece em `../../../08_Coordenacao_Agentes/Prioridades_Estudio.md`.
+- Referência de portfólio: `P2_IMPLEMENTACAO`; a autoridade permanece em `../../../08_Coordenacao_Agentes/Prioridades_Estudio.md`.
 - Baseline técnica aplicada: Track 10D Web Goal Golden Pop Hotfix.
 - Última regressão registrada: 108/108 testes, 1.844 asserts e 62 scripts verificados.
 - Superfícies locais: editor Windows e export Web single-threaded.

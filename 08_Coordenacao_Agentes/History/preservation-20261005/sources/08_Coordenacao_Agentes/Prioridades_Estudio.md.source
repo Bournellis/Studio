@@ -4,7 +4,7 @@
 
 - status: `active`
 - authority: `portfolio_state`
-- last_verified: `2026-10-05`
+- last_verified: `2026-09-21`
 - review_when: `Fabio changes focus, portfolio status or allowed work`
 - supersedes: `none`
 - superseded_by: `none`
@@ -23,23 +23,17 @@ Não retomar design, código, QA, builds, infraestrutura, depuração, integraç
 publicação, monitors ou backlog de legados. Autorizações antigas e término de
 outro trabalho não levantam a pausa. Preservar baselines, gates e evidências;
 consulta seletiva ao acervo para objetivo nomeado do RPG Comando é permitida.
-
-Decisão Fabio 2026-10-05: executar os lotes 1 e 2 — alinhar a política de
-preservação e simplificar a consulta. Essa manutenção permite corrigir
-entradas, estados e referências, preservar fontes e validar documentos.
-Limpeza física, encerramento de worktrees antigas e deduplicação são lotes
-posteriores. RPG Comando permanece independente do Studio Core.
 ## Portfolio
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
 |---|---|---|---|---|---|
-| Pausado | JogoDaCopa | `Projetos/JogoDaCopa/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | DraxosMobile | `Projetos/draxos-mobile/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | JogoDaCopa | `Projetos/JogoDaCopa/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | DraxosMobile | `Projetos/draxos-mobile/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - |
-| Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | RPG Turnos | `Projetos/rpg-turnos/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | RPG Turnos | `Projetos/rpg-turnos/` | `PAUSADO_INDEFINIDO` | Preservação e consulta seletiva para objetivo nomeado do RPG Comando | Nenhum; aguardar retomada explícita de Fabio |
 
 Baselines, markers e detalhes por projeto vivem em `Estado_Atual.md` e no `implementation/current-status.md` de cada projeto. Historico de pacotes do DraxosMobile: `Projetos/draxos-mobile/docs/release-history.md`.
 

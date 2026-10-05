@@ -4,19 +4,15 @@
 
 - status: living
 - authority: local_state
-- last_verified: `2026-10-05`
+- last_verified: 2026-07-16
 - review_when: baseline, gate, risco, validacao ou trabalho permitido mudar
 - supersedes: current-status.md before Governance v2
 - superseded_by: none
 
-## Preservação vigente
-
-Projeto congelado; somente lotes documentais 1 e 2 autorizados. Baselines e gates preservados, sem novo QA; retomada e execução de recomendações anteriores exigem Fabio e a autoridade de portfólio.
-
 ## Portifolio
 
-- estado autorizado: `PAUSADO_INDEFINIDO`;
-- trabalho atual: somente manutenção documental dos lotes 1 e 2;
+- estado autorizado: `PAUSADO_TEMPORARIO`;
+- trabalho atual: governanca e integridade solicitadas, sem retomada de produto;
 - track preservada: `Track 02 - Complete Run Evolution`, marco `T02-P09_COMPLETE`;
 - nova track: nenhuma enquanto a pausa nao for encerrada por Fabio.
 
