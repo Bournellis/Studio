@@ -29,12 +29,6 @@ preservação e simplificar a consulta. Essa manutenção permite corrigir
 entradas, estados e referências, preservar fontes e validar documentos.
 Limpeza física, encerramento de worktrees antigas e deduplicação são lotes
 posteriores. RPG Comando permanece independente do Studio Core.
-Decisão posterior de Fabio em 2026-10-05: executar os lotes 3 a 6 — preservar
-e encerrar cópias antigas, limpar caches identificados, deduplicar artefatos
-com hashes e verificar recuperação. Manutenção física do acervo autorizada;
-produto, integrações antigas, QA dos jogos, builds e remotos de produto
-continuam congelados.
-
 ## Portfolio
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |

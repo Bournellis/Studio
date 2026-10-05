@@ -1,0 +1,19 @@
+{
+  "schema": "studio.documentation-preservation.v1",
+  "source_records": [
+    {
+      "source_path": "AGENTS.md",
+      "snapshot_path": "08_Coordenacao_Agentes/History/cleanup-20261005/sources/AGENTS.md.source",
+      "source_commit": "8bbc1de82c7050af7c46ab5a6e58e24d86d4d5d7",
+      "sha256": "28f513b184c498b406d438e7af00a831d0afba1bfc567ccf7d11da3f2bd4801f",
+      "bytes": 13039
+    },
+    {
+      "source_path": "08_Coordenacao_Agentes/Prioridades_Estudio.md",
+      "snapshot_path": "08_Coordenacao_Agentes/History/cleanup-20261005/sources/08_Coordenacao_Agentes/Prioridades_Estudio.md.source",
+      "source_commit": "8bbc1de82c7050af7c46ab5a6e58e24d86d4d5d7",
+      "sha256": "a5294479f734165c36e54ea19dd51d2b83411c32deb9f9588185d1cc1cd95b1b",
+      "bytes": 5161
+    }
+  ]
+}

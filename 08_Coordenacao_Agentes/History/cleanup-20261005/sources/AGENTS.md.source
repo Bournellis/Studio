@@ -28,11 +28,7 @@ Fabio authorized documentation maintenance lots 1 and 2 on 2026-10-05:
 align preservation policy and simplify consultation. This exception permits
 documentary edits, exact source preservation and proportional document checks.
 Product/runtime, assets, game QA, builds, legacy integrations and physical
-cleanup were not authorized by lots 1 and 2.
-Fabio now authorized maintenance lots 3 to 6 on 2026-10-05: verified
-preservation and archival of old worktrees, identified regenerable caches,
-physical artifact deduplication and final integrity checks. Game/runtime QA,
-legacy integration and product publication remain frozen. RPG Comando is independent of Studio Core; its work
+cleanup remain frozen. RPG Comando is independent of Studio Core; its work
 and state belong exclusively to D:/RPG Comando.
 
 ## Authority Order

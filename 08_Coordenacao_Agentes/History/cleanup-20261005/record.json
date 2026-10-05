@@ -1,0 +1,100 @@
+{
+  "schema": "studio.cleanup.completed.v1",
+  "date": "2026-10-05",
+  "status": "completed",
+  "authorization": "Fabio: De acordo! Pode executar! (lotes 3 a 6)",
+  "archive_root": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005",
+  "archived_registered_worktrees": 4,
+  "archived_auxiliary_copies": 16,
+  "canonical_cache_dirs_removed": 24,
+  "apk_paths_deduplicated": 100,
+  "apk_paths_retained": 245,
+  "unique_apk_hashes": 121,
+  "human_gates_unchanged": 9,
+  "old_active_identities_preserved_blocked": 7,
+  "old_branch_refs_preserved": 6,
+  "legacy_integrations_resumed": false,
+  "gross_content_bytes_removed_or_shared": 13012251504,
+  "retained_archive_and_verification_bytes": 5065940281,
+  "retained_probe_disposition": "retained; automatic approval review rejected removal (blocked by policy)",
+  "estimated_net_content_bytes_reclaimed": 7946311223,
+  "space_method": "logical file bytes; excludes NTFS allocation overhead, small manifests and validation logs; shared APK origins counted only where original link count was one",
+  "retained_msw_roots": [
+    "D:\\MSW\\alpha-toolchains",
+    "D:\\MSW\\godot-mcp-lab",
+    "D:\\MSW\\godot-toolchain",
+    "D:\\MSW\\godot-toolchains",
+    "D:\\MSW\\npm-lock-generator-12-0-2",
+    "D:\\MSW\\portal-deps-20260911-security",
+    "D:\\MSW\\portal-deps-31fe63c3a70c",
+    "D:\\MSW\\qa",
+    "D:\\MSW\\receipts",
+    "D:\\MSW\\research-wave",
+    "D:\\MSW\\scratch",
+    "D:\\MSW\\toolchain",
+    "D:\\MSW\\zyrax_t01_intake_job_20260901_1",
+    "D:\\MSW\\_scratch"
+  ],
+  "core_unchanged": true,
+  "comando_touched": false,
+  "game_runtime_or_assets_changed": false,
+  "game_qa_or_builds_run": false,
+  "product_publication": false,
+  "proof_files": [
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\filesystem-before.json",
+      "sha256": "cb6d7dabdc56ec8f2d092237cc0e52fa3f583c1e9f48dcd2f2575215f9fec49e",
+      "bytes": 49717
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\worktrees-preserved.json",
+      "sha256": "09ed7da7a5ec89bdbc96f3840cbb7f08b7a9e022f68b70aed5bdd622eaee9acf",
+      "bytes": 22239710
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\worktree-removal-plan.json",
+      "sha256": "ec3fd67ecaa3f96455cdb4771c467be72a3f67d70ef4f196cbac2f9d6f7ef9e1",
+      "bytes": 7753
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\worktree-removal-result.json",
+      "sha256": "b82ccc788554fd6e17ceef0dd36c5a605af0fca3ed491e72e09e140d7d107a30",
+      "bytes": 5224
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\cache-cleanup-plan.json",
+      "sha256": "bd58752cfcaecea7041d1a80204fd92e1f0acd0890eb0143cfc94d746efdefd9",
+      "bytes": 7476
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\cache-cleanup-result.json",
+      "sha256": "dc699bd844572a3798023d4dd0c8a3d3766eb0d18d4086848a35bcd56cc53907",
+      "bytes": 4306
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\apk-dedup-plan.json",
+      "sha256": "244ef28b252ebd8ee05d3cc0052fcd811a6125009352189a51205d0fd4bbbfc6",
+      "bytes": 161552
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\apk-dedup-result.json",
+      "sha256": "9ea730d99ad6ed568946fe716faa603bcb7d7dedf5f76f09746a5ddeb7ac7e8b",
+      "bytes": 51975
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\restore-probe-result.json",
+      "sha256": "94834ce0a296fac3a038f8078fd0bb218a112ebc7cb71f695796eec58734db44",
+      "bytes": 4357
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\apk-cas-verification.json",
+      "sha256": "75b8016dc9bf96b152baa4366b69c7850338ca30a53f883608c73349d0b0ba97",
+      "bytes": 424
+    },
+    {
+      "path": "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005\\manifest-path-encoding-correction.json",
+      "sha256": "b87753f57dfb631d995ebdb24c6b89d3af8fb12bd0a0b3aa36754b87f2accde7",
+      "bytes": 3391
+    }
+  ]
+}
