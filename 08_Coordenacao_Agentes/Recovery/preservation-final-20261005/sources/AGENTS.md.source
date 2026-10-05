@@ -24,8 +24,13 @@ MMORPG in `D:/Studio/Projetos/MMORPG`, is frozen. Read the current freeze in
 build, debugging, integration, publication or automated follow-up. Preserve old
 evidence; do not resume from historical approvals or tasks.
 
-Maintenance lots 1 to 6 were completed on 2026-10-05; their authorization is consumed. Preservation now permits passive retention and selective consultation only; any new intervention requires Fabio's explicit scope.
-The final documentary closeout and independent backup were explicitly authorized and recorded in 08_Coordenacao_Agentes/Recovery/preservation-final-20261005. Game/runtime QA, legacy integration and product publication remain frozen.
+Fabio authorized documentation maintenance lots 1 and 2 on 2026-10-05:
+align preservation policy and simplify consultation. This exception permits
+documentary edits, exact source preservation and proportional document checks.
+Product/runtime, assets, game QA, builds, legacy integrations and physical
+cleanup were not authorized by lots 1 and 2.
+Fabio authorized maintenance lots 3 to 6 on 2026-10-05: verified preservation and archival of old worktrees, identified regenerable caches, physical artifact deduplication and final integrity checks.
+Game/runtime QA, legacy integration and product publication remain frozen.
 RPG Comando is independent of Studio Core; its work and state belong exclusively to D:/RPG Comando.
 
 ## Authority Order

@@ -1,0 +1,26 @@
+{
+  "schema": "studio.documentation-preservation.v1",
+  "source_records": [
+    {
+      "source_path": "AGENTS.md",
+      "snapshot_path": "08_Coordenacao_Agentes/Recovery/preservation-final-20261005/sources/AGENTS.md.source",
+      "source_commit": "3db8d8799d7e67214e472df872a07696b44ddac3",
+      "sha256": "b04ca457cec37bb8a20334ee977abf5442b7affe1814057d6648064d4b548cba",
+      "bytes": 13336
+    },
+    {
+      "source_path": "08_Coordenacao_Agentes/Prioridades_Estudio.md",
+      "snapshot_path": "08_Coordenacao_Agentes/Recovery/preservation-final-20261005/sources/08_Coordenacao_Agentes/Prioridades_Estudio.md.source",
+      "source_commit": "3db8d8799d7e67214e472df872a07696b44ddac3",
+      "sha256": "308531c658ef62556b3e9c8b8b3d8970969dfe6b073884f49938340cb8e57268",
+      "bytes": 5498
+    },
+    {
+      "source_path": "08_Coordenacao_Agentes/Estado_Atual.md",
+      "snapshot_path": "08_Coordenacao_Agentes/Recovery/preservation-final-20261005/sources/08_Coordenacao_Agentes/Estado_Atual.md.source",
+      "source_commit": "3db8d8799d7e67214e472df872a07696b44ddac3",
+      "sha256": "346666d2028133271381ba71fd1350251cf628ebfa63976c5f5346aa2b855529",
+      "bytes": 4861
+    }
+  ]
+}

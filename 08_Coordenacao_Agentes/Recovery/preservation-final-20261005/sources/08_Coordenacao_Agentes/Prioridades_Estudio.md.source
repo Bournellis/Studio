@@ -24,27 +24,28 @@ publicação, monitors ou backlog de legados. Autorizações antigas e término 
 outro trabalho não levantam a pausa. Preservar baselines, gates e evidências;
 consulta seletiva ao acervo para objetivo nomeado do RPG Comando é permitida.
 
-Os lotes 1 a 6 foram concluídos em 2026-10-05: orientação documental,
-preservação verificável, encerramento das cópias antigas identificadas,
-caches regeneráveis, deduplicação e recuperação. Essas autorizações foram
-consumidas; não constituem permissão contínua de manutenção.
-Fabio autorizou o fechamento documental e backup independente em outro disco
-físico. A cópia em C: foi verificada; o registro local fica em
-Recovery/preservation-final-20261005/README.md. RPG Comando permanece independente
-do Studio Core. O estado habitual volta a ser retenção passiva e consulta
-seletiva; nova intervenção ou retomada exige escopo explícito de Fabio.
+Decisão Fabio 2026-10-05: executar os lotes 1 e 2 — alinhar a política de
+preservação e simplificar a consulta. Essa manutenção permite corrigir
+entradas, estados e referências, preservar fontes e validar documentos.
+Limpeza física, encerramento de worktrees antigas e deduplicação são lotes
+posteriores. RPG Comando permanece independente do Studio Core.
+Decisão posterior de Fabio em 2026-10-05: executar os lotes 3 a 6 — preservar
+e encerrar cópias antigas, limpar caches identificados, deduplicar artefatos
+com hashes e verificar recuperação. Manutenção física do acervo autorizada;
+produto, integrações antigas, QA dos jogos, builds e remotos de produto
+continuam congelados.
 
 ## Portfolio
 
 | Prioridade | Projeto | Caminho | Status | Trabalho permitido | Proximo passo |
 |---|---|---|---|---|---|
-| Pausado | JogoDaCopa | `Projetos/JogoDaCopa/` | `PAUSADO_INDEFINIDO` | Preservação passiva e consulta seletiva; nova intervenção exige Fabio | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_INDEFINIDO` | Preservação passiva e consulta seletiva; nova intervenção exige Fabio | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | DraxosMobile | `Projetos/draxos-mobile/` | `PAUSADO_INDEFINIDO` | Preservação passiva e consulta seletiva; nova intervenção exige Fabio | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_INDEFINIDO` | Preservação passiva e consulta seletiva; nova intervenção exige Fabio | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | JogoDaCopa | `Projetos/JogoDaCopa/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | Draxos Roguelike Cardgame | `Projetos/draxos-roguelike-cardgame/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | DraxosMobile | `Projetos/draxos-mobile/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | FpsPlayground | `Projetos/FpsPlayground/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
 | Arquivo | Mobile Universe (conceito) | `Projetos/_conceitos/mobile-universe/` | `ARQUIVO_DESIGN` | Leitura e referencia de design apenas | - |
-| Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | `PAUSADO_INDEFINIDO` | Preservação passiva e consulta seletiva; nova intervenção exige Fabio | Nenhum; aguardar retomada explícita de Fabio |
-| Pausado | RPG Turnos | `Projetos/rpg-turnos/` | `PAUSADO_INDEFINIDO` | Preservação passiva e consulta seletiva; nova intervenção exige Fabio | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | RPG Isometrico | `Projetos/rpg-isometrico/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
+| Pausado | RPG Turnos | `Projetos/rpg-turnos/` | `PAUSADO_INDEFINIDO` | Preservação; manutenção documental dos lotes 1 e 2; consulta seletiva | Nenhum; aguardar retomada explícita de Fabio |
 
 Baselines, markers e detalhes por projeto vivem em `Estado_Atual.md` e no `implementation/current-status.md` de cada projeto. Historico de pacotes do DraxosMobile: `Projetos/draxos-mobile/docs/release-history.md`.
 

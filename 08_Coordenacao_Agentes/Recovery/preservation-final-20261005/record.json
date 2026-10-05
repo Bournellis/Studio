@@ -1,0 +1,40 @@
+{
+  "schema": "studio.preservation-closeout.v1",
+  "status": "completed",
+  "date": "2026-10-05",
+  "authorization": "Fabio: Otimo, pode executar! (backup independente e pequeno fechamento documental)",
+  "maintenance_lots_1_to_6": "completed; authorization consumed",
+  "new_intervention_requires": "explicit scope from Fabio",
+  "backup": {
+    "schema": "studio.independent-backup.v1",
+    "status": "verified",
+    "verified_utc": "2026-10-05T20:00:48Z",
+    "destination": "C:\\Studio-preservation-backups\\preservation-20261005-closeout",
+    "source_disk": 0,
+    "destination_disk": 1,
+    "files": 6162,
+    "bytes": 9089039458,
+    "apk_objects": 140,
+    "source_prefix_mappings": {
+      "D:\\MinigameStudio-backups\\studio-archive\\preservation-cleanup-20261005": "cleanup-archive",
+      "D:\\MinigameStudio-backups\\artifact-store": "artifact-store"
+    },
+    "excluded_redundant_probes": [
+      "restore-probe.git",
+      "restored-samples"
+    ],
+    "scope": "Archived cleanup files, APK CAS, original proofs, local Git LFS objects. Current Git bundles added at closeout; no product or credentials included.",
+    "manifest_sha256": "d2541cb8c735c7c78de361223b46a8c08be812c8445cbc78067d7619deef8a71"
+  },
+  "backup_receipt_sha256": "324dfb54741448b71c6307b66fff778dae32924dd105f5761a9cefc6f65e5153",
+  "backup_receipt_bytes": 864,
+  "historical_backup_sources_unchanged": true,
+  "game_runtime_or_assets_changed": false,
+  "game_qa_or_builds_run": false,
+  "human_gates_changed": false,
+  "blocked_obligations_changed": false,
+  "core_unchanged": true,
+  "comando_touched": false,
+  "product_publication": false,
+  "git_bundles": "Final clean repository bundles and final closure evidence added after integration; see backup/git-bundles.json and backup/closeout-evidence."
+}
